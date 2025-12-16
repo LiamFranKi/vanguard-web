@@ -31,8 +31,8 @@ export default function About() {
           </div>
 
           <div 
-            className={`overflow-hidden transition-all duration-500 ease-in-out ${
-              isExpanded ? 'max-h-[3000px] opacity-100 pb-8 mt-8' : 'max-h-0 opacity-0 mt-0 pb-0'
+            className={`transition-all duration-500 ease-in-out ${
+              isExpanded ? 'max-h-none opacity-100 pb-8 mt-8' : 'max-h-0 opacity-0 mt-0 pb-0 overflow-hidden'
             }`}
           >
             <div className="grid md:grid-cols-3 gap-8">
@@ -148,9 +148,9 @@ export default function About() {
             </div>
 
             {/* Sección Nuestros Beneficios */}
-            <div className="mt-16">
+            <div className="mt-16 pb-8">
               <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-800 mb-4">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-800 mb-4">
                   Nuestros Beneficios
                 </h2>
                 <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-6"></div>
@@ -159,7 +159,7 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pb-4">
                 {/* 7500+ m² de Infraestructura */}
                 <div className="bg-gradient-to-br from-blue-50 via-blue-100/50 to-blue-50 p-6 rounded-2xl shadow-lg border border-blue-200/50 hover:shadow-2xl transition-all transform hover:-translate-y-2 hover:scale-105">
                   <div className="flex flex-col items-center text-center mb-4">
