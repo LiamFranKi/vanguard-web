@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: email,
-        subject: `Gracias por tu postulación - ${emailConfig.nombre_remitente}`,
+        subject: `✅ Gracias por tu postulación - ${emailConfig.nombre_remitente}`,
         html: confirmacionHTML,
       })
     )
@@ -308,5 +308,6 @@ function generateConfirmacionHTML(nombre: string, tipoFormulario: string, logoUr
     </html>
   `
 }
+
 
 

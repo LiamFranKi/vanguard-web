@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const emailToSchool = {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: process.env.CONTACT_EMAIL || 'admin@vanguardschools.edu.pe',
-      subject: `Nuevo mensaje de contacto: ${asunto}`,
+      subject: `📧 Nuevo mensaje de contacto: ${asunto}`,
       html: generateEmailToSchool(nombre, email, telefono, asunto, mensaje, logoUrl),
     }
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const emailToUser = {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: email,
-      subject: 'Gracias por contactarnos - Vanguard Schools',
+      subject: '✅ Gracias por contactarnos - Vanguard Schools',
       html: generateEmailToUser(nombre, logoUrl),
     }
 
