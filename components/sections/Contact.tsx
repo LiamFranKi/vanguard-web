@@ -91,8 +91,8 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 mb-2">Email</h3>
-                      <a href="mailto:admin@vanguardschools.edu.pe" className="text-cyan-600 hover:text-cyan-700 transition-colors">
-                        admin@vanguardschools.edu.pe
+                      <a href="mailto:admin@vanguardschools.edu.pe" className="text-cyan-600 hover:text-cyan-700 transition-colors break-words">
+                        admin@vanguardschools.<wbr />edu.pe
                       </a>
                     </div>
                   </div>

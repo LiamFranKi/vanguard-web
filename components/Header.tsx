@@ -49,11 +49,11 @@ export default function Header() {
                 unoptimized
               />
             </div>
-            <div className="hidden sm:flex flex-col justify-center">
-              <span className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
+            <div className="flex flex-col justify-center">
+              <span className="text-lg sm:text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
                 Vanguard Schools
               </span>
-              <span className="text-xs md:text-sm font-semibold leading-tight mt-0.5 text-center">
+              <span className="text-[10px] sm:text-xs md:text-sm font-semibold leading-tight mt-0.5">
                 <span className="text-gray-900">A la vanguardia</span> <span className="text-secondary-800">de la tecnología</span>
               </span>
             </div>

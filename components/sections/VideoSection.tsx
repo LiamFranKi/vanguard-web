@@ -21,12 +21,13 @@ export default function VideoSection() {
             {/* Video del Mapa */}
             <div className="relative group">
               <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl p-2 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
-                <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden">
+                <div className="aspect-video bg-gray-900 rounded-xl overflow-hidden w-full">
                   <video
                     src="/mapa-vanguard.mp4"
                     controls
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     preload="metadata"
+                    style={{ maxWidth: '100%', height: 'auto' }}
                   >
                     Tu navegador no soporta la reproducción de videos.
                   </video>
@@ -43,12 +44,12 @@ export default function VideoSection() {
             {/* Google Maps */}
             <div className="relative group">
               <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-2 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
-                <div className="aspect-video bg-gray-200 rounded-xl overflow-hidden">
+                <div className="aspect-video bg-gray-200 rounded-xl overflow-hidden w-full">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.234567890123!2d-77.0851712!3d-12.0140762!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105ce93e7332faf%3A0x5419c3e0a840d1a1!2sColegio%20Vanguard%20School!5e0!3m2!1ses!2spe!4v1700000000000!5m2!1ses!2spe"
                     width="100%"
                     height="100%"
-                    style={{ border: 0 }}
+                    style={{ border: 0, maxWidth: '100%' }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
