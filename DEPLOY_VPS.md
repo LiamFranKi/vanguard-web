@@ -97,25 +97,54 @@ NODE_ENV=production
 
 ---
 
-## 🎬 Paso 5: Subir Videos Grandes
+## 🎬 Paso 5: Subir Videos Grandes con WinSCP
 
-Los videos NO están en GitHub porque son muy grandes. Subirlos directamente:
+Los videos NO están en GitHub porque son muy grandes (>100MB). **Subirlos usando WinSCP**:
+
+### Instrucciones para WinSCP:
+
+1. **Abrir WinSCP** y conectarte a tu VPS
+   - Host: IP o dominio de tu VPS
+   - Usuario: tu usuario SSH
+   - Contraseña: tu contraseña SSH
+   - Protocolo: SFTP
+
+2. **Navegar a la carpeta del proyecto:**
+   ```
+   /ruta/a/vanguard-web/public/
+   ```
+   (Reemplazar con la ruta real de tu proyecto)
+
+3. **Subir los videos:**
+   - Desde tu máquina local, navegar a la carpeta donde tienes los videos
+   - Arrastrar y soltar (o copiar) estos archivos:
+     - `video-vanguard.mp4`
+     - `mapa-vanguard.mp4`
+   - Asegurarse de que se suban a: `public/video-vanguard.mp4` y `public/mapa-vanguard.mp4`
+
+4. **Verificar permisos después de subir:**
+   ```bash
+   # Conectarse por SSH al VPS
+   cd /ruta/a/vanguard-web/public/
+   ls -lh *.mp4
+   chmod 644 video-vanguard.mp4 mapa-vanguard.mp4
+   ```
+
+### Alternativas (si no usas WinSCP):
 
 ```bash
-# Opción 1: Usando SCP desde tu máquina local
+# Opción 1: Usando SCP desde tu máquina local (Windows PowerShell o Git Bash)
 scp public/video-vanguard.mp4 usuario@tu-vps:/ruta/a/vanguard-web/public/
 scp public/mapa-vanguard.mp4 usuario@tu-vps:/ruta/a/vanguard-web/public/
 
-# Opción 2: Usando SFTP o FileZilla
+# Opción 2: Usando FileZilla (similar a WinSCP)
 # Subir a: /ruta/a/vanguard-web/public/
-
-# Opción 3: Desde el VPS, descargar desde un servidor temporal
-# (si los tienes en otro lugar)
 ```
 
-**Verificar que los videos estén en:**
-- `public/video-vanguard.mp4`
-- `public/mapa-vanguard.mp4`
+**IMPORTANTE**: 
+- Los videos deben estar en la carpeta `public/` del proyecto
+- Verificar que los nombres sean exactamente: `video-vanguard.mp4` y `mapa-vanguard.mp4`
+- Verificar permisos de lectura (644) después de subirlos
 
 ---
 
