@@ -1,0 +1,106 @@
+{
+  "faqs": [
+    {
+      "categoria": "ADMISIÓN Y MATRÍCULA",
+      "pregunta": "¿Cuál es la edad mínima para ingresar a inicial?",
+      "respuesta": "En inicial, a partir de los 3 años cumplidos hasta el 31 de marzo 2026."
+    },
+    {
+      "categoria": "ADMISIÓN Y MATRÍCULA",
+      "pregunta": "¿Cuál es la capacidad máxima de estudiantes por salón?",
+      "respuesta": "Nivel inicial: máximo 25 estudiantes.\nNivel primaria: máximo 30 estudiantes.\nNivel secundaria: máximo 30 estudiantes."
+    },
+    {
+      "categoria": "ADMISIÓN Y MATRÍCULA",
+      "pregunta": "¿Puedo trasladar a mi hijo una vez iniciado el año escolar?",
+      "respuesta": "Sí, pero el traslado estará sujeto a la disponibilidad de vacantes. Si es aprobado, deberás cumplir con las condiciones y obligaciones correspondientes a un estudiante nuevo."
+    },
+    {
+      "categoria": "COSTOS Y PAGOS",
+      "pregunta": "¿Cuáles son los costos de la matrícula, pensión y otros?",
+      "respuesta": "Nivel inicial: matrícula S/510 – pensión S/510.\nNivel primaria: matrícula S/510 – pensión S/510.\nNivel secundaria: matrícula S/530 – pensión S/530.\nEvaluación psicopedagógica S/50."
+    },
+    {
+      "categoria": "COSTOS Y PAGOS",
+      "pregunta": "¿Hay descuentos por hermanos?",
+      "respuesta": "Sí, a partir del 2do hermano, descuento de S/20 en matrícula y pensión."
+    },
+    {
+      "categoria": "HORARIOS Y CALENDARIO",
+      "pregunta": "¿Cuál es el horario de clases por nivel?",
+      "respuesta": "Inicial: 8:00 am – 12:30 pm.\nPrimaria: 7:35 am – 1:30 pm.\nSecundaria: 7:35 am – 2:00 pm."
+    },
+    {
+      "categoria": "HORARIOS Y CALENDARIO",
+      "pregunta": "¿Cuándo es el inicio de clases?",
+      "respuesta": "El inicio de clases en nuestros 3 niveles es el viernes 6 de marzo."
+    },
+    {
+      "categoria": "HORARIOS Y CALENDARIO",
+      "pregunta": "¿Hay vacaciones durante el año para los estudiantes?",
+      "respuesta": "Sí, al final de cada bimestre, los estudiantes de los 3 niveles tienen una semana de receso."
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cuál es la metodología educativa en el nivel inicial?",
+      "respuesta": "Basada en el enfoque STEAM (Science, Technology, Engineering, Arts and Mathematics), con proyectos, resolución de problemas, aprendizaje activo y colaborativo."
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cuál es la metodología educativa en primaria y secundaria?",
+      "respuesta": "Aplicamos el modelo de Aula Invertida (Flipped Classroom), donde los estudiantes ven la teoría en casa y en clase trabajan práctica, debates y proyectos."
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Qué idiomas imparten y desde qué grado comienzan?",
+      "respuesta": "Inglés desde inicial, con proyectos, debates y club de conversación en inglés, además de visitas de profesores nativos."
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cómo se evalúa a los estudiantes?",
+      "respuesta": "Evaluación continua, formativa y multidimensional: prácticas, trabajos, presentaciones y observaciones con retroalimentación y rúbricas claras."
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Se permite el uso de tecnología en clase?",
+      "respuesta": "Sí. Desde 4.º de primaria hasta 5.º de secundaria los estudiantes usan tablets como herramienta educativa. La compra es asumida por los padres."
+    },
+    {
+      "categoria": "SERVICIOS Y ACTIVIDADES",
+      "pregunta": "¿Qué actividades extracurriculares ofrecen?",
+      "respuesta": "Talleres gratuitos de natación y danzas, además de fútbol, vóley y balonmano dentro de Educación Física."
+    },
+    {
+      "categoria": "SERVICIOS Y ACTIVIDADES",
+      "pregunta": "¿Cuentan con departamento de psicología?",
+      "respuesta": "Sí. Ofrecemos acompañamiento socioemocional, protocolos anti-bullying, orientación vocacional, talleres y escuela para padres, siempre con confidencialidad."
+    },
+    {
+      "categoria": "COMUNICACIÓN CON PADRES",
+      "pregunta": "¿Cómo se informa a los padres sobre el progreso académico?",
+      "respuesta": "Reportes bimestrales, plataforma digital con calificaciones en tiempo real, reuniones personalizadas y alertas tempranas."
+    },
+    {
+      "categoria": "COMUNICACIÓN CON PADRES",
+      "pregunta": "¿Con qué frecuencia se realizan reuniones de padres y maestros?",
+      "respuesta": "Reuniones generales al inicio del año y reuniones individuales bimestrales con cada familia."
+    },
+    {
+      "categoria": "COMUNICACIÓN CON PADRES",
+      "pregunta": "¿Tienen plataforma virtual o aplicación?",
+      "respuesta": "Sí. Contamos con la Intranet Vanguardroom 4.0 y una APP móvil que notifica sobre asistencias, calificaciones y comunicados."
+    },
+    {
+      "categoria": "OTROS",
+      "pregunta": "¿Los estudiantes usan uniforme?",
+      "respuesta": "En Vanguard Schools no exigimos uniforme completo. Solo se requiere el buzo institucional y polos distintivos para actividades académicas y deportivas. Esto mantiene la identidad del colegio, con comodidad y sin gastos innecesarios. La vestimenta siempre debe respetar el Reglamento Interno."
+    },
+    {
+      "categoria": "OTROS",
+      "pregunta": "Calidad de la enseñanza en Vanguard Schools",
+      "respuesta": "Contamos con un equipo docente de alto nivel, capacitado en metodologías modernas como STEAM y Aula Invertida, evaluados y acompañados durante todo el año."
+    }
+  ]
+}
+
+

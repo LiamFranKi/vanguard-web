@@ -1,0 +1,46 @@
+{
+  "formularios": {
+    "contacto": {
+      "nombre": "Formulario de Contacto",
+      "destinatarios": ["walter.lozano@vanguardschools.edu.pe", "walterlozanoalcalde@gmail.com"],
+      "asunto": "Nuevo contacto desde la web - Vanguard Schools",
+      "activo": true
+    },
+    "admisión": {
+      "nombre": "Formulario de Admisión",
+      "destinatarios": ["walter.lozano@vanguardschools.edu.pe"],
+      "asunto": "Nueva solicitud de admisión - Vanguard Schools",
+      "activo": true
+    },
+    "sugerencias": {
+      "nombre": "Sugerencias",
+      "destinatarios": ["walter.lozano@vanguardschools.edu.pe"],
+      "asunto": "Nueva sugerencia - Vanguard Schools",
+      "activo": true
+    },
+    "trabaja-con-nosotros": {
+      "nombre": "Trabaja con Nosotros",
+      "destinatarios": ["walter.lozano@vanguardschools.edu.pe"],
+      "asunto": "Nueva postulación - Vanguard Schools",
+      "activo": true
+    },
+    "visita-guiada": {
+      "nombre": "Visita Guiada",
+      "destinatarios": ["walter.lozano@vanguardschools.edu.pe"],
+      "asunto": "Nueva reserva de visita guiada - Vanguard Schools",
+      "activo": true
+    },
+    "chat": {
+      "nombre": "Chat en Línea",
+      "destinatarios": ["walter.lozano@vanguardschools.edu.pe", "walterlozanoalcalde@gmail.com"],
+      "asunto": "💬 Nuevo mensaje de chat - Vanguard Schools",
+      "activo": true
+    }
+  },
+  "configuracion": {
+    "email_from": "noreply@vanguardschools.edu.pe",
+    "nombre_remitente": "Vanguard Schools",
+    "reply_to": "walter.lozano@vanguardschools.edu.pe"
+  }
+}
+
