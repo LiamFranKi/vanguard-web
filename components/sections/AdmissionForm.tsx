@@ -88,24 +88,13 @@ export default function AdmissionForm() {
         <div className="max-w-5xl mx-auto">
           {/* Card principal del formulario */}
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-            {/* Header del formulario */}
-            <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white py-8 px-6 md:px-12">
-              <div className="text-center">
-                <h2 className="text-3xl md:text-4xl font-extrabold mb-2">Ratificación / Admisión</h2>
-                <p className="text-5xl md:text-6xl font-black text-white drop-shadow-lg">2026</p>
-                <p className="text-lg md:text-xl mt-4 text-white/95 font-medium">
-                  Regístrate e inmediatamente nos comunicaremos contigo para brindarte más información.
-                </p>
-              </div>
-            </div>
-
             {/* Formulario */}
             <div className="p-6 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Datos del Estudiante */}
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
-                    <FiUser className="text-amber-600" size={24} />
+                    <FiUser className="text-amber-700" size={24} />
                     <span>Datos del Estudiante</span>
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -120,7 +109,7 @@ export default function AdmissionForm() {
                         required
                         value={formData.nombresEstudiante}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-gray-900"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all text-gray-900"
                         placeholder="Ingresa los nombres"
                       />
                     </div>
@@ -135,7 +124,7 @@ export default function AdmissionForm() {
                         required
                         value={formData.apellidosEstudiante}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-gray-900"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all text-gray-900"
                         placeholder="Ingresa los apellidos"
                       />
                     </div>
@@ -145,7 +134,7 @@ export default function AdmissionForm() {
                 {/* Datos del Apoderado */}
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
-                    <FiUser className="text-amber-600" size={24} />
+                    <FiUser className="text-amber-700" size={24} />
                     <span>Datos del Apoderado</span>
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -153,7 +142,7 @@ export default function AdmissionForm() {
                       <label htmlFor="nombresApoderado" className="block text-gray-700 font-semibold mb-2">
                         Nombres Apoderado *
                       </label>
-                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 transition-all">
+                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-700 focus-within:border-amber-700 transition-all">
                         <FiUser className="text-gray-400 mr-2" size={20} />
                         <input
                           type="text"
@@ -171,7 +160,7 @@ export default function AdmissionForm() {
                       <label htmlFor="dniApoderado" className="block text-gray-700 font-semibold mb-2">
                         DNI Apoderado *
                       </label>
-                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 transition-all">
+                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-700 focus-within:border-amber-700 transition-all">
                         <FiFileText className="text-gray-400 mr-2" size={20} />
                         <input
                           type="text"
@@ -191,7 +180,7 @@ export default function AdmissionForm() {
                       <label htmlFor="telefonoApoderado" className="block text-gray-700 font-semibold mb-2">
                         Teléfono Apoderado *
                       </label>
-                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 transition-all">
+                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-700 focus-within:border-amber-700 transition-all">
                         <FiPhone className="text-gray-400 mr-2" size={20} />
                         <input
                           type="tel"
@@ -209,7 +198,7 @@ export default function AdmissionForm() {
                       <label htmlFor="emailApoderado" className="block text-gray-700 font-semibold mb-2">
                         Email Apoderado *
                       </label>
-                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 transition-all">
+                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-700 focus-within:border-amber-700 transition-all">
                         <FiMail className="text-gray-400 mr-2" size={20} />
                         <input
                           type="email"
@@ -227,7 +216,7 @@ export default function AdmissionForm() {
                       <label htmlFor="direccionApoderado" className="block text-gray-700 font-semibold mb-2">
                         Dirección Apoderado *
                       </label>
-                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 transition-all">
+                      <div className="flex items-center border-2 border-gray-300 rounded-xl px-4 focus-within:ring-2 focus-within:ring-amber-700 focus-within:border-amber-700 transition-all">
                         <FiMapPin className="text-gray-400 mr-2" size={20} />
                         <input
                           type="text"
@@ -247,7 +236,7 @@ export default function AdmissionForm() {
                 {/* Grado */}
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
-                    <FiCheckCircle className="text-amber-600" size={24} />
+                    <FiCheckCircle className="text-amber-700" size={24} />
                     <span>Grado de Interés</span>
                   </h3>
                   <div>
@@ -260,7 +249,7 @@ export default function AdmissionForm() {
                       required
                       value={formData.grado}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-gray-900 bg-white"
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all text-gray-900 bg-white"
                     >
                       <option value="">Selecciona un grado</option>
                       {grados.map((grado) => (
@@ -292,7 +281,7 @@ export default function AdmissionForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center space-x-2 hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+                  className="w-full bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white px-6 py-4 rounded-xl font-bold text-lg flex items-center justify-center space-x-2 hover:from-primary-700 hover:via-primary-800 hover:to-primary-900 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <FiSend className={isSubmitting ? 'animate-spin' : ''} size={22} />
                   <span>{isSubmitting ? 'Enviando solicitud...' : 'Registrarme'}</span>
