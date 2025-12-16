@@ -168,13 +168,15 @@ export default function Header() {
               <FiMessageSquare className="text-primary-700" size={18} />
               <span>Sugerencias</span>
             </Link>
-            <Link
-              href="/app"
+            <a
+              href="https://nuevo.vanguardschools.edu.pe/login"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-2.5 rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-2"
             >
               <FiLock size={18} />
               <span>Intranet</span>
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -315,14 +317,16 @@ export default function Header() {
                 <FiMessageSquare className="text-primary-700" size={18} />
                 <span>Sugerencias</span>
               </Link>
-              <Link
-                href="/app"
+              <a
+                href="https://nuevo.vanguardschools.edu.pe/login"
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}
                 className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-2 rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all font-semibold text-center flex items-center justify-center space-x-2 mt-2"
               >
                 <FiLock size={18} />
                 <span>Intranet</span>
-              </Link>
+              </a>
             </div>
           </div>
         )}
