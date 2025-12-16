@@ -87,7 +87,7 @@ export default function SecundariaPage() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiCpu className="text-green-600 mt-1 flex-shrink-0" size={20} />
-                  <span className="text-gray-700">Trabajamos con la metodología "Aula Invertida".</span>
+                  <span className="text-gray-700">Trabajamos con la metodología &quot;Aula Invertida&quot;.</span>
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiMonitor className="text-green-600 mt-1 flex-shrink-0" size={20} />

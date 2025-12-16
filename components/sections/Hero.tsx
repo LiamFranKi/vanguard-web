@@ -62,7 +62,7 @@ export default function Hero() {
               </div>
               <div className="text-left flex-1 min-w-0">
                 <p className="text-xs sm:text-sm text-gray-100 mb-1 font-medium">Ubicación</p>
-                <p className="font-bold text-white text-sm sm:text-base leading-relaxed">Jr. Toribio de Luzuriaga Mz "F" Lote 18 y 19 - SMP</p>
+                <p className="font-bold text-white text-sm sm:text-base leading-relaxed">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
               </div>
             </div>
             <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/30 hover:bg-white/25 transition-all transform hover:scale-105 shadow-xl">
