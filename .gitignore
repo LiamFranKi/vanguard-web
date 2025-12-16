@@ -55,3 +55,7 @@ Thumbs.db
 *.swo
 *~
 
+# Large video files (upload directly to VPS)
+public/video-vanguard.mp4
+public/mapa-vanguard.mp4
+
