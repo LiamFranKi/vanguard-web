@@ -64,6 +64,31 @@ export async function POST(request: NextRequest) {
       console.error('Error leyendo formularios.json:', e)
     }
 
+    // Función para formatear el teléfono para WhatsApp
+    const formatPhoneForWhatsApp = (phone: string | undefined): string | null => {
+      if (!phone) return null
+      
+      // Eliminar espacios, guiones, paréntesis y otros caracteres
+      let cleaned = phone.replace(/[\s\-\(\)\.]/g, '')
+      
+      // Si no empieza con código de país, agregar código de Perú (51)
+      if (!cleaned.startsWith('51')) {
+        // Si empieza con 0, quitarlo y agregar 51
+        if (cleaned.startsWith('0')) {
+          cleaned = '51' + cleaned.substring(1)
+        } else {
+          cleaned = '51' + cleaned
+        }
+      }
+      
+      return cleaned
+    }
+
+    const phoneFormatted = formatPhoneForWhatsApp(telefono)
+    const whatsappLink = phoneFormatted 
+      ? `https://wa.me/${phoneFormatted}?text=${encodeURIComponent(`Hola ${nombre}, gracias por contactarnos. En relación a tu consulta: ${mensaje.substring(0, 100)}...`)}`
+      : null
+
     // Enviar email de notificación (en segundo plano, no bloquea la respuesta)
     const emailPromise = transporter.sendMail({
       from: `"Vanguard Schools Chat" <${process.env.SMTP_USER}>`,
@@ -111,8 +136,8 @@ export async function POST(request: NextRequest) {
               <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 4px; border-left: 4px solid #f59e0b;">
                 <strong>💡 Respuesta rápida:</strong>
                 <p style="margin: 5px 0 0 0;">
-                  <a href="mailto:${email}" style="color: #16a34a; text-decoration: none; font-weight: bold;">Responder por email</a> | 
-                  <a href="https://wa.me/51970877642?text=${encodeURIComponent(`Hola ${nombre}, gracias por contactarnos. En relación a tu consulta: ${mensaje.substring(0, 100)}...`)}" style="color: #16a34a; text-decoration: none; font-weight: bold;">Responder por WhatsApp</a>
+                  <a href="mailto:${email}" style="color: #16a34a; text-decoration: none; font-weight: bold;">Responder por email</a>
+                  ${whatsappLink ? ` | <a href="${whatsappLink}" style="color: #16a34a; text-decoration: none; font-weight: bold;">Responder por WhatsApp</a>` : ''}
                 </p>
               </div>
             </div>
