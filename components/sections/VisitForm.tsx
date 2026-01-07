@@ -59,7 +59,10 @@ export default function VisitForm() {
     
     // Validar que la fecha seleccionada sea Martes o Jueves
     if (name === 'fechaPreferida' && value) {
-      const selectedDate = new Date(value)
+      // Parsear la fecha manualmente para evitar problemas de zona horaria
+      // El formato del input date es YYYY-MM-DD
+      const [year, month, day] = value.split('-').map(Number)
+      const selectedDate = new Date(year, month - 1, day) // month - 1 porque Date usa 0-11 para meses
       const dayOfWeek = selectedDate.getDay() // 0 = Domingo, 1 = Lunes, 2 = Martes, 4 = Jueves
       
       // Martes = 2, Jueves = 4
@@ -108,7 +111,9 @@ export default function VisitForm() {
   // Función para verificar si una fecha es Martes o Jueves
   const isValidDay = (dateString: string) => {
     if (!dateString) return false
-    const date = new Date(dateString)
+    // Parsear la fecha manualmente para evitar problemas de zona horaria
+    const [year, month, day] = dateString.split('-').map(Number)
+    const date = new Date(year, month - 1, day) // month - 1 porque Date usa 0-11 para meses
     const dayOfWeek = date.getDay()
     return dayOfWeek === 2 || dayOfWeek === 4 // Martes o Jueves
   }
