@@ -77,6 +77,13 @@ export default function Header() {
               {inicioOpen && (
                 <div className="absolute top-full left-0 mt-0 w-64 bg-white rounded-lg shadow-xl py-2 border-t-2 border-primary-600">
                   <Link
+                    href="/calendarizacion"
+                    className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-blue-100 hover:text-primary-600 transition-all rounded-md mx-2"
+                  >
+                    <FiMap className="text-primary-700" size={16} />
+                    <span>Calendarización</span>
+                  </Link>
+                  <Link
                     href="/preguntas-frecuentes"
                     className="flex items-center space-x-2 px-4 py-2.5 text-gray-700 hover:bg-blue-100 hover:text-primary-600 transition-all rounded-md mx-2"
                   >
@@ -213,6 +220,14 @@ export default function Header() {
                 </div>
                 {inicioOpen && (
                   <div className="pl-8 flex flex-col space-y-1 mt-1">
+                    <Link
+                      href="/calendarizacion"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 hover:bg-blue-100 font-medium rounded-md px-3 py-2 transition-all"
+                    >
+                      <FiMap className="text-primary-700" size={16} />
+                      <span>Calendarización</span>
+                    </Link>
                     <Link
                       href="/preguntas-frecuentes"
                       onClick={() => setIsOpen(false)}
