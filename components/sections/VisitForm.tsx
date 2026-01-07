@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FiCalendar, FiClock, FiUsers, FiMail, FiPhone, FiSend } from 'react-icons/fi'
 import AlertModal from '@/components/AlertModal'
 import DatePicker from 'react-datepicker'
@@ -27,6 +27,24 @@ export default function VisitForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [showAlert, setShowAlert] = useState(false)
+
+  // Prevenir autofill del navegador
+  useEffect(() => {
+    const preventAutofill = () => {
+      const input = document.getElementById('fechaPreferida') as HTMLInputElement
+      if (input) {
+        input.setAttribute('autocomplete', 'off')
+        input.setAttribute('data-form-type', 'other')
+        input.setAttribute('data-lpignore', 'true')
+        input.setAttribute('data-1p-ignore', 'true')
+      }
+    }
+
+    // Ejecutar inmediatamente y después de un pequeño delay
+    preventAutofill()
+    const timer = setTimeout(preventAutofill, 100)
+    return () => clearTimeout(timer)
+  }, [formData.fechaPreferida])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -310,7 +328,7 @@ export default function VisitForm() {
                         minDate={getMinDate()}
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Selecciona una fecha"
-                        className={`w-full py-2.5 outline-none text-gray-900 ${
+                        className={`w-full py-2.5 outline-none text-gray-900 date-picker-no-autofill ${
                           formData.fechaPreferida && isValidDay(formData.fechaPreferida)
                             ? 'bg-green-50 text-green-900 font-semibold'
                             : ''
@@ -319,6 +337,8 @@ export default function VisitForm() {
                         showPopperArrow={false}
                         name="fechaPreferida"
                         id="fechaPreferida"
+                        autoComplete="off"
+                        autoFocus={false}
                       />
                       {/* Input oculto para validación HTML5 */}
                       <input
