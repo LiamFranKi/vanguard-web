@@ -63,7 +63,12 @@ export default function Hero() {
 
           {/* Quick Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto mt-8 sm:mt-12">
-            <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/30 hover:bg-white/25 transition-all transform hover:scale-105 shadow-xl">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Jr.+Toribio+de+Luzuriaga+Mz+F+Lote+18+y+19,+San+Martín+de+Porres,+Lima"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 backdrop-blur-md rounded-xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/30 hover:bg-white/25 transition-all transform hover:scale-105 shadow-xl cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold-500/30 rounded-lg flex items-center justify-center flex-shrink-0 border border-gold-400/30">
                 <FiMapPin className="text-gold-300" size={20} />
               </div>
@@ -71,8 +76,13 @@ export default function Hero() {
                 <p className="text-xs sm:text-sm text-gray-100 mb-1 font-medium">Ubicación</p>
                 <p className="font-bold text-white text-sm sm:text-base leading-relaxed">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
               </div>
-            </div>
-            <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/30 hover:bg-white/25 transition-all transform hover:scale-105 shadow-xl">
+            </a>
+            <a
+              href="https://wa.me/51946592100"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 backdrop-blur-md rounded-xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/30 hover:bg-white/25 transition-all transform hover:scale-105 shadow-xl cursor-pointer"
+            >
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold-500/30 rounded-lg flex items-center justify-center flex-shrink-0 border border-gold-400/30">
                 <FiPhone className="text-gold-300" size={20} />
               </div>
@@ -80,7 +90,7 @@ export default function Hero() {
                 <p className="text-xs sm:text-sm text-gray-100 mb-1 font-medium">Teléfonos</p>
                 <p className="font-bold text-white text-sm sm:text-base leading-relaxed">946 592 100 / 922 084 833</p>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </div>
