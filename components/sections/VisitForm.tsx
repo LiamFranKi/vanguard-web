@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FiCalendar, FiClock, FiUsers, FiMail, FiPhone, FiSend } from 'react-icons/fi'
+import AlertModal from '@/components/AlertModal'
 
 export default function VisitForm() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ export default function VisitForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [showAlert, setShowAlert] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -67,7 +69,7 @@ export default function VisitForm() {
       
       // Martes = 2, Jueves = 4
       if (dayOfWeek !== 2 && dayOfWeek !== 4) {
-        alert('Las visitas guiadas solo están disponibles los días Martes y Jueves. Por favor, selecciona uno de estos días.')
+        setShowAlert(true)
         setFormData(prev => ({
           ...prev,
           fechaPreferida: '',
@@ -377,6 +379,15 @@ export default function VisitForm() {
           </div>
         </div>
       </div>
+
+      {/* Modal de alerta personalizado */}
+      <AlertModal
+        isOpen={showAlert}
+        onClose={() => setShowAlert(false)}
+        type="warning"
+        title="Día no disponible"
+        message="Las visitas guiadas solo están disponibles los días Martes y Jueves. Por favor, selecciona uno de estos días."
+      />
     </section>
   )
 }
