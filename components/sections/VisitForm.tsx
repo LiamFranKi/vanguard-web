@@ -3,6 +3,14 @@
 import { useState } from 'react'
 import { FiCalendar, FiClock, FiUsers, FiMail, FiPhone, FiSend } from 'react-icons/fi'
 import AlertModal from '@/components/AlertModal'
+import DatePicker from 'react-datepicker'
+import { registerLocale, setDefaultLocale } from 'react-datepicker'
+import { es } from 'date-fns/locale/es'
+import 'react-datepicker/dist/react-datepicker.css'
+
+// Registrar locale en español
+registerLocale('es', es)
+setDefaultLocale('es')
 
 export default function VisitForm() {
   const [formData, setFormData] = useState({
@@ -58,35 +66,42 @@ export default function VisitForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    
-    // Validar que la fecha seleccionada sea Martes o Jueves
-    if (name === 'fechaPreferida' && value) {
-      // Parsear la fecha manualmente para evitar problemas de zona horaria
-      // El formato del input date es YYYY-MM-DD
-      const [year, month, day] = value.split('-').map(Number)
-      const selectedDate = new Date(year, month - 1, day) // month - 1 porque Date usa 0-11 para meses
-      const dayOfWeek = selectedDate.getDay() // 0 = Domingo, 1 = Lunes, 2 = Martes, 4 = Jueves
-      
-      // Martes = 2, Jueves = 4
-      if (dayOfWeek !== 2 && dayOfWeek !== 4) {
-        setShowAlert(true)
-        setFormData(prev => ({
-          ...prev,
-          fechaPreferida: '',
-        }))
-        return
-      }
-    }
-    
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }))
   }
+
+  // Manejar cambio de fecha desde DatePicker
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      const dateString = `${year}-${month}-${day}`
+      
+      setFormData(prev => ({
+        ...prev,
+        fechaPreferida: dateString,
+      }))
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        fechaPreferida: '',
+      }))
+    }
+  }
+
+  // Función para filtrar días - solo permitir Martes (2) y Jueves (4)
+  const filterDate = (date: Date) => {
+    const dayOfWeek = date.getDay()
+    return dayOfWeek === 2 || dayOfWeek === 4 // Solo Martes y Jueves
+  }
   
   // Función para obtener el día mínimo disponible (próximo Martes o Jueves)
   const getMinDate = () => {
     const today = new Date()
+    today.setHours(0, 0, 0, 0)
     const dayOfWeek = today.getDay()
     let daysToAdd = 0
     
@@ -107,7 +122,14 @@ export default function VisitForm() {
     
     const minDate = new Date(today)
     minDate.setDate(today.getDate() + daysToAdd)
-    return minDate.toISOString().split('T')[0]
+    return minDate
+  }
+
+  // Convertir fecha string a Date object para DatePicker
+  const getSelectedDate = () => {
+    if (!formData.fechaPreferida) return null
+    const [year, month, day] = formData.fechaPreferida.split('-').map(Number)
+    return new Date(year, month - 1, day)
   }
   
   // Función para verificar si una fecha es Martes o Jueves
@@ -276,24 +298,34 @@ export default function VisitForm() {
                         ? 'border-green-500 bg-green-50'
                         : 'border-gray-300'
                     }`}>
-                      <FiCalendar className={`mr-2 ${
+                      <FiCalendar className={`mr-2 flex-shrink-0 ${
                         formData.fechaPreferida && isValidDay(formData.fechaPreferida)
                           ? 'text-green-600'
                           : 'text-gray-400'
                       }`} />
-                      <input
-                        type="date"
-                        id="fechaPreferida"
-                        name="fechaPreferida"
-                        required
-                        min={getMinDate()}
-                        value={formData.fechaPreferida}
-                        onChange={handleChange}
+                      <DatePicker
+                        selected={getSelectedDate()}
+                        onChange={handleDateChange}
+                        filterDate={filterDate}
+                        minDate={getMinDate()}
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="Selecciona una fecha"
                         className={`w-full py-2.5 outline-none text-gray-900 ${
                           formData.fechaPreferida && isValidDay(formData.fechaPreferida)
                             ? 'bg-green-50 text-green-900 font-semibold'
                             : ''
                         }`}
+                        locale="es"
+                        showPopperArrow={false}
+                        name="fechaPreferida"
+                        id="fechaPreferida"
+                      />
+                      {/* Input oculto para validación HTML5 */}
+                      <input
+                        type="hidden"
+                        name="fechaPreferida"
+                        value={formData.fechaPreferida}
+                        required
                       />
                     </div>
                     <p className="text-xs text-gray-500 mt-1 flex items-center">

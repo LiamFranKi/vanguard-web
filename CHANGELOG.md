@@ -261,3 +261,4 @@ Este proyecto usa [Semantic Versioning](https://semver.org/):
 - **MINOR**: Nuevas funcionalidades compatibles
 - **PATCH**: Correcciones de bugs compatibles
 
+

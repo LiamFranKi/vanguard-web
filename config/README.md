@@ -59,3 +59,4 @@ Con el body JSON conteniendo los campos del formulario (email y nombre son reque
 - Puedes desactivar un formulario cambiando `activo: false`
 - Los emails se envían a todos los destinatarios especificados
 
+
