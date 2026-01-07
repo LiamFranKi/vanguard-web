@@ -55,10 +55,62 @@ export default function VisitForm() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    
+    // Validar que la fecha seleccionada sea Martes o Jueves
+    if (name === 'fechaPreferida' && value) {
+      const selectedDate = new Date(value)
+      const dayOfWeek = selectedDate.getDay() // 0 = Domingo, 1 = Lunes, 2 = Martes, 4 = Jueves
+      
+      // Martes = 2, Jueves = 4
+      if (dayOfWeek !== 2 && dayOfWeek !== 4) {
+        alert('Las visitas guiadas solo están disponibles los días Martes y Jueves. Por favor, selecciona uno de estos días.')
+        setFormData(prev => ({
+          ...prev,
+          fechaPreferida: '',
+        }))
+        return
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }))
+  }
+  
+  // Función para obtener el día mínimo disponible (próximo Martes o Jueves)
+  const getMinDate = () => {
+    const today = new Date()
+    const dayOfWeek = today.getDay()
+    let daysToAdd = 0
+    
+    // Si es domingo (0), el próximo martes está a 2 días
+    if (dayOfWeek === 0) daysToAdd = 2
+    // Si es lunes (1), el próximo martes está a 1 día
+    else if (dayOfWeek === 1) daysToAdd = 1
+    // Si es martes (2), el próximo jueves está a 2 días
+    else if (dayOfWeek === 2) daysToAdd = 2
+    // Si es miércoles (3), el próximo jueves está a 1 día
+    else if (dayOfWeek === 3) daysToAdd = 1
+    // Si es jueves (4), el próximo martes está a 5 días
+    else if (dayOfWeek === 4) daysToAdd = 5
+    // Si es viernes (5), el próximo martes está a 4 días
+    else if (dayOfWeek === 5) daysToAdd = 4
+    // Si es sábado (6), el próximo martes está a 3 días
+    else if (dayOfWeek === 6) daysToAdd = 3
+    
+    const minDate = new Date(today)
+    minDate.setDate(today.getDate() + daysToAdd)
+    return minDate.toISOString().split('T')[0]
+  }
+  
+  // Función para verificar si una fecha es Martes o Jueves
+  const isValidDay = (dateString: string) => {
+    if (!dateString) return false
+    const date = new Date(dateString)
+    const dayOfWeek = date.getDay()
+    return dayOfWeek === 2 || dayOfWeek === 4 // Martes o Jueves
   }
 
   return (
@@ -212,18 +264,35 @@ export default function VisitForm() {
                     <label htmlFor="fechaPreferida" className="block text-gray-700 font-semibold mb-2">
                       Fecha preferida *
                     </label>
-                    <div className="flex items-center border border-gray-300 rounded-lg px-3">
-                      <FiCalendar className="text-gray-400 mr-2" />
+                    <div className={`flex items-center border rounded-lg px-3 transition-colors ${
+                      formData.fechaPreferida && isValidDay(formData.fechaPreferida)
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-300'
+                    }`}>
+                      <FiCalendar className={`mr-2 ${
+                        formData.fechaPreferida && isValidDay(formData.fechaPreferida)
+                          ? 'text-green-600'
+                          : 'text-gray-400'
+                      }`} />
                       <input
                         type="date"
                         id="fechaPreferida"
                         name="fechaPreferida"
                         required
+                        min={getMinDate()}
                         value={formData.fechaPreferida}
                         onChange={handleChange}
-                        className="w-full py-2.5 outline-none text-gray-900"
+                        className={`w-full py-2.5 outline-none text-gray-900 ${
+                          formData.fechaPreferida && isValidDay(formData.fechaPreferida)
+                            ? 'bg-green-50 text-green-900 font-semibold'
+                            : ''
+                        }`}
                       />
                     </div>
+                    <p className="text-xs text-gray-500 mt-1 flex items-center">
+                      <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                      Solo disponibles: <strong className="text-green-600 ml-1">Martes y Jueves</strong>
+                    </p>
                   </div>
                   <div>
                     <label htmlFor="horarioPreferido" className="block text-gray-700 font-semibold mb-2">
@@ -238,9 +307,8 @@ export default function VisitForm() {
                       className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900"
                     >
                       <option value="">Selecciona una franja horaria</option>
-                      <option value="Mañana (9:00 am - 11:00 am)">Mañana (9:00 am - 11:00 am)</option>
-                      <option value="Mediodía (11:00 am - 1:00 pm)">Mediodía (11:00 am - 1:00 pm)</option>
-                      <option value="Tarde (2:00 pm - 5:00 pm)">Tarde (2:00 pm - 5:00 pm)</option>
+                      <option value="Mañana (10:00 am - 11:00 am)">Mañana (10:00 am - 11:00 am)</option>
+                      <option value="Tarde (03:00 pm - 04:00 pm)">Tarde (03:00 pm - 04:00 pm)</option>
                     </select>
                   </div>
                 </div>
