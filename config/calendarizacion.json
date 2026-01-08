@@ -9,21 +9,21 @@
           "color": "#3b82f6",
           "colorTexto": "#ffffff",
           "dia": 4,
-          "texto": "REUNIÓN PPFF (INICIAL Y PRIMARIA)"
+          "texto": "REUNIÓN PPFF\n(INICIAL Y PRIMARIA)"
         },
         {
           "tipo": "reunion",
           "color": "#3b82f6",
           "colorTexto": "#ffffff",
           "dia": 5,
-          "texto": "REUNIÓN PPFF (SECUNDARIA)"
+          "texto": "REUNIÓN PPFF\n(SECUNDARIA)"
         },
         {
           "tipo": "inicio",
           "color": "#10b981",
           "colorTexto": "#ffffff",
           "dia": 6,
-          "texto": "Primer día en Vanguard Schools"
+          "texto": "PRIMER DIA EN\nVANGUARD SCHOOLS"
         },
         {
           "tipo": "feriado",
@@ -50,27 +50,6 @@
           "texto": "INICIO DE CLASES"
         },
         {
-          "tipo": "evento",
-          "color": "#f59e0b",
-          "colorTexto": "#ffffff",
-          "dia": 16,
-          "texto": "TEMA 2\nDÍA"
-        },
-        {
-          "tipo": "evento",
-          "color": "#06b6d4",
-          "colorTexto": "#ffffff",
-          "dia": 17,
-          "texto": "TEMA 2\nMUNDIAL"
-        },
-        {
-          "tipo": "evento",
-          "color": "#0ea5e9",
-          "colorTexto": "#ffffff",
-          "dia": 18,
-          "texto": "TEMA 2\nDEL AGUA"
-        },
-        {
           "tipo": "tema",
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
@@ -93,7 +72,7 @@
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 23,
-            "fin": 25
+            "fin": 27
           },
           "texto": "TEMA 3"
         },
@@ -105,7 +84,17 @@
             "inicio": 26,
             "fin": 27
           },
-          "texto": "EXAMEN 1\nTEMA 3"
+          "texto": "EXAMEN 1"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 30,
+            "fin": 31
+          },
+          "texto": "TEMA 4"
         },
         {
           "tipo": "examen",
@@ -115,7 +104,7 @@
             "inicio": 30,
             "fin": 31
           },
-          "texto": "EXAMEN 1\nTEMA 4"
+          "texto": "EXAMEN 1"
         }
       ]
     },
@@ -123,19 +112,33 @@
       "nombre": "Abril",
       "eventos": [
         {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 1,
+          "texto": "TEMA 4"
+        },
+        {
           "tipo": "examen",
           "color": "#dc2626",
           "colorTexto": "#ffffff",
           "dia": 1,
-          "texto": "EXAMEN 1\nTEMA 4"
-        },
+          "texto": "EXAMEN 1"
+        }
         {
           "tipo": "feriado",
           "color": "#ef4444",
           "colorTexto": "#ffffff",
           "dia": 2,
-          "texto": "JUEVES SANTO\nDÍA MUNDIAL DE AUTISMO"
+          "texto": "JUEVES SANTO"
         },
+        {
+          "tipo": "evento",
+          "color": "#10b981",
+          "colorTexto": "#ffffff",
+          "dia": 2,
+          "texto": "DÍA MUNDIAL\nDEl AUTISMO"
+        },  
         {
           "tipo": "feriado",
           "color": "#ef4444",
@@ -181,7 +184,7 @@
           "tipo": "evento",
           "color": "#10b981",
           "colorTexto": "#ffffff",
-          "dia": 13,
+          "dia": 6,
           "texto": "DÍA MUNDIAL DE LA\nACTIVIDAD FÍSICA"
         },
         {
@@ -265,10 +268,10 @@
         },
         {
           "tipo": "evento",
-          "color": "#f59e0b",
+          "color": "#10b981",
           "colorTexto": "#ffffff",
           "dia": 2,
-          "texto": "DÍA INTERNACIONAL\nCONTRA EL ACOSO ESCOLAR"
+          "texto": "DÍA INTERNACIONAL\nCONTRA EL ACOSO\nESCOLAR"
         },
         {
           "tipo": "examen",
@@ -281,21 +284,18 @@
           "texto": "EXÁMENES\nBIMESTRALES"
         },
         {
-          "tipo": "actuacion",
-          "color": "#ec4899",
+          "tipo": "evento",
+          "color": "#10b981",
           "colorTexto": "#ffffff",
           "dia": 8,
-          "texto": "ACTUACIÓN DÍA DE LA MADRE\nNO HAY CLASES"
+          "texto": "EVENTO DÍA\nDE LA MADRE\nNO HAY CLASES"
         },
-        {
-          "tipo": "evento",
-          "color": "#ec4899",
+          {
+          "tipo": "feriado",
+          "color": "#ef4444",
           "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 9,
-            "fin": 10
-          },
-          "texto": "CELEBRAMOS\nA MAMÁ"
+          "dia": 10,
+          "texto": "DÍA DE LA MADRE"
         },
         {
           "tipo": "receso",
@@ -311,7 +311,7 @@
           "tipo": "inicio",
           "color": "#10b981",
           "colorTexto": "#ffffff",
-          "dia": 15,
+          "dia": 18,
           "texto": "INICIO DE II BIMESTRE"
         },
         {
@@ -340,7 +340,7 @@
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 25,
-            "fin": 31
+            "fin": 29
           },
           "texto": "SEMANA DE LA\nEDUCACIÓN INICIAL"
         },
@@ -364,7 +364,17 @@
             "inicio": 1,
             "fin": 5
           },
-          "texto": "TEMA 3\nVOCABULARIO 1"
+          "texto": "TEMA 3"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 1,
+            "fin": 5
+          },
+          "texto": "VOCABULARIO 1"
         },
         {
           "tipo": "evento",
@@ -377,11 +387,11 @@
           "texto": "CELEBRAMOS\nA NUESTRA BANDERA"
         },
         {
-          "tipo": "feriado",
-          "color": "#ef4444",
+          "tipo": "evento",
+          "color": "#10b981",
           "colorTexto": "#ffffff",
           "dia": 4,
-          "texto": "DÍA INTERNACIONAL DE LOS NIÑOS\nVÍCTIMAS INOCENTES DE AGRESIÓN"
+          "texto": "DÍA INTERNACIONAL\nDE LOS NIÑOS\nVÍCTIMAS INOCENTES\nDE AGRESIÓN"
         },
         {
           "tipo": "feriado",
@@ -398,7 +408,17 @@
             "inicio": 8,
             "fin": 12
           },
-          "texto": "EXAMEN 1\nTEMA 4"
+          "texto": "EXAMEN 1"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 8,
+            "fin": 12
+          },
+          "texto": "TEMA 4"
         },
         {
           "tipo": "evento",
@@ -421,18 +441,8 @@
           "tipo": "evento",
           "color": "#ec4899",
           "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 15,
-            "fin": 18
-          },
-          "texto": "CELEBRAMOS\nA PAPÁ"
-        },
-        {
-          "tipo": "feriado",
-          "color": "#ef4444",
-          "colorTexto": "#ffffff",
           "dia": 19,
-          "texto": "NO HAY CLASES\nDÍA DEL PADRE"
+          "texto": "EVENTO DÍA\nDEL PADRE\nNO HAY CLASES"
         },
         {
           "tipo": "feriado",
@@ -446,18 +456,28 @@
           "color": "#dc2626",
           "colorTexto": "#ffffff",
           "dia": 22,
-          "texto": "EXAMEN 2\nTEMA 6"
+          "texto": "EXAMEN 2"
         },
         {
           "tipo": "tema",
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 23,
+            "inicio": 22,
             "fin": 26
           },
-          "texto": "TEMA 6\nVOCABULARIO 2"
+          "texto": "TEMA 6"
         },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 22,
+            "fin": 26
+          },
+          "texto": "VOCABULARIO 2"
+          },
         {
           "tipo": "feriado",
           "color": "#ef4444",
@@ -470,7 +490,7 @@
           "color": "#f59e0b",
           "colorTexto": "#ffffff",
           "dia": 26,
-          "texto": "DÍA INTERNACIONAL DE LA LUCHA\nCONTRA EL USO INDEBIDO Y EL\nTRÁFICO ILÍCITO DE DROGAS"
+          "texto": "DÍA INTERNACIONAL DE\nLA LUCHA CONTRA EL\nUSO INDEBIDO Y EL\nTRÁFICO ILÍCITO DE DROGAS"
         },
         {
           "tipo": "feriado",
@@ -484,92 +504,27 @@
           "color": "#dc2626",
           "colorTexto": "#ffffff",
           "dia": 30,
-          "texto": "EXAMEN 2\nTEMA 7"
-        }
+          "texto": "EXAMEN 2"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 30,
+          "texto": "TEMA 7"
+          }
       ]
     },
     "7": {
       "nombre": "Julio",
       "eventos": [
         {
-          "tipo": "feriado",
-          "color": "#ef4444",
-          "colorTexto": "#ffffff",
-          "dia": 1,
-          "texto": "FERIADO"
-        },
-        {
           "tipo": "tema",
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 6,
-            "fin": 10
-          },
-          "texto": "TEMA 1"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 13,
-            "fin": 17
-          },
-          "texto": "TEMA 2"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 20,
-            "fin": 24
-          },
-          "texto": "TEMA 3"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 27,
-            "fin": 31
-          },
-          "texto": "TEMA 4"
-        }
-      ]
-    },
-    "8": {
-      "nombre": "Agosto",
-      "eventos": [
-        {
-          "tipo": "examen",
-          "color": "#dc2626",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 3,
-            "fin": 7
-          },
-          "texto": "EXAMEN 1\nTEMA 5"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 10,
-            "fin": 14
-          },
-          "texto": "TEMA 6"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 17,
-            "fin": 21
+            "inicio": 1,
+            "fin": 3
           },
           "texto": "TEMA 7"
         },
@@ -578,20 +533,260 @@
           "color": "#dc2626",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 24,
-            "fin": 28
+            "inicio": 1,
+            "fin": 3
           },
-          "texto": "EXAMEN 2\nTEMA 8"
+          "texto": "EXAMEN 2"
+        },
+        {
+          "tipo": "evento",
+          "color": "#ec4899",
+          "colorTexto": "#ffffff",
+          "dia": 4,
+          "texto": "INAGURACIÓN\nOLIMPIADAS\nVANGUARDINAS"
+        },
+        {
+          "tipo": "feriado",
+          "color": "#ef4444",
+          "colorTexto": "#ffffff",
+          "dia": 6,
+          "texto": "FERIADO\nSDIA DEL MAESTRO"
+        },
+        {
+          "tipo": "evento",
+          "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 7,
+            "fin": 10
+          },
+          "texto": "DÍA DEL\nLOGRO 01"
         },
         {
           "tipo": "asesoria",
           "color": "#f59e0b",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 31,
-            "fin": 31
+            "inicio": 7,
+            "fin": 10
           },
           "texto": "ASESORÍA"
+        },       
+        {
+          "tipo": "evento",
+          "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "dia": 13,
+          "texto": "DÍA DEL\nLOGRO 01"
+        },
+        {
+          "tipo": "asesoria",
+          "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "dia": 13,
+          "texto": "ASESORÍA"
+        },
+        {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 14,
+            "fin": 17
+          },
+          "texto": "EXÁMENES\nBIMESTRALES"
+        },
+        {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 20,
+            "fin": 21
+          },
+          "texto": "EXÁMENES\nBIMESTRALES"
+        },       
+        {
+          "tipo": "receso",
+          "color": "#6366f1",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 22,
+            "fin": 24
+          },
+          "texto": "SEMANA DE RECESO ESTUDIANTES"
+        },
+        {
+          "tipo": "receso",
+          "color": "#6366f1",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 27,
+            "fin": 31
+          },
+          "texto": "SEMANA DE RECESO ESTUDIANTES"
+        },
+        {
+          "tipo": "feriado",
+          "color": "#ef4444",
+          "colorTexto": "#ffffff",
+          "dia": 23,
+          "texto": "DIA DE LA \nFUERZA AEREA \nDEL PERÚ"
+        },        
+        {
+          "tipo": "feriado",
+          "color": "#ef4444",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 28,
+            "fin": 29
+          },
+          "texto": "FIESTAS PATRIAS"
+        }
+      ]
+    },
+    "8": {
+      "nombre": "Agosto",
+      "eventos": [
+        {
+          "tipo": "inicio",
+          "color": "#10b981",
+          "colorTexto": "#ffffff",
+          "dia": 3,
+          "texto": "INICIO DE III BIMESTRE"
+        },       
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 3,
+            "fin": 5
+          },
+          "texto": "TEMA 1"
+        },        
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 7,
+          "texto": "TEMA 1"
+        },
+        {
+          "tipo": "feriado",
+          "color": "#ef4444",
+          "colorTexto": "#ffffff",
+          "dia": 6,
+          "texto": "FERIADO\nBATALLA DE JUNIN"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 10,
+            "fin": 12
+          },
+          "texto": "TEMA 2"
+        },   
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 13,
+          "texto": "TEMA 1"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 14,
+          "texto": "TEMA 2"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 17,
+            "fin": 19
+          },
+          "texto": "TEMA 3"
+        },   
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 20,
+          "texto": "TEMA 2"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 21,
+          "texto": "TEMA 3"
+        }, 
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 17,
+            "fin": 21
+          },
+          "texto": "VOCABULARIO 1"
+        },
+        {
+          "tipo": "evento",
+          "color": "#10b981",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 17,
+            "fin": 19
+          },
+          "texto": "DÍA DEL NIÑO"
+        },    
+        {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 24,
+            "fin": 28
+          },
+          "texto": "EXAMEN 1"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 24,
+            "fin": 26
+          },
+          "texto": "TEMA 4"
+        },   
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 27,
+          "texto": "TEMA 3"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 28,
+          "texto": "TEMA 4"
+        }, 
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 31,
+          "texto": "TEMA 5"
         }
       ]
     },
@@ -604,20 +799,48 @@
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 1,
-            "fin": 5
+            "fin": 2
           },
           "texto": "TEMA 5"
-        },
+        },   
         {
-          "tipo": "evento",
-          "color": "#10b981",
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 3,
+          "texto": "TEMA 4"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 4,
+          "texto": "TEMA 5"
+        }, 
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 1,
-            "fin": 5
+            "inicio": 7,
+            "fin": 9
           },
-          "texto": "CUIDAMOS Y SEMBRAMOS ÁRBOLES"
-        },
+          "texto": "TEMA 6"
+        },   
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 10,
+          "texto": "TEMA 5"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 11,
+          "texto": "TEMA 6"
+        }, 
         {
           "tipo": "tema",
           "color": "#8b5cf6",
@@ -626,22 +849,39 @@
             "inicio": 7,
             "fin": 11
           },
-          "texto": "TEMA 6\nVOCABULARIO 2"
+          "texto": "VOCABULARIO 2"
+        },
+        {
+          "tipo": "evento",
+          "color": "#10b981",
+          "colorTexto": "#ffffff",
+          "dia": 13,
+          "texto": "DÍA DE LA FAMILIA"
         },
         {
           "tipo": "tema",
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
-          "dia": 10,
-          "texto": "TEMA 5\nVOCABULARIO 2"
-        },
+          "rango": {
+            "inicio": 14,
+            "fin": 16
+          },
+          "texto": "TEMA 7"
+        },   
         {
-          "tipo": "feriado",
-          "color": "#ef4444",
+          "tipo": "tema",
+          "color": "#8b5cf6",
           "colorTexto": "#ffffff",
-          "dia": 13,
-          "texto": "DÍA DE LA FAMILIA"
-        },
+          "dia": 17,
+          "texto": "TEMA 6"
+        },  
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 18,
+          "texto": "TEMA 7"
+        }, 
         {
           "tipo": "examen",
           "color": "#dc2626",
@@ -650,16 +890,9 @@
             "inicio": 14,
             "fin": 18
           },
-          "texto": "EXAMEN 2\nTEMA 7"
+          "texto": "EXAMEN 2"
         },
-        {
-          "tipo": "examen",
-          "color": "#dc2626",
-          "colorTexto": "#ffffff",
-          "dia": 17,
-          "texto": "EXAMEN 2\nTEMA 6"
-        },
-        {
+         {
           "tipo": "asesoria",
           "color": "#f59e0b",
           "colorTexto": "#ffffff",
@@ -668,28 +901,31 @@
             "fin": 25
           },
           "texto": "ASESORÍA"
-        },
-        {
-          "tipo": "evento",
-          "color": "#ec4899",
-          "colorTexto": "#ffffff",
-          "dia": 21,
-          "texto": "DÍA DEL ALZHEIMER"
-        },
+        },     
         {
           "tipo": "evento",
           "color": "#10b981",
           "colorTexto": "#ffffff",
-          "dia": 23,
-          "texto": "DÍA DE LA PRIMAVERA"
-        },
+          "dia": 21,
+          "texto": "DÍA DEL ALZHEIMER"
+        },  
         {
           "tipo": "evento",
-          "color": "#f59e0b",
+          "color": "#10b981",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 22,
+            "fin": 25
+          },
+          "texto": "SEMANA DE LA\nPRIMAVERA"
+        },   
+        {
+          "tipo": "evento",
+          "color": "#ec4899",
           "colorTexto": "#ffffff",
           "dia": 26,
-          "texto": "OLIMPIADAS\nCLAUSURA"
-        },
+          "texto": "OLIMPIADAS VANGUARD"
+        },   
         {
           "tipo": "examen",
           "color": "#dc2626",
@@ -698,7 +934,7 @@
             "inicio": 28,
             "fin": 30
           },
-          "texto": "EXAMEN BIMESTRAL"
+          "texto": "EXÁMENES\nBIMESTRALES"
         }
       ]
     },
@@ -781,30 +1017,30 @@
             "inicio": 26,
             "fin": 30
           },
-          "texto": "TEMA 3\nVOCABULARIO 1"
+          "texto": "TEMA 3"
         },
         {
-          "tipo": "evento",
-          "color": "#f59e0b",
+          "tipo": "tema",
+          "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 26,
             "fin": 30
           },
-          "texto": "AL RITMO DE LA CANCIÓN CRIOLLA"
-        },
-        {
-          "tipo": "feriado",
-          "color": "#ef4444",
-          "colorTexto": "#ffffff",
-          "dia": 1,
-          "texto": "DÍA DE TODOS LOS SANTOS\nFERIADO"
+          "texto": "VOCABULARIO 1"
         }
       ]
     },
     "11": {
       "nombre": "Noviembre",
       "eventos": [
+        {
+          "tipo": "feriado",
+          "color": "#ef4444",
+          "colorTexto": "#ffffff",
+          "dia": 1,
+          "texto": "FERIADO DÍA DE\n TODOS LOS SANTOS"
+        }       
         {
           "tipo": "examen",
           "color": "#dc2626",
@@ -833,7 +1069,7 @@
             "inicio": 2,
             "fin": 6
           },
-          "texto": "SEMANA NACIONAL FORESTAL"
+          "texto": "SEMANA NACIONAL\n FORESTAL"
         },
         {
           "tipo": "tema",
@@ -860,8 +1096,18 @@
             "inicio": 16,
             "fin": 20
           },
-          "texto": "TEMA 6\nVOCABULARIO 2"
+          "texto": "TEMA 6"
         },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 16,
+            "fin": 20
+          },
+          "texto": "VOCABULARIO 2"
+        },        
         {
           "tipo": "examen",
           "color": "#dc2626",
@@ -887,15 +1133,22 @@
           "color": "#ef4444",
           "colorTexto": "#ffffff",
           "dia": 25,
-          "texto": "DIA INTERNACIONAL PARA LA\nELIMINACIÓN DE LA VIOLENCIA\nCONTRA LA MUJER"
+          "texto": "DIA INTERNACIONAL\nPARA LA ELIMINACIÓN\n DE LA VIOLENCIA\nCONTRA LA MUJER"
         },
         {
           "tipo": "evento",
           "color": "#f59e0b",
           "colorTexto": "#ffffff",
           "dia": 30,
-          "texto": "DIA DEL LOGRO 2\nASESORÍA"
+          "texto": "DIA DEL LOGRO 2"
         },
+        {
+          "tipo": "asesoria",
+          "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "dia": 30,
+          "texto": "ASESORÍA"
+        },        
         {
           "tipo": "feriado",
           "color": "#ef4444",
@@ -916,18 +1169,28 @@
             "inicio": 1,
             "fin": 4
           },
-          "texto": "DÍA DEL LOGRO 2\nASESORÍA"
+          "texto": "DÍA DEL LOGRO"
         },
         {
-          "tipo": "evento",
+          "tipo": "asesoria",
           "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 1,
+            "fin": 4
+          },
+          "texto": "ASESORÍA"
+        },        
+        {
+          "tipo": "evento",
+          "color": "#10b981",
           "colorTexto": "#ffffff",
           "dia": 3,
           "texto": "DÍA INTERNACIONAL DE LAS\nPERSONAS CON DISCAPACIDAD"
         },
         {
           "tipo": "evento",
-          "color": "#06b6d4",
+          "color": "#10b981",
           "colorTexto": "#ffffff",
           "dia": 7,
           "texto": "CLAUSURA NATACION"
@@ -952,10 +1215,20 @@
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 10,
-            "fin": 15
+            "fin": 11
           },
-          "texto": "EVALUACIÓN BIMESTRAL"
+          "texto": "EXÁMENES\nBIMESTRALES"
         },
+        {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 14,
+            "fin": 17
+          },
+          "texto": "EXÁMENES\nBIMESTRALES"
+        },        
         {
           "tipo": "evento",
           "color": "#ec4899",
@@ -981,4 +1254,3 @@
     }
   }
 }
-
