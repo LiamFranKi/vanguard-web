@@ -124,7 +124,7 @@
           "colorTexto": "#ffffff",
           "dia": 1,
           "texto": "EXAMEN 1"
-        }
+        },
         {
           "tipo": "feriado",
           "color": "#ef4444",
@@ -477,7 +477,7 @@
             "fin": 26
           },
           "texto": "VOCABULARIO 2"
-          },
+        },
         {
           "tipo": "feriado",
           "color": "#ef4444",
@@ -512,7 +512,7 @@
           "colorTexto": "#ffffff",
           "dia": 30,
           "texto": "TEMA 7"
-          }
+        }
       ]
     },
     "7": {
@@ -1040,7 +1040,7 @@
           "colorTexto": "#ffffff",
           "dia": 1,
           "texto": "FERIADO DÍA DE\n TODOS LOS SANTOS"
-        }       
+        },
         {
           "tipo": "examen",
           "color": "#dc2626",
