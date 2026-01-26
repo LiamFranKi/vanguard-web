@@ -79,8 +79,14 @@ export default function ListaUtilesPage() {
             {/* Levels Grid */}
             <div className="space-y-16">
               {listaUtilesData.niveles.map((nivel) => {
-                const colors = colorConfig[nivel.color as keyof typeof colorConfig]
+                const colors = colorConfig[nivel.id as keyof typeof colorConfig]
                 const Icon = nivelIcons[nivel.id as keyof typeof nivelIcons]
+                
+                // Validación de seguridad
+                if (!colors) {
+                  console.error(`Color config no encontrado para nivel: ${nivel.id}`)
+                  return null
+                }
                 
                 return (
                   <div key={nivel.id} className="bg-white rounded-3xl shadow-xl overflow-hidden">
