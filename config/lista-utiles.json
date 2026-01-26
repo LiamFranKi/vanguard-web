@@ -1,0 +1,110 @@
+{
+  "niveles": [
+    {
+      "id": "inicial",
+      "nombre": "Educación Inicial",
+      "color": "pink",
+      "grados": [
+        {
+          "id": "inicial-03",
+          "nombre": "Inicial 03 Años",
+          "archivo": "utiles-inicial3.pdf",
+          "ruta": "/utiles/utiles-inicial3.pdf"
+        },
+        {
+          "id": "inicial-04",
+          "nombre": "Inicial 04 Años",
+          "archivo": "utiles-inicial4.pdf",
+          "ruta": "/utiles/utiles-inicial4.pdf"
+        },
+        {
+          "id": "inicial-05",
+          "nombre": "Inicial 05 Años",
+          "archivo": "utiles-inicial5.pdf",
+          "ruta": "/utiles/utiles-inicial5.pdf"
+        }
+      ]
+    },
+    {
+      "id": "primaria",
+      "nombre": "Educación Primaria",
+      "color": "blue",
+      "grados": [
+        {
+          "id": "primaria-1",
+          "nombre": "1° Grado",
+          "archivo": "utiles-1grado.pdf",
+          "ruta": "/utiles/utiles-1grado.pdf"
+        },
+        {
+          "id": "primaria-2",
+          "nombre": "2° Grado",
+          "archivo": "utiles-2grado.pdf",
+          "ruta": "/utiles/utiles-2grado.pdf"
+        },
+        {
+          "id": "primaria-3",
+          "nombre": "3° Grado",
+          "archivo": "utiles-3grado.pdf",
+          "ruta": "/utiles/utiles-3grado.pdf"
+        },
+        {
+          "id": "primaria-4",
+          "nombre": "4° Grado",
+          "archivo": "utiles-4grado.pdf",
+          "ruta": "/utiles/utiles-4grado.pdf"
+        },
+        {
+          "id": "primaria-5",
+          "nombre": "5° Grado",
+          "archivo": "utiles-5grado.pdf",
+          "ruta": "/utiles/utiles-5grado.pdf"
+        },
+        {
+          "id": "primaria-6",
+          "nombre": "6° Grado",
+          "archivo": "utiles-6grado.pdf",
+          "ruta": "/utiles/utiles-6grado.pdf"
+        }
+      ]
+    },
+    {
+      "id": "secundaria",
+      "nombre": "Educación Secundaria",
+      "color": "purple",
+      "grados": [
+        {
+          "id": "secundaria-1",
+          "nombre": "1° Año",
+          "archivo": "utiles-1ano.pdf",
+          "ruta": "/utiles/utiles-1ano.pdf"
+        },
+        {
+          "id": "secundaria-2",
+          "nombre": "2° Año",
+          "archivo": "utiles-2ano.pdf",
+          "ruta": "/utiles/utiles-2ano.pdf"
+        },
+        {
+          "id": "secundaria-3",
+          "nombre": "3° Año",
+          "archivo": "utiles-3ano.pdf",
+          "ruta": "/utiles/utiles-3ano.pdf"
+        },
+        {
+          "id": "secundaria-4",
+          "nombre": "4° Año",
+          "archivo": "utiles-4ano.pdf",
+          "ruta": "/utiles/utiles-4ano.pdf"
+        },
+        {
+          "id": "secundaria-5",
+          "nombre": "5° Año",
+          "archivo": "utiles-5ano.pdf",
+          "ruta": "/utiles/utiles-5ano.pdf"
+        }
+      ]
+    }
+  ]
+}
+
