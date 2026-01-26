@@ -78,15 +78,18 @@ export default function ListaUtilesPage() {
 
             {/* Levels Grid */}
             <div className="space-y-16">
-              {listaUtilesData.niveles.map((nivel) => {
-                const colors = colorConfig[nivel.id as keyof typeof colorConfig]
-                const Icon = nivelIcons[nivel.id as keyof typeof nivelIcons]
-                
-                // Validación de seguridad
-                if (!colors) {
-                  console.error(`Color config no encontrado para nivel: ${nivel.id}`)
-                  return null
-                }
+              {listaUtilesData.niveles
+                .filter((nivel) => {
+                  // Filtrar niveles que no tienen configuración de color
+                  const hasColorConfig = nivel.id in colorConfig
+                  if (!hasColorConfig) {
+                    console.error(`Color config no encontrado para nivel: ${nivel.id}`)
+                  }
+                  return hasColorConfig
+                })
+                .map((nivel) => {
+                const colors = colorConfig[nivel.id as keyof typeof colorConfig]!
+                const Icon = nivelIcons[nivel.id as keyof typeof nivelIcons]!
                 
                 return (
                   <div key={nivel.id} className="bg-white rounded-3xl shadow-xl overflow-hidden">
