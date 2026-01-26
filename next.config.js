@@ -16,8 +16,8 @@ const nextConfig = {
   experimental: {
     optimizeCss: false,
   },
-  // Solo usar standalone en producción
-  ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
+  // Standalone desactivado temporalmente para evitar problemas con archivos estáticos
+  // ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 }
 
 module.exports = nextConfig
