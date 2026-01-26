@@ -5,6 +5,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import StructuredData from '@/components/StructuredData'
 import ChatWidget from '@/components/ChatWidget'
+import BannerModalWrapper from '@/components/BannerModalWrapper'
+import BannerButton from '@/components/BannerButton'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
 
@@ -101,6 +103,8 @@ export default function RootLayout({
         </main>
         <Footer />
         <ChatWidget />
+        <BannerButton />
+        <BannerModalWrapper />
       </body>
     </html>
   )

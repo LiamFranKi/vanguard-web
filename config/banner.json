@@ -1,0 +1,49 @@
+{
+  "activo": true,
+  "tiempoCambio": 4000,
+  "imagenes": [
+    {
+      "id": "1",
+      "ruta": "/banner/bolsatrabajo.jpeg",
+      "activo": true,
+      "url": "/trabaja-con-nosotros"
+    },
+    {
+      "id": "2",
+      "ruta": "/banner/descuentos.jpeg",
+      "activo": true,
+      "url": ""
+    },
+    {
+      "id": "3",
+      "ruta": "/banner/ingles-inicial.jpeg",
+      "activo": true,
+      "url": ""
+    },
+    {
+      "id": "4",
+      "ruta": "/banner/ingles-primaria.jpeg",
+      "activo": true,
+      "url": ""
+    },
+    {
+      "id": "5",
+      "ruta": "/banner/ingles-secundaria.jpeg",
+      "activo": true,
+      "url": ""
+    },
+    {
+      "id": "6",
+      "ruta": "/banner/robotica.jpeg",
+      "activo": true,
+      "url": ""
+    },
+    {
+      "id": "7",
+      "ruta": "/banner/listautiles.jpeg",
+      "activo": true,
+      "url": "/lista-utiles"
+    }
+  ]
+}
+
