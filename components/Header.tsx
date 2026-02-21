@@ -176,7 +176,7 @@ export default function Header() {
               <span>Sugerencias</span>
             </Link>
             <a
-              href="https://nuevo.vanguardschools.edu.pe/login"
+              href="https://sistema.vanguardschools.edu.pe/"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-2.5 rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-2"
@@ -333,7 +333,7 @@ export default function Header() {
                 <span>Sugerencias</span>
               </Link>
               <a
-                href="https://nuevo.vanguardschools.edu.pe/login"
+                href="https://sistema.vanguardschools.edu.pe/"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}
