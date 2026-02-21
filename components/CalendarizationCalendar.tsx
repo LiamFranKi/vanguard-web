@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { useState, useMemo, useEffect } from 'react'
+import { FiChevronLeft, FiChevronRight, FiX, FiCalendar } from 'react-icons/fi'
 import calendarizacionData from '@/config/calendarizacion.json'
 
 interface Evento {
@@ -26,7 +26,8 @@ type MesNumero = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 export default function CalendarizationCalendar() {
   const año = calendarizacionData.año
   const [mesActual, setMesActual] = useState<MesNumero>(3) // Empezar en Marzo
-  
+  const [selectedDay, setSelectedDay] = useState<{ dia: number; eventos: Evento[]; nombreMes: string } | null>(null)
+
   const meses: MesNumero[] = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   const nombresMeses = ['', '', '', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
@@ -86,6 +87,26 @@ export default function CalendarizationCalendar() {
       setMesActual(meses[indiceActual + 1])
     }
   }
+
+  const abrirModalEventos = (dia: number, eventos: Evento[]) => {
+    setSelectedDay({ dia, eventos, nombreMes: nombresMeses[mesActual] })
+  }
+
+  const cerrarModal = () => setSelectedDay(null)
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedDay) cerrarModal()
+    }
+    if (selectedDay) {
+      window.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      window.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedDay])
 
   const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
@@ -175,19 +196,23 @@ export default function CalendarizationCalendar() {
               return (
                 <div
                   key={`dia-${dia}`}
+                  onClick={eventos.length > 0 ? () => abrirModalEventos(dia, eventos) : undefined}
+                  role={eventos.length > 0 ? 'button' : undefined}
+                  tabIndex={eventos.length > 0 ? 0 : undefined}
+                  onKeyDown={eventos.length > 0 ? (e) => e.key === 'Enter' && abrirModalEventos(dia, eventos) : undefined}
                   className={`min-h-[120px] md:min-h-[140px] border-2 rounded-lg p-2 bg-white transition-all ${
                     esDiaActual
                       ? 'border-primary-500 bg-primary-50 shadow-md'
                       : 'border-gray-200 hover:border-primary-300'
-                  }`}
+                  } ${eventos.length > 0 ? 'cursor-pointer lg:cursor-default md:active:scale-[0.98] lg:active:scale-100 hover:ring-2 hover:ring-primary-400/50 lg:hover:ring-0' : ''}`}
                 >
                   {/* Número del día */}
-                  <div className={`text-sm font-bold mb-1 ${
+                  <div className={`text-sm font-bold mb-1 flex items-center justify-between ${
                     esDiaActual ? 'text-primary-700' : 'text-gray-700'
                   }`}>
-                    {dia}
-                    {esDiaActual && (
-                      <span className="ml-1 text-xs text-primary-600">●</span>
+                    <span>{dia}{esDiaActual && <span className="ml-1 text-xs text-primary-600">●</span>}</span>
+                    {eventos.length > 0 && (
+                      <span className="text-[10px] text-primary-600 font-medium lg:hidden">Toca</span>
                     )}
                   </div>
 
@@ -220,6 +245,76 @@ export default function CalendarizationCalendar() {
           </div>
         </div>
       </div>
+
+      {/* Modal de eventos - visible en mobile/tablet y al hacer clic en desktop */}
+      {selectedDay && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in-up"
+          onClick={cerrarModal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-titulo"
+        >
+          <div
+            className="relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border-2 border-primary-200 animate-fade-in-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header del modal */}
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-primary-600 to-primary-700 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-xl">
+                  <FiCalendar size={24} />
+                </div>
+                <div>
+                  <h2 id="modal-titulo" className="text-xl font-bold">
+                    {selectedDay.dia} de {selectedDay.nombreMes} {año}
+                  </h2>
+                  <p className="text-sm text-white/90">
+                    {selectedDay.eventos.length} {selectedDay.eventos.length === 1 ? 'evento' : 'eventos'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={cerrarModal}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                aria-label="Cerrar"
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+
+            {/* Lista de eventos */}
+            <div className="p-4 space-y-3">
+              {selectedDay.eventos.map((evento, i) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-xl shadow-lg border-l-4 transition-transform hover:scale-[1.02]"
+                  style={{
+                    backgroundColor: `${evento.color}15`,
+                    borderLeftColor: evento.color,
+                  }}
+                >
+                  <p
+                    className="font-semibold text-base leading-relaxed whitespace-pre-line"
+                    style={{ color: evento.color }}
+                  >
+                    {evento.texto}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 pt-0">
+              <button
+                onClick={cerrarModal}
+                className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-colors shadow-md"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
