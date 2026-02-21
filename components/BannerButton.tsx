@@ -23,7 +23,7 @@ export default function BannerButton() {
   useEffect(() => {
     const loadBannerData = async () => {
       try {
-        const response = await fetch('/api/banner')
+        const response = await fetch('/api/banner?t=' + Date.now(), { cache: 'no-store' })
         if (response.ok) {
           const data = await response.json()
           setBannerData(data)
