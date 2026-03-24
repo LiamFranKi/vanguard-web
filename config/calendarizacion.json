@@ -37,8 +37,8 @@
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 9,
-            "fin": 13
+            "inicio": 16,
+            "fin": 20
           },
           "texto": "TEMA 1"
         },
@@ -46,7 +46,7 @@
           "tipo": "inicio",
           "color": "#10b981",
           "colorTexto": "#ffffff",
-          "dia": 9,
+          "dia": 16,
           "texto": "INICIO DE CLASES"
         },
         {
@@ -54,8 +54,8 @@
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 16,
-            "fin": 20
+            "inicio": 23,
+            "fin": 27
           },
           "texto": "TEMA 2"
         },
@@ -71,40 +71,10 @@
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 23,
-            "fin": 27
+            "inicio": 30,
+            "fin": 31
           },
           "texto": "TEMA 3"
-        },
-        {
-          "tipo": "examen",
-          "color": "#dc2626",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 26,
-            "fin": 27
-          },
-          "texto": "EXAMEN 1"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 30,
-            "fin": 31
-          },
-          "texto": "TEMA 4"
-        },
-        {
-          "tipo": "examen",
-          "color": "#dc2626",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 30,
-            "fin": 31
-          },
-          "texto": "EXAMEN 1"
         }
       ]
     },
@@ -116,14 +86,7 @@
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "dia": 1,
-          "texto": "TEMA 4"
-        },
-        {
-          "tipo": "examen",
-          "color": "#dc2626",
-          "colorTexto": "#ffffff",
-          "dia": 1,
-          "texto": "EXAMEN 1"
+          "texto": "TEMA 3"
         },
         {
           "tipo": "feriado",
@@ -161,6 +124,16 @@
           "texto": "DOMINGO DE RAMOS"
         },
         {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 6,
+            "fin": 10
+          },
+          "texto": "EXAMEN 1"
+        },
+        {
           "tipo": "tema",
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
@@ -168,7 +141,7 @@
             "inicio": 6,
             "fin": 8
           },
-          "texto": "TEMA 5"
+          "texto": "TEMA 4"
         },
         {
           "tipo": "tema",
@@ -178,7 +151,7 @@
             "inicio": 9,
             "fin": 10
           },
-          "texto": "TEMA 4"
+          "texto": "TEMA 3"
         },
         {
           "tipo": "evento",
@@ -195,7 +168,7 @@
             "inicio": 13,
             "fin": 15
           },
-          "texto": "TEMA 6"
+          "texto": "TEMA 5"
         },
         {
           "tipo": "tema",
@@ -205,7 +178,7 @@
             "inicio": 16,
             "fin": 17
           },
-          "texto": "TEMA 5"
+          "texto": "TEMA 4"
         },
         {
           "tipo": "examen",
@@ -225,7 +198,7 @@
             "inicio": 20,
             "fin": 22
           },
-          "texto": "TEMA 7"
+          "texto": "TEMA 6"
         },
         {
           "tipo": "tema",
@@ -235,24 +208,24 @@
             "inicio": 23,
             "fin": 24
           },
-          "texto": "TEMA 6"
+          "texto": "TEMA 5"
         },
         {
-          "tipo": "asesoria",
-          "color": "#f59e0b",
+          "tipo": "tema",
+          "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 27,
             "fin": 29
           },
-          "texto": "ASESORÍA"
+          "texto": "TEMA 7"
         },
         {
-          "tipo": "examen",
-          "color": "#dc2626",
+          "tipo": "tema",
+          "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "dia": 30,
-          "texto": "EXAMENES\nBIMESTRALES"
+          "texto": "TEMA 6"
         }
       ]
     },
@@ -273,15 +246,15 @@
           "dia": 2,
           "texto": "DÍA INTERNACIONAL\nCONTRA EL ACOSO\nESCOLAR"
         },
-        {
-          "tipo": "examen",
-          "color": "#dc2626",
+	{
+          "tipo": "asesoria",
+          "color": "#f59e0b",
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 4,
             "fin": 7
           },
-          "texto": "EXÁMENES\nBIMESTRALES"
+          "texto": "ASESORÍA"
         },
         {
           "tipo": "evento",
@@ -290,22 +263,22 @@
           "dia": 8,
           "texto": "EVENTO DÍA\nDE LA MADRE\nNO HAY CLASES"
         },
-          {
-          "tipo": "feriado",
-          "color": "#ef4444",
-          "colorTexto": "#ffffff",
-          "dia": 10,
-          "texto": "DÍA DE LA MADRE"
-        },
         {
-          "tipo": "receso",
-          "color": "#6366f1",
+          "tipo": "examen",
+          "color": "#dc2626",
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 11,
             "fin": 15
           },
-          "texto": "SEMANA DE RECESO ESTUDIANTES"
+          "texto": "EXÁMENES\nBIMESTRALES"
+        },
+        {
+          "tipo": "feriado",
+          "color": "#ef4444",
+          "colorTexto": "#ffffff",
+          "dia": 10,
+          "texto": "DÍA DE LA MADRE"
         },
         {
           "tipo": "inicio",
@@ -550,7 +523,7 @@
           "color": "#ef4444",
           "colorTexto": "#ffffff",
           "dia": 6,
-          "texto": "FERIADO\nSDIA DEL MAESTRO"
+          "texto": "FERIADO\nDIA DEL MAESTRO"
         },
         {
           "tipo": "evento",
@@ -614,7 +587,7 @@
             "inicio": 22,
             "fin": 24
           },
-          "texto": "SEMANA DE RECESO ESTUDIANTES"
+          "texto": "SEMANA DE RECESO"
         },
         {
           "tipo": "receso",
@@ -624,7 +597,7 @@
             "inicio": 27,
             "fin": 31
           },
-          "texto": "SEMANA DE RECESO ESTUDIANTES"
+          "texto": "SEMANA DE RECESO"
         },
         {
           "tipo": "feriado",
