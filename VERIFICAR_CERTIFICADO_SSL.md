@@ -56,3 +56,5 @@ cat /etc/nginx/sites-available/vanguardschools.com | grep -A 5 "ssl_certificate"
 
 
 
+
+

@@ -1,0 +1,57 @@
+{
+  "categorias": [
+    {
+      "id": "admision",
+      "categoria": "Admisión",
+      "items": [
+        {
+          "id": "proceso-admision-2026",
+          "nombre": "Propuesta Académica 2026",
+          "tipo": "PDF",
+          "archivo": "PROPUESTA2026.pdf",
+          "ruta": "/documentos/PROPUESTA2026.pdf"
+        }
+      ]
+    },
+    {
+      "id": "contratos-reglamentos",
+      "categoria": "Contratos y Reglamentos",
+      "items": [
+        {
+          "id": "contratos-servicios-2026",
+          "nombre": "Contratos de Servicios 2026",
+          "tipo": "PDF",
+          "archivo": "Contrato2026.pdf",
+          "ruta": "/documentos/Contrato2026.pdf"
+        },
+        {
+          "id": "reglamento-interno-2026",
+          "nombre": "Reglamento Interno - Norma de Convivencia 2026",
+          "tipo": "PDF",
+          "archivo": "RI2026.pdf",
+          "ruta": "/documentos/RI2026.pdf"
+        }
+      ]
+    },
+    {
+      "id": "informacion-general",
+      "categoria": "Información General",
+      "items": [
+        {
+          "id": "plan-curricular-2026",
+          "nombre": "Plan Curricular Institucional 2026",
+          "tipo": "PDF",
+          "archivo": "PCI2026.pdf",
+          "ruta": "/documentos/PCI2026.pdf"
+        },
+        {
+          "id": "evaluaciones-asistencias-2026",
+          "nombre": "Evaluaciones y Asistencias 2026",
+          "tipo": "PDF",
+          "archivo": "EVALUACIONES2026.pdf",
+          "ruta": "/documentos/EVALUACIONES2026.pdf"
+        }
+      ]
+    }
+  ]
+}

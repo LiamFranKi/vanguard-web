@@ -8,19 +8,19 @@
         {
           "id": "inicial-03",
           "nombre": "Inicial 03 Años",
-          "archivo": "utiles-inicial3.pdf",
+          "archivo": "utiles-3ano.pdf",
           "ruta": "/utiles/utiles-inicial3.pdf"
         },
         {
           "id": "inicial-04",
           "nombre": "Inicial 04 Años",
-          "archivo": "utiles-inicial4.pdf",
+          "archivo": "utiles-4ano.pdf",
           "ruta": "/utiles/utiles-inicial4.pdf"
         },
         {
           "id": "inicial-05",
           "nombre": "Inicial 05 Años",
-          "archivo": "utiles-inicial5.pdf",
+          "archivo": "utiles-5ano.pdf",
           "ruta": "/utiles/utiles-inicial5.pdf"
         }
       ]

@@ -478,29 +478,12 @@
           "colorTexto": "#ffffff",
           "dia": 30,
           "texto": "EXAMEN 2"
-        },
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "dia": 30,
-          "texto": "TEMA 7"
         }
       ]
     },
     "7": {
       "nombre": "Julio",
       "eventos": [
-        {
-          "tipo": "tema",
-          "color": "#8b5cf6",
-          "colorTexto": "#ffffff",
-          "rango": {
-            "inicio": 1,
-            "fin": 3
-          },
-          "texto": "TEMA 7"
-        },
         {
           "tipo": "examen",
           "color": "#dc2626",
@@ -567,7 +550,7 @@
             "inicio": 14,
             "fin": 17
           },
-          "texto": "EXÁMENES\nBIMESTRALES"
+          "texto": "PRESENTACIÓN\nDE PROYECTOS"
         },
         {
           "tipo": "examen",
@@ -577,7 +560,7 @@
             "inicio": 20,
             "fin": 21
           },
-          "texto": "EXÁMENES\nBIMESTRALES"
+          "texto": "PRESENTACIÓN\nDE PROYECTOS"
         },       
         {
           "tipo": "receso",
@@ -645,6 +628,13 @@
           "dia": 7,
           "texto": "TEMA 1"
         },
+        {
+          "tipo": "evento",
+          "color": "#10b981",
+          "colorTexto": "#ffffff",
+          "dia": 7,
+          "texto": "CELEBRACIÓN\n100 DÍAS DE CLASES"
+        },  
         {
           "tipo": "feriado",
           "color": "#ef4444",
