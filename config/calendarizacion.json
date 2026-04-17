@@ -184,9 +184,16 @@
           "tipo": "examen",
           "color": "#dc2626",
           "colorTexto": "#ffffff",
+          "dia": 24,
+          "texto": "EXAMEN 2"
+        },
+        {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
           "rango": {
-            "inicio": 20,
-            "fin": 24
+            "inicio": 27,
+            "fin": 30
           },
           "texto": "EXAMEN 2"
         },
