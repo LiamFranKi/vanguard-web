@@ -413,7 +413,7 @@
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 15,
-            "fin": 19
+            "fin": 18
           },
           "texto": "TEMA 5"
         },
@@ -432,21 +432,28 @@
           "texto": "DÍA DEL PADRE"
         },
         {
-          "tipo": "examen",
-          "color": "#dc2626",
-          "colorTexto": "#ffffff",
-          "dia": 22,
-          "texto": "EXAMEN 2"
-        },
-        {
           "tipo": "tema",
           "color": "#8b5cf6",
           "colorTexto": "#ffffff",
           "rango": {
             "inicio": 22,
-            "fin": 26
+            "fin": 25
           },
           "texto": "TEMA 6"
+        },
+        {
+          "tipo": "tema",
+          "color": "#8b5cf6",
+          "colorTexto": "#ffffff",
+          "dia": 26,
+          "texto": "TEMA 5"
+        },
+        {
+          "tipo": "examen",
+          "color": "#dc2626",
+          "colorTexto": "#ffffff",
+          "dia": 26,
+          "texto": "EXAMEN 2"
         },
         {
           "tipo": "tema",
@@ -485,6 +492,13 @@
           "colorTexto": "#ffffff",
           "dia": 30,
           "texto": "EXAMEN 2"
+        },
+        {
+          "tipo": "asesoria",
+          "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "dia": 30,
+          "texto": "ASESORÍADÍA DEL LOGRO"
         }
       ]
     },
@@ -501,6 +515,16 @@
           },
           "texto": "EXAMEN 2"
         },
+        {
+          "tipo": "asesoria",
+          "color": "#f59e0b",
+          "colorTexto": "#ffffff",
+          "rango": {
+            "inicio": 1,
+            "fin": 3
+          },
+          "texto": "ASESORÍA DÍA DEL LOGRO"
+        }, 
         {
           "tipo": "evento",
           "color": "#ec4899",
@@ -533,7 +557,7 @@
             "inicio": 7,
             "fin": 10
           },
-          "texto": "ASESORÍA"
+          "texto": "ASESORÍA DE PROYECTOS"
         },       
         {
           "tipo": "evento",
