@@ -3,7 +3,12 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
-import { insertReclamo } from '@/lib/db'
+import { insertReclamo, getDestinatariosWeb } from '@/lib/db'
+import {
+  getLogoUrl,
+  emailReclamoColegio,
+  emailReclamoUsuario,
+} from '@/lib/email-templates'
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'libro-reclamaciones')
 const JSON_FILE = path.join(DATA_DIR, 'registros.json')
@@ -213,12 +218,7 @@ export async function POST(request: NextRequest) {
     })
 
     const emailConfig = getEmailConfig()
-    const logoUrl =
-      process.env.NEXT_PUBLIC_EMAIL_LOGO_URL ||
-      `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com').replace(
-        /\/+$/,
-        ''
-      )}/LOGO1.png`
+    const logoUrl = getLogoUrl()
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -242,64 +242,50 @@ export async function POST(request: NextRequest) {
           ]
         : []
 
-    const emailHTML = `
-      <!DOCTYPE html>
-      <html><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">
-        <table width="600" style="margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
-          <tr><td style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8);padding:24px;text-align:center;color:#fff;">
-            <img src="${logoUrl}" alt="Logo" style="width:70px;margin:0 auto 8px;display:block;" />
-            <h1 style="margin:0;font-size:22px;">Libro de Reclamaciones</h1>
-            <p style="margin:8px 0 0;opacity:.9;">N° ${numero}</p>
-          </td></tr>
-          <tr><td style="padding:24px;color:#374151;font-size:14px;line-height:1.6;">
-            <p><strong>Tipo:</strong> ${tipoLabel}</p>
-            <p><strong>Proveedor:</strong> ${institucion.razonSocial} — RUC: ${institucion.ruc}</p>
-            <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;" />
-            <p><strong>Reclamante:</strong> ${nombre}</p>
-            <p><strong>Documento:</strong> ${tipoDocumento} ${numeroDocumento}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Teléfono:</strong> ${telefono || '—'}</p>
-            <p><strong>Domicilio:</strong> ${domicilio || '—'}</p>
-            <p><strong>Relación:</strong> ${relacion || '—'}</p>
-            <p><strong>Alumno:</strong> ${alumnoNombre || '—'} (DNI: ${alumnoDni || '—'})</p>
-            <p><strong>Bien/servicio:</strong> ${bienContratado || '—'}</p>
-            <p><strong>Fecha del hecho:</strong> ${fechaHecho || '—'}</p>
-            <p><strong>Monto reclamado:</strong> ${monto || '—'}</p>
-            <p><strong>Detalle:</strong><br/>${detalle.replace(/\n/g, '<br/>')}</p>
-            <p><strong>Pedido:</strong><br/>${pedido.replace(/\n/g, '<br/>')}</p>
-            <p><strong>Adjunto:</strong> ${adjuntoMeta ? adjuntoMeta.nombreOriginal : 'Ninguno'}</p>
-            <p style="color:#6b7280;font-size:12px;margin-top:20px;">Registrado: ${fechaRegistro}</p>
-          </td></tr>
-        </table>
-      </body></html>
-    `
+    const emailHTML = emailReclamoColegio({
+      logoUrl,
+      numero,
+      tipoLabel,
+      razonSocial: institucion.razonSocial,
+      ruc: institucion.ruc,
+      nombre,
+      email,
+      telefono,
+      tipoDocumento,
+      numeroDocumento,
+      domicilio,
+      relacion,
+      alumnoNombre,
+      alumnoDni,
+      bienContratado,
+      fechaHecho,
+      monto,
+      detalle,
+      pedido,
+      adjunto: adjuntoMeta?.nombreOriginal,
+      fechaRegistro,
+    })
 
-    const confirmHTML = `
-      <!DOCTYPE html>
-      <html><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">
-        <table width="600" style="margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
-          <tr><td style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8);padding:24px;text-align:center;color:#fff;">
-            <h1 style="margin:0;font-size:22px;">Vanguard Schools</h1>
-            <p style="margin:8px 0 0;opacity:.9;">Acuse de recibo</p>
-          </td></tr>
-          <tr><td style="padding:24px;color:#374151;font-size:14px;line-height:1.6;">
-            <p>Estimado/a <strong>${nombre}</strong>,</p>
-            <p>Hemos registrado su <strong>${tipoLabel.toLowerCase()}</strong> en nuestro Libro de Reclamaciones.</p>
-            <p style="background:#eff6ff;border-left:4px solid #2563eb;padding:12px;"><strong>Número de registro:</strong> ${numero}</p>
-            <p>Conserve este número para el seguimiento. Nuestro equipo revisará su caso y se comunicará a la brevedad.</p>
-            <p><strong>Teléfonos:</strong> ${institucion.telefonos}<br/>
-            <strong>Email:</strong> ${institucion.email}</p>
-          </td></tr>
-        </table>
-      </body></html>
-    `
+    const confirmHTML = emailReclamoUsuario({
+      logoUrl,
+      nombre,
+      numero,
+      tipoLabel,
+      telefonos: institucion.telefonos,
+      emailContacto: institucion.email,
+    })
 
-    const emailPromises = formConfig.destinatarios.map((destinatario) =>
+    // Destinatarios desde BD (web_correos_envio); respaldo formularios.json
+    const destinatarios = await getDestinatariosWeb('reclamos')
+    const lista =
+      destinatarios.length > 0 ? destinatarios : formConfig.destinatarios
+
+    const emailPromises = lista.map((destinatario) =>
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: destinatario,
         replyTo: email,
-        subject: `${formConfig.asunto} — ${numero} (${tipoLabel})`,
+        subject: `Libro de Reclamaciones ${numero} — ${tipoLabel} · Vanguard Schools`,
         html: emailHTML,
         attachments,
       })
@@ -309,7 +295,7 @@ export async function POST(request: NextRequest) {
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: email,
-        subject: `Registro Libro de Reclamaciones ${numero} — Vanguard Schools`,
+        subject: `Registro confirmado ${numero} — Libro de Reclamaciones`,
         html: confirmHTML,
       })
     )

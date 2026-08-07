@@ -3,7 +3,12 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
-import { insertSugerencia } from '@/lib/db'
+import { insertSugerencia, getDestinatariosWeb } from '@/lib/db'
+import {
+  getLogoUrl,
+  emailSugerenciaColegio,
+  emailSugerenciaUsuario,
+} from '@/lib/email-templates'
 
 /**
  * API genérica para manejar cualquier tipo de formulario
@@ -11,7 +16,6 @@ import { insertSugerencia } from '@/lib/db'
  */
 export async function POST(request: NextRequest) {
   try {
-    // Obtener el tipo de formulario desde los query params
     const searchParams = request.nextUrl.searchParams
     const tipo = searchParams.get('tipo')
 
@@ -22,7 +26,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Obtener configuración del formulario
     const formularioConfig = getFormularioConfig(tipo)
     if (!formularioConfig) {
       return NextResponse.json(
@@ -31,11 +34,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Obtener datos del body
     const body = await request.json()
     const { email, nombre, ...otrosDatos } = body
 
-    // Validaciones básicas
     if (!email || !nombre) {
       return NextResponse.json(
         { error: 'Email y nombre son requeridos' },
@@ -43,7 +44,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Registrar envío en archivos (JSONL) para TODOS los formularios
     logFormulario(tipo, {
       fecha: new Date().toISOString(),
       nombre,
@@ -60,12 +59,14 @@ export async function POST(request: NextRequest) {
       ...otrosDatos,
     })
 
-    // Sugerencias: guardar en MySQL (si falla, se continúa con email)
     if (tipo === 'sugerencias') {
       const mensaje = String(otrosDatos.mensaje || '').trim()
       if (mensaje) {
         const forwarded = request.headers.get('x-forwarded-for')
-        const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || null
+        const ip =
+          forwarded?.split(',')[0]?.trim() ||
+          request.headers.get('x-real-ip') ||
+          null
         await insertSugerencia({
           nombre,
           email,
@@ -78,11 +79,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Configuración de email
     const emailConfig = getEmailConfig()
-    const logoUrl =
-      process.env.NEXT_PUBLIC_EMAIL_LOGO_URL ||
-      `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com').replace(/\/+$/, '')}/LOGO1.png`
+    const logoUrl = getLogoUrl()
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
@@ -93,32 +91,64 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Generar HTML del email
-    const emailHTML = generateEmailHTML(formularioConfig.nombre, nombre, email, otrosDatos, logoUrl)
+    // Destinatarios: BD web_correos_envio (sugerencias) o formularios.json
+    let destinatarios = formularioConfig.destinatarios
+    if (tipo === 'sugerencias') {
+      destinatarios = await getDestinatariosWeb('sugerencias')
+    }
 
-    // Enviar email a todos los destinatarios
-    const emailPromises = formularioConfig.destinatarios.map((destinatario) =>
+    let emailHTML: string
+    let confirmacionHTML: string
+    let asuntoColegio = formularioConfig.asunto
+    let asuntoUsuario = `✅ Gracias por contactarnos - ${emailConfig.nombre_remitente}`
+
+    if (tipo === 'sugerencias') {
+      emailHTML = emailSugerenciaColegio({
+        logoUrl,
+        nombre,
+        email,
+        telefono: String(otrosDatos.telefono || ''),
+        relacion: String(otrosDatos.relacion || ''),
+        tipo: String(otrosDatos.tipo || ''),
+        mensaje: String(otrosDatos.mensaje || ''),
+      })
+      confirmacionHTML = emailSugerenciaUsuario({ logoUrl, nombre })
+      asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
+      // Reply al usuario para que el colegio pueda responderle
+    } else {
+      emailHTML = generateEmailHTML(
+        formularioConfig.nombre,
+        nombre,
+        email,
+        otrosDatos,
+        logoUrl
+      )
+      confirmacionHTML = generateConfirmacionHTML(
+        nombre,
+        formularioConfig.nombre,
+        logoUrl
+      )
+    }
+
+    const emailPromises = destinatarios.map((destinatario) =>
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: destinatario,
-        replyTo: emailConfig.reply_to,
-        subject: formularioConfig.asunto,
+        replyTo: tipo === 'sugerencias' ? email : emailConfig.reply_to,
+        subject: asuntoColegio,
         html: emailHTML,
       })
     )
 
-    // Enviar email de confirmación al usuario
-    const confirmacionHTML = generateConfirmacionHTML(nombre, formularioConfig.nombre, logoUrl)
     emailPromises.push(
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: email,
-        subject: `✅ Gracias por contactarnos - ${emailConfig.nombre_remitente}`,
+        subject: asuntoUsuario,
         html: confirmacionHTML,
       })
     )
 
-    // Disparamos el envío en segundo plano para no hacer esperar al usuario
     Promise.all(emailPromises).catch((error) => {
       console.error('Error al enviar emails de formulario:', error)
     })

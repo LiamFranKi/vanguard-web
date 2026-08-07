@@ -1,4 +1,5 @@
-import mysql, { Pool, ResultSetHeader } from 'mysql2/promise'
+import mysql, { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
+import { getFormularioConfig } from '@/lib/formularios'
 
 let pool: Pool | null = null
 
@@ -64,9 +65,39 @@ export type ReclamoRow = {
 }
 
 /**
- * Inserta una sugerencia. Si falla la BD, registra el error y NO lanza
- * (el flujo debe continuar con email de respaldo).
+ * Destinatarios de correo para sugerencias o reclamos.
+ * Prioridad: tabla web_correos_envio (activos).
+ * Respaldo: config/formularios.json si la BD falla o no hay filas.
  */
+export async function getDestinatariosWeb(
+  canal: 'sugerencias' | 'reclamos'
+): Promise<string[]> {
+  const db = getPool()
+  if (db) {
+    try {
+      const flagCol = canal === 'sugerencias' ? 'recibe_sugerencias' : 'recibe_reclamos'
+      const [rows] = await db.execute<RowDataPacket[]>(
+        `SELECT email FROM web_correos_envio
+         WHERE activo = 1 AND ${flagCol} = 1
+         ORDER BY id ASC`
+      )
+      const emails = (rows || [])
+        .map((r) => String(r.email || '').trim())
+        .filter((e) => e.includes('@'))
+      if (emails.length > 0) {
+        return Array.from(new Set(emails))
+      }
+    } catch (error) {
+      console.error('[MySQL] Error leyendo web_correos_envio, se usa formularios.json:', error)
+    }
+  }
+
+  const tipoForm =
+    canal === 'sugerencias' ? 'sugerencias' : 'libro-reclamaciones'
+  const cfg = getFormularioConfig(tipoForm)
+  return cfg?.destinatarios?.length ? cfg.destinatarios : []
+}
+
 export async function insertSugerencia(row: SugerenciaRow): Promise<boolean> {
   const db = getPool()
   if (!db) {
@@ -96,10 +127,6 @@ export async function insertSugerencia(row: SugerenciaRow): Promise<boolean> {
   }
 }
 
-/**
- * Inserta un reclamo. Si falla la BD, registra el error y NO lanza
- * (el flujo debe continuar con email de respaldo).
- */
 export async function insertReclamo(row: ReclamoRow): Promise<boolean> {
   const db = getPool()
   if (!db) {

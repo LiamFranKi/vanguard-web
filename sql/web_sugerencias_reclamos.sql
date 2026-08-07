@@ -55,3 +55,5 @@ CREATE TABLE IF NOT EXISTS `web_reclamos` (
   KEY `idx_web_reclamos_tipo` (`tipo`),
   KEY `idx_web_reclamos_estado` (`estado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+/* También ejecuta sql/web_correos_envio.sql (correos de destino) */
