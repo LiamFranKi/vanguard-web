@@ -1,5 +1,6 @@
 import mysql, { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise'
 import { getFormularioConfig } from '@/lib/formularios'
+import { nowPeruMysql, toPeruMysqlDatetime } from '@/lib/datetime-peru'
 
 let pool: Pool | null = null
 
@@ -108,8 +109,8 @@ export async function insertSugerencia(row: SugerenciaRow): Promise<boolean> {
   try {
     await db.execute<ResultSetHeader>(
       `INSERT INTO web_sugerencias
-        (nombre, email, telefono, relacion, tipo, mensaje, estado, ip)
-       VALUES (?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+        (nombre, email, telefono, relacion, tipo, mensaje, estado, ip, fecha_registro)
+       VALUES (?, ?, ?, ?, ?, ?, 'nuevo', ?, ?)`,
       [
         row.nombre,
         row.email,
@@ -118,6 +119,7 @@ export async function insertSugerencia(row: SugerenciaRow): Promise<boolean> {
         row.tipo || null,
         row.mensaje,
         row.ip || null,
+        nowPeruMysql(),
       ]
     )
     return true
@@ -142,9 +144,8 @@ export async function insertReclamo(row: ReclamoRow): Promise<boolean> {
         : row.fechaHecho
     }
 
-    const fechaRegistro = row.fechaRegistro.includes('T')
-      ? row.fechaRegistro.replace('T', ' ').replace('Z', '').slice(0, 19)
-      : row.fechaRegistro
+    // Siempre DATETIME en hora Perú (nunca UTC “crudo”)
+    const fechaRegistro = toPeruMysqlDatetime(row.fechaRegistro)
 
     await db.execute<ResultSetHeader>(
       `INSERT INTO web_reclamos

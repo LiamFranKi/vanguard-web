@@ -9,6 +9,7 @@ import {
   emailReclamoColegio,
   emailReclamoUsuario,
 } from '@/lib/email-templates'
+import { nowPeruMysql } from '@/lib/datetime-peru'
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'libro-reclamaciones')
 const JSON_FILE = path.join(DATA_DIR, 'registros.json')
@@ -152,7 +153,8 @@ export async function POST(request: NextRequest) {
     const year = new Date().getFullYear()
     const contador = (store.contador || 0) + 1
     const numero = `REC-${year}-${String(contador).padStart(5, '0')}`
-    const fechaRegistro = new Date().toISOString()
+    // Hora de Perú (UTC-5), no UTC de toISOString()
+    const fechaRegistro = nowPeruMysql()
 
     if (adjuntoBuffer && adjuntoMeta) {
       const ext = path.extname(adjuntoMeta.nombreOriginal) || ''
