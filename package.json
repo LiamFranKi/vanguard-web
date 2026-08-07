@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/react-datepicker": "^6.2.0",
     "date-fns": "^4.1.0",
+    "mysql2": "^3.23.2",
     "next": "^14.0.4",
     "nodemailer": "^6.9.7",
     "react": "^18.2.0",

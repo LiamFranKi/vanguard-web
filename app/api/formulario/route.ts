@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
+import { insertSugerencia } from '@/lib/db'
 
 /**
  * API genérica para manejar cualquier tipo de formulario
@@ -58,6 +59,24 @@ export async function POST(request: NextRequest) {
       email,
       ...otrosDatos,
     })
+
+    // Sugerencias: guardar en MySQL (si falla, se continúa con email)
+    if (tipo === 'sugerencias') {
+      const mensaje = String(otrosDatos.mensaje || '').trim()
+      if (mensaje) {
+        const forwarded = request.headers.get('x-forwarded-for')
+        const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || null
+        await insertSugerencia({
+          nombre,
+          email,
+          telefono: String(otrosDatos.telefono || ''),
+          relacion: String(otrosDatos.relacion || ''),
+          tipo: String(otrosDatos.tipo || ''),
+          mensaje,
+          ip,
+        })
+      }
+    }
 
     // Configuración de email
     const emailConfig = getEmailConfig()

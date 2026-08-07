@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
+import { insertReclamo } from '@/lib/db'
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'libro-reclamaciones')
 const JSON_FILE = path.join(DATA_DIR, 'registros.json')
@@ -183,6 +184,33 @@ export async function POST(request: NextRequest) {
     store.contador = contador
     store.registros.unshift(registro)
     fs.writeFileSync(JSON_FILE, JSON.stringify(store, null, 2), 'utf8')
+
+    // MySQL: si falla, se continúa con email de respaldo
+    await insertReclamo({
+      numero,
+      fechaRegistro,
+      nombre,
+      email,
+      telefono,
+      tipoDocumento,
+      numeroDocumento,
+      domicilio,
+      relacion,
+      alumnoNombre,
+      alumnoDni,
+      tipo: tipo as 'reclamo' | 'queja',
+      bienContratado,
+      fechaHecho,
+      detalle,
+      pedido,
+      monto,
+      adjuntoNombre: adjuntoMeta?.nombreOriginal || null,
+      adjuntoRuta: adjuntoMeta?.guardadoComo
+        ? path.join(ADJUNTOS_DIR, adjuntoMeta.guardadoComo)
+        : null,
+      rucRegistrado: institucion.ruc,
+      razonSocial: institucion.razonSocial,
+    })
 
     const emailConfig = getEmailConfig()
     const logoUrl =
