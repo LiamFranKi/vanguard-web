@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { FiFacebook, FiInstagram, FiYoutube, FiHome, FiLayers, FiShield, FiCamera, FiMessageSquare, FiMail, FiPhone, FiMapPin } from 'react-icons/fi'
+import { FiFacebook, FiInstagram, FiYoutube, FiHome, FiLayers, FiShield, FiCamera, FiMessageSquare, FiMail, FiPhone, FiMapPin, FiBookOpen } from 'react-icons/fi'
 import { FaTiktok } from 'react-icons/fa6'
 
 export default function Footer() {
@@ -99,6 +99,12 @@ export default function Footer() {
                 <Link href="/sugerencias" className="text-gray-400 hover:text-white transition-colors text-sm flex items-center space-x-2">
                   <FiMessageSquare className="text-white" size={14} />
                   <span>Sugerencias</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/libro-de-reclamaciones" className="text-gray-400 hover:text-white transition-colors text-sm flex items-center space-x-2">
+                  <FiBookOpen className="text-white" size={14} />
+                  <span>Libro de Reclamaciones</span>
                 </Link>
               </li>
             </ul>

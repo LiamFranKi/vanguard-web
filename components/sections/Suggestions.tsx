@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import Link from 'next/link'
 import { FiSmile, FiAlertCircle, FiThumbsUp, FiMessageSquare, FiSend } from 'react-icons/fi'
 
 export default function Suggestions() {
@@ -273,6 +273,14 @@ export default function Suggestions() {
                   momentos.
                 </div>
               )}
+
+              <p className="text-xs text-gray-500 text-center">
+                Para un reclamo o queja formal use el{' '}
+                <Link href="/libro-de-reclamaciones" className="text-primary-700 font-semibold underline">
+                  Libro de Reclamaciones
+                </Link>
+                .
+              </p>
 
               <button
                 type="submit"

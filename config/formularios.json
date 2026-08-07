@@ -18,6 +18,12 @@
       "asunto": "💡 Nueva sugerencia - Vanguard Schools",
       "activo": true
     },
+    "libro-reclamaciones": {
+      "nombre": "Libro de Reclamaciones",
+      "destinatarios": ["dianavi54@gmail.com", "walter.lozano@vanguardschools.edu.pe", "rosario.maravi@vanguardschools.edu.pe", "perla.lagos@vanguardschools.edu.pe"],
+      "asunto": "📕 Libro de Reclamaciones - Vanguard Schools",
+      "activo": true
+    },
     "trabaja-con-nosotros": {
       "nombre": "Trabaja con Nosotros",
       "destinatarios": ["walter.lozano@vanguardschools.edu.pe", "rosario.maravi@vanguardschools.edu.pe", "perla.lagos@vanguardschools.edu.pe"],

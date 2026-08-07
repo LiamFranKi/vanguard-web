@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FiMenu, FiX, FiChevronDown, FiHome, FiMap, FiShoppingBag, FiFileText, FiLayers, FiShield, FiLock, FiHelpCircle, FiBriefcase, FiMessageSquare, FiCamera } from 'react-icons/fi'
+import { FiMenu, FiX, FiChevronDown, FiHome, FiMap, FiShoppingBag, FiFileText, FiLayers, FiShield, FiLock, FiHelpCircle, FiBriefcase, FiMessageSquare, FiCamera, FiBookOpen } from 'react-icons/fi'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -175,6 +175,13 @@ export default function Header() {
               <FiMessageSquare className="text-primary-700" size={18} />
               <span>Sugerencias</span>
             </Link>
+            <Link
+              href="/libro-de-reclamaciones"
+              className="flex items-center space-x-2 text-gray-800 hover:text-primary-600 font-semibold transition-all rounded-md px-3 py-2 hover:bg-blue-100"
+            >
+              <FiBookOpen className="text-primary-700" size={18} />
+              <span>Reclamaciones</span>
+            </Link>
             <a
               href="https://sistema.vanguardschools.edu.pe/"
               target="_blank"
@@ -331,6 +338,14 @@ export default function Header() {
               >
                 <FiMessageSquare className="text-primary-700" size={18} />
                 <span>Sugerencias</span>
+              </Link>
+              <Link
+                href="/libro-de-reclamaciones"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center space-x-2 text-gray-800 hover:text-primary-600 font-semibold hover:bg-blue-100 rounded-md px-3 py-2 transition-all"
+              >
+                <FiBookOpen className="text-primary-700" size={18} />
+                <span>Reclamaciones</span>
               </Link>
               <a
                 href="https://sistema.vanguardschools.edu.pe/"
