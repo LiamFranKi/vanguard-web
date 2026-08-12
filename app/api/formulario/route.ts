@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
           forwarded?.split(',')[0]?.trim() ||
           request.headers.get('x-real-ip') ||
           null
-        await insertSugerencia({
+        const saved = await insertSugerencia({
           nombre,
           email,
           telefono: String(otrosDatos.telefono || ''),
@@ -76,6 +76,21 @@ export async function POST(request: NextRequest) {
           mensaje,
           ip,
         })
+        // Campanita + push a ADMINISTRADORES en la intranet (no bloquea el formulario)
+        if (saved.ok) {
+          const { notificarIntranetWebFormulario } = await import(
+            '@/lib/intranet-notify'
+          )
+          notificarIntranetWebFormulario({
+            canal: 'sugerencia',
+            tipo: String(otrosDatos.tipo || 'sugerencia'),
+            id: saved.id,
+            nombre,
+            email,
+            telefono: String(otrosDatos.telefono || ''),
+            resumen: mensaje,
+          }).catch(() => {})
+        }
       }
     }
 

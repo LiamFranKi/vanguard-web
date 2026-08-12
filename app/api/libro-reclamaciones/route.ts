@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
     fs.writeFileSync(JSON_FILE, JSON.stringify(store, null, 2), 'utf8')
 
     // MySQL: si falla, se continúa con email de respaldo
-    await insertReclamo({
+    const savedReclamo = await insertReclamo({
       numero,
       fechaRegistro,
       nombre,
@@ -218,6 +218,23 @@ export async function POST(request: NextRequest) {
       rucRegistrado: institucion.ruc,
       razonSocial: institucion.razonSocial,
     })
+
+    // Campanita + push a ADMINISTRADORES en la intranet (no bloquea el registro)
+    if (savedReclamo.ok) {
+      const { notificarIntranetWebFormulario } = await import(
+        '@/lib/intranet-notify'
+      )
+      notificarIntranetWebFormulario({
+        canal: tipo === 'queja' ? 'queja' : 'reclamo',
+        tipo: String(tipo),
+        id: savedReclamo.id,
+        nombre,
+        email,
+        telefono,
+        resumen: detalle,
+        numero,
+      }).catch(() => {})
+    }
 
     const emailConfig = getEmailConfig()
     const logoUrl = getLogoUrl()

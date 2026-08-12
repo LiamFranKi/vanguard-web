@@ -99,15 +99,17 @@ export async function getDestinatariosWeb(
   return cfg?.destinatarios?.length ? cfg.destinatarios : []
 }
 
-export async function insertSugerencia(row: SugerenciaRow): Promise<boolean> {
+export type InsertResult = { ok: boolean; id?: number }
+
+export async function insertSugerencia(row: SugerenciaRow): Promise<InsertResult> {
   const db = getPool()
   if (!db) {
     console.warn('[MySQL] No configurado: se omite guardado de sugerencia')
-    return false
+    return { ok: false }
   }
 
   try {
-    await db.execute<ResultSetHeader>(
+    const [result] = await db.execute<ResultSetHeader>(
       `INSERT INTO web_sugerencias
         (nombre, email, telefono, relacion, tipo, mensaje, estado, ip, fecha_registro)
        VALUES (?, ?, ?, ?, ?, ?, 'nuevo', ?, ?)`,
@@ -122,18 +124,18 @@ export async function insertSugerencia(row: SugerenciaRow): Promise<boolean> {
         nowPeruMysql(),
       ]
     )
-    return true
+    return { ok: true, id: Number(result.insertId) || undefined }
   } catch (error) {
     console.error('[MySQL] Error al guardar web_sugerencias (email de respaldo sigue):', error)
-    return false
+    return { ok: false }
   }
 }
 
-export async function insertReclamo(row: ReclamoRow): Promise<boolean> {
+export async function insertReclamo(row: ReclamoRow): Promise<InsertResult> {
   const db = getPool()
   if (!db) {
     console.warn('[MySQL] No configurado: se omite guardado de reclamo')
-    return false
+    return { ok: false }
   }
 
   try {
@@ -147,7 +149,7 @@ export async function insertReclamo(row: ReclamoRow): Promise<boolean> {
     // Siempre DATETIME en hora Perú (nunca UTC “crudo”)
     const fechaRegistro = toPeruMysqlDatetime(row.fechaRegistro)
 
-    await db.execute<ResultSetHeader>(
+    const [result] = await db.execute<ResultSetHeader>(
       `INSERT INTO web_reclamos
         (numero, fecha_registro, nombre, email, telefono, tipo_documento, numero_documento,
          domicilio, relacion, alumno_nombre, alumno_dni, tipo, bien_contratado, fecha_hecho,
@@ -177,9 +179,9 @@ export async function insertReclamo(row: ReclamoRow): Promise<boolean> {
         row.razonSocial || null,
       ]
     )
-    return true
+    return { ok: true, id: Number(result.insertId) || undefined }
   } catch (error) {
     console.error('[MySQL] Error al guardar web_reclamos (email de respaldo sigue):', error)
-    return false
+    return { ok: false }
   }
 }
