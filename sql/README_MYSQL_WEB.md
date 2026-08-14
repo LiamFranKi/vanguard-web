@@ -7,6 +7,7 @@
 3. Ejecuta `sql/web_correos_envio.sql` (correos destino + filas iniciales).
 4. Ejecuta `sql/web_contactenos.sql` (contactos + flag `recibe_contacto`).
 5. Ejecuta `sql/web_visitas_guiadas.sql` (días/horarios configurables + registros + `recibe_visitas`).
+6. Ejecuta `sql/web_trabaja_con_nosotros.sql` (postulaciones + CV + `recibe_trabaja`).
 
 ### Tabla `web_correos_envio` (quién recibe los mails)
 
@@ -19,19 +20,20 @@
 | `recibe_reclamos` | 1 = recibe reclamos |
 | `recibe_contacto` | 1 = recibe Contáctenos |
 | `recibe_visitas` | 1 = recibe Visitas Guiadas |
+| `recibe_trabaja` | 1 = recibe Trabaja con Nosotros |
 
 **Ejemplos en phpMyAdmin:**
 
 ```sql
 -- Agregar un correo nuevo
 INSERT INTO web_correos_envio
-  (email, etiqueta, activo, recibe_sugerencias, recibe_reclamos, recibe_contacto, recibe_visitas)
-VALUES ('nuevo@correo.com', 'Secretaría', 1, 1, 1, 1, 1);
+  (email, etiqueta, activo, recibe_sugerencias, recibe_reclamos, recibe_contacto, recibe_visitas, recibe_trabaja)
+VALUES ('nuevo@correo.com', 'Secretaría', 1, 1, 1, 1, 1, 1);
 
--- Solo visitas
+-- Solo Trabaja con Nosotros (RR.HH.)
 UPDATE web_correos_envio
-SET recibe_visitas=1, recibe_sugerencias=0, recibe_reclamos=0, recibe_contacto=0
-WHERE email='admision@correo.com';
+SET recibe_trabaja=1, recibe_sugerencias=0, recibe_reclamos=0, recibe_contacto=0, recibe_visitas=0
+WHERE email='rrhh@correo.com';
 
 -- Desactivar un correo sin borrarlo
 UPDATE web_correos_envio SET activo=0 WHERE email='ya-no@correo.com';
@@ -43,6 +45,14 @@ UPDATE web_correos_envio SET activo=0 WHERE email='ya-no@correo.com';
 - `web_visita_horarios`: franjas (etiquetas).
 - `web_visita_secuencias` + `web_visita_secuencia_slots` (opcional): si hay secuencias activas, solo esas combinaciones día+horario.
 - `web_visitas_guiadas`: solicitudes del formulario.
+
+### Trabaja con Nosotros (CV)
+
+- Tabla: `web_trabaja_con_nosotros`
+- Archivos PDF en disco (**ruta nueva Zarkiel**, no Hostinger):
+  - `/home/vanguard/web-vanguard/data/curriculums/<archivo>`
+- En BD: `cv_nombre` (original) + `cv_ruta` (absoluta en el VPS nuevo)
+- Máx. 5 MB, solo PDF. El correo al colegio lleva el CV adjunto.
 
 Si MySQL falla, el formulario usa martes/jueves y los dos horarios por defecto; los correos caen a `config/formularios.json`.
 

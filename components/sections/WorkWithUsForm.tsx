@@ -28,6 +28,11 @@ export default function WorkWithUsForm() {
       setCvFile(null)
       return
     }
+    if (file && file.size > 5 * 1024 * 1024) {
+      setErrorMessage('El CV no puede superar 5 MB.')
+      setCvFile(null)
+      return
+    }
     setErrorMessage(null)
     setCvFile(file)
   }

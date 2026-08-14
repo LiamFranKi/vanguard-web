@@ -170,6 +170,74 @@ export function emailVisitaUsuario(opts: {
   })
 }
 
+/** Correo al colegio: postulación Trabaja con Nosotros */
+export function emailTrabajaColegio(opts: {
+  logoUrl: string
+  nombre: string
+  email: string
+  telefono?: string
+  puesto: string
+  mensaje?: string
+  cvNombre?: string
+}) {
+  const body = `
+    <p style="margin:0 0 16px 0;color:#334155;font-size:15px;line-height:1.6;">
+      Nueva <strong>postulación</strong> desde el formulario Trabaja con Nosotros.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px 0;">
+      ${row('Nombre', opts.nombre)}
+      ${row('Email', opts.email)}
+      ${row('Teléfono', opts.telefono || '—')}
+      ${row('Puesto de interés', opts.puesto)}
+      ${row('Mensaje', opts.mensaje || '—')}
+      ${row('CV adjunto', opts.cvNombre || '—')}
+    </table>
+    <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">El PDF del curriculum va adjunto a este correo. Puede responder (Reply-To) al postulante.</p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Formulario web',
+    title: 'Nueva postulación',
+    subtitle: opts.puesto,
+    body,
+  })
+}
+
+/** Correo al usuario: acuse postulación */
+export function emailTrabajaUsuario(opts: {
+  logoUrl: string
+  nombre: string
+  puesto?: string
+}) {
+  const body = `
+    <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
+      Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
+    </p>
+    <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
+      Gracias por su interés en formar parte de Vanguard Schools. Hemos recibido su postulación
+      ${opts.puesto ? `para <strong>${escapeHtml(opts.puesto)}</strong>` : ''}
+      y nuestro equipo de Recursos Humanos la revisará a la brevedad.
+    </p>
+    <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
+      <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
+        Si su perfil se ajusta a una vacante, nos pondremos en contacto con usted
+        a través de los datos proporcionados.
+      </p>
+    </div>
+    <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
+      Atentamente,<br/>
+      <strong style="color:#1e3a8a;">Recursos Humanos · Vanguard Schools</strong>
+    </p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Vanguard Schools',
+    title: 'Postulación recibida',
+    subtitle: 'Trabaja con Nosotros',
+    body,
+  })
+}
+
 /** Correo al colegio: nuevo contacto */
 export function emailContactoColegio(opts: {
   logoUrl: string

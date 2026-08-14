@@ -3,11 +3,45 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
+import { insertTrabaja, getDestinatariosWeb } from '@/lib/db'
+import {
+  getLogoUrl,
+  emailTrabajaColegio,
+  emailTrabajaUsuario,
+} from '@/lib/email-templates'
+
+/**
+ * CVs en la web nueva (Zarkiel):
+ *   {cwd}/data/curriculums  →  /home/vanguard/web-vanguard/data/curriculums
+ * No usar /var/www/web (sistema anterior).
+ */
+const CV_DIR = path.join(process.cwd(), 'data', 'curriculums')
+const CV_MAX_MB = 5
+
+function sanitizeFilename(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120)
+}
+
+function ensureCvDir() {
+  if (!fs.existsSync(CV_DIR)) {
+    fs.mkdirSync(CV_DIR, { recursive: true })
+  }
+}
+
+function logFormulario(tipo: string, data: Record<string, unknown>) {
+  try {
+    const logDir = path.join(process.cwd(), 'data', 'formularios')
+    const logFile = path.join(logDir, `${tipo}.log`)
+    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true })
+    fs.appendFileSync(logFile, JSON.stringify(data) + '\n', 'utf8')
+  } catch (error) {
+    console.error('Error al registrar trabaja-con-nosotros en archivo:', error)
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
     const tipo = 'trabaja-con-nosotros'
-
     const formularioConfig = getFormularioConfig(tipo)
     if (!formularioConfig) {
       return NextResponse.json(
@@ -36,7 +70,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email inválido.' }, { status: 400 })
     }
 
-    if (!cv || typeof cv === 'string') {
+    if (!cv || typeof cv === 'string' || !('arrayBuffer' in cv) || cv.size <= 0) {
       return NextResponse.json(
         { error: 'Debes adjuntar tu curriculum en formato PDF.' },
         { status: 400 }
@@ -44,31 +78,42 @@ export async function POST(request: NextRequest) {
     }
 
     const file = cv as File
-    const allowedTypes = ['application/pdf']
-    if (!allowedTypes.includes(file.type)) {
+    const mime = file.type || 'application/octet-stream'
+    if (mime !== 'application/pdf') {
       return NextResponse.json(
         { error: 'El archivo debe estar en formato PDF.' },
         { status: 400 }
       )
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    const uploadDir = path.join(process.cwd(), 'data', 'curriculums')
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true })
+    const maxBytes = CV_MAX_MB * 1024 * 1024
+    if (file.size > maxBytes) {
+      return NextResponse.json(
+        { error: `El CV no puede superar ${CV_MAX_MB} MB.` },
+        { status: 400 }
+      )
     }
 
-    const safeName = file.name.toLowerCase().replace(/[^a-z0-9.\-]/g, '_')
-    const fileName = `${Date.now()}-${safeName || 'cv.pdf'}`
-    const filePath = path.join(uploadDir, fileName)
+    const buffer = Buffer.from(await file.arrayBuffer())
+    ensureCvDir()
 
+    const originalName = sanitizeFilename(file.name || 'cv.pdf')
+    const ext = path.extname(originalName).toLowerCase() === '.pdf' ? '.pdf' : '.pdf'
+    const baseName = path.basename(originalName, path.extname(originalName)) || 'cv'
+    const guardadoComo = `${Date.now()}-${baseName}${ext}`
+    const filePath = path.join(CV_DIR, guardadoComo)
     fs.writeFileSync(filePath, buffer)
 
-    const relativePath = path.relative(process.cwd(), filePath)
+    // Ruta absoluta del sistema nuevo (Zarkiel): /home/vanguard/web-vanguard/data/curriculums/...
+    const cvRutaAbsoluta = filePath
+    const cvRutaRelativa = path.join('data', 'curriculums', guardadoComo).replace(/\\/g, '/')
 
-    // Registrar en log
+    const forwarded = request.headers.get('x-forwarded-for')
+    const ip =
+      forwarded?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      null
+
     logFormulario(tipo, {
       fecha: new Date().toISOString(),
       nombre,
@@ -76,17 +121,38 @@ export async function POST(request: NextRequest) {
       telefono,
       puesto,
       mensaje,
-      cv: relativePath,
+      cv: cvRutaRelativa,
+      cvAbsoluta: cvRutaAbsoluta,
     })
 
-    const emailConfig = getEmailConfig()
-    const logoUrl =
-      process.env.NEXT_PUBLIC_EMAIL_LOGO_URL ||
-      `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com').replace(
-        /\/+$/,
-        ''
-      )}/LOGO1.png`
+    const saved = await insertTrabaja({
+      nombre,
+      email,
+      telefono,
+      puesto,
+      mensaje,
+      cvNombre: originalName,
+      cvRuta: cvRutaAbsoluta,
+      cvMime: mime,
+      cvSize: file.size,
+      ip,
+    })
 
+    if (saved.ok) {
+      const { notificarIntranetWebFormulario } = await import('@/lib/intranet-notify')
+      notificarIntranetWebFormulario({
+        canal: 'trabaja',
+        tipo: puesto,
+        id: saved.id,
+        nombre,
+        email,
+        telefono,
+        resumen: `CV: ${originalName}`,
+      }).catch(() => {})
+    }
+
+    const emailConfig = getEmailConfig()
+    const logoUrl = getLogoUrl()
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
@@ -97,45 +163,45 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    const otrosDatos = {
+    const destinatarios = await getDestinatariosWeb('trabaja')
+    const emailHTML = emailTrabajaColegio({
+      logoUrl,
+      nombre,
+      email,
       telefono,
       puesto,
       mensaje,
-      cv: relativePath,
-    }
+      cvNombre: originalName,
+    })
+    const confirmacionHTML = emailTrabajaUsuario({ logoUrl, nombre, puesto })
 
-    const emailHTML = generateEmailHTML(formularioConfig.nombre, nombre, email, otrosDatos, logoUrl)
-
-    // Email al colegio con CV adjunto
-    const emailPromises = formularioConfig.destinatarios.map(destinatario =>
+    const emailPromises = destinatarios.map((destinatario) =>
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: destinatario,
-        replyTo: emailConfig.reply_to,
-        subject: formularioConfig.asunto,
+        replyTo: email,
+        subject: `Nueva postulación — ${puesto}`,
         html: emailHTML,
         attachments: [
           {
-            filename: file.name || 'cv.pdf',
-            path: filePath,
-            contentType: file.type || 'application/pdf',
+            filename: originalName.endsWith('.pdf') ? originalName : `${originalName}.pdf`,
+            content: buffer,
+            contentType: 'application/pdf',
           },
         ],
       })
     )
 
-    // Email de confirmación al postulante (sin adjunto)
-    const confirmacionHTML = generateConfirmacionHTML(nombre, formularioConfig.nombre, logoUrl)
     emailPromises.push(
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: email,
-        subject: `✅ Gracias por tu postulación - ${emailConfig.nombre_remitente}`,
+        subject: `Postulación recibida — Vanguard Schools`,
         html: confirmacionHTML,
       })
     )
 
-    Promise.all(emailPromises).catch(error => {
+    Promise.all(emailPromises).catch((error) => {
       console.error('Error al enviar emails de trabaja con nosotros:', error)
     })
 
@@ -151,163 +217,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
-// --- Utilidades locales (similar a /api/formulario) ---
-
-function logFormulario(tipo: string, data: Record<string, any>) {
-  try {
-    const logDir = path.join(process.cwd(), 'data', 'formularios')
-    const logFile = path.join(logDir, `${tipo}.log`)
-
-    if (!fs.existsSync(logDir)) {
-      fs.mkdirSync(logDir, { recursive: true })
-    }
-
-    const entry = {
-      ...data,
-    }
-
-    fs.appendFileSync(logFile, JSON.stringify(entry) + '\n', 'utf8')
-  } catch (error) {
-    console.error('Error al registrar formulario trabaja-con-nosotros en archivo:', error)
-  }
-}
-
-function generateEmailHTML(
-  tipoFormulario: string,
-  nombre: string,
-  email: string,
-  datos: Record<string, any>,
-  logoUrl: string
-): string {
-  const camposHTML = Object.entries(datos)
-    .map(([key, value]) => {
-      const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
-      return `
-        <tr>
-          <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;">
-            <strong style="color: #374151;">${label}:</strong>
-            <span style="color: #6b7280; margin-left: 10px;">${String(value || 'N/A')}</span>
-          </td>
-        </tr>
-      `
-    })
-    .join('')
-
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${tipoFormulario}</title>
-    </head>
-    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px;">
-        <tr>
-          <td align="center">
-            <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <tr>
-                <td style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px; text-align: center;">
-                  <img 
-                    src="${logoUrl}" 
-                    alt="Vanguard Schools" 
-                    style="width: 80px; height: auto; display: block; margin: 0 auto 10px auto;"
-                  />
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Vanguard Schools</h1>
-                  <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">${tipoFormulario}</p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 30px;">
-                  <h2 style="color: #1f2937; margin-top: 0; font-size: 20px;">Nueva postulación recibida</h2>
-                  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
-                    <tr>
-                      <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;">
-                        <strong style="color: #374151;">Nombre:</strong>
-                        <span style="color: #6b7280; margin-left: 10px;">${nombre}</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;">
-                        <strong style="color: #374151;">Email:</strong>
-                        <span style="color: #6b7280; margin-left: 10px;">${email}</span>
-                      </td>
-                    </tr>
-                    ${camposHTML}
-                  </table>
-                </td>
-              </tr>
-              <tr>
-                <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-                  <p style="margin: 0;">Este es un mensaje automático del sistema de formularios de Vanguard Schools</p>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </body>
-    </html>
-  `
-}
-
-function generateConfirmacionHTML(nombre: string, tipoFormulario: string, logoUrl: string): string {
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Gracias por tu postulación</title>
-    </head>
-    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px;">
-        <tr>
-          <td align="center">
-            <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <tr>
-                <td style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px; text-align: center;">
-                  <img 
-                    src="${logoUrl}" 
-                    alt="Vanguard Schools" 
-                    style="width: 80px; height: auto; display: block; margin: 0 auto 10px auto;"
-                  />
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Vanguard Schools</h1>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 30px;">
-                  <h2 style="color: #1f2937; margin-top: 0; font-size: 20px;">¡Gracias por tu postulación, ${nombre}!</h2>
-                  <p style="color: #6b7280; line-height: 1.6; margin: 20px 0;">
-                    Hemos recibido tu ${tipoFormulario.toLowerCase()} y nuestro equipo de Recursos Humanos la revisará a la brevedad.
-                  </p>
-                  <p style="color: #6b7280; line-height: 1.6; margin: 20px 0;">
-                    De encontrar una vacante acorde a tu perfil, nos pondremos en contacto contigo a través de los datos proporcionados.
-                  </p>
-                  <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0;">
-                    <p style="color: #1e40af; margin: 0; font-size: 14px;">
-                      <strong>¿Deseas conocer más sobre Vanguard Schools?</strong><br>
-                      Visita nuestro sitio web o nuestras redes sociales oficiales.
-                    </p>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-                  <p style="margin: 0 0 10px 0;"><strong>Vanguard Schools</strong></p>
-                  <p style="margin: 0;">Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP</p>
-                  <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Vanguard Schools - Todos los derechos reservados</p>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </body>
-    </html>
-  `
-}
-
-
-

@@ -62,6 +62,19 @@ export type VisitaRow = {
   ip?: string | null
 }
 
+export type TrabajaRow = {
+  nombre: string
+  email: string
+  telefono?: string
+  puesto: string
+  mensaje?: string
+  cvNombre?: string | null
+  cvRuta?: string | null
+  cvMime?: string | null
+  cvSize?: number | null
+  ip?: string | null
+}
+
 export type ReclamoRow = {
   numero: string
   fechaRegistro: string
@@ -92,7 +105,7 @@ export type ReclamoRow = {
  * La intranet puede administrar quién recibe cada canal.
  */
 export async function getDestinatariosWeb(
-  canal: 'sugerencias' | 'reclamos' | 'contacto' | 'visitas'
+  canal: 'sugerencias' | 'reclamos' | 'contacto' | 'visitas' | 'trabaja'
 ): Promise<string[]> {
   const db = getPool()
   if (db) {
@@ -104,7 +117,9 @@ export async function getDestinatariosWeb(
             ? 'recibe_reclamos'
             : canal === 'contacto'
               ? 'recibe_contacto'
-              : 'recibe_visitas'
+              : canal === 'visitas'
+                ? 'recibe_visitas'
+                : 'recibe_trabaja'
       const [rows] = await db.execute<RowDataPacket[]>(
         `SELECT email FROM web_correos_envio
          WHERE activo = 1 AND ${flagCol} = 1
@@ -128,7 +143,9 @@ export async function getDestinatariosWeb(
         ? 'libro-reclamaciones'
         : canal === 'contacto'
           ? 'contacto'
-          : 'visita-guiada'
+          : canal === 'visitas'
+            ? 'visita-guiada'
+            : 'trabaja-con-nosotros'
   const cfg = getFormularioConfig(tipoForm)
   return cfg?.destinatarios?.length ? cfg.destinatarios : []
 }
@@ -223,6 +240,43 @@ export async function insertVisita(row: VisitaRow): Promise<InsertResult> {
     return { ok: true, id: Number(result.insertId) || undefined }
   } catch (error) {
     console.error('[MySQL] Error al guardar web_visitas_guiadas (email de respaldo sigue):', error)
+    return { ok: false }
+  }
+}
+
+export async function insertTrabaja(row: TrabajaRow): Promise<InsertResult> {
+  const db = getPool()
+  if (!db) {
+    console.warn('[MySQL] No configurado: se omite guardado de postulación')
+    return { ok: false }
+  }
+
+  try {
+    const [result] = await db.execute<ResultSetHeader>(
+      `INSERT INTO web_trabaja_con_nosotros
+        (fecha_registro, nombre, email, telefono, puesto, mensaje,
+         cv_nombre, cv_ruta, cv_mime, cv_size, estado, ip)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+      [
+        nowPeruMysql(),
+        row.nombre,
+        row.email,
+        row.telefono || null,
+        row.puesto,
+        row.mensaje || null,
+        row.cvNombre || null,
+        row.cvRuta || null,
+        row.cvMime || null,
+        row.cvSize ?? null,
+        row.ip || null,
+      ]
+    )
+    return { ok: true, id: Number(result.insertId) || undefined }
+  } catch (error) {
+    console.error(
+      '[MySQL] Error al guardar web_trabaja_con_nosotros (email de respaldo sigue):',
+      error
+    )
     return { ok: false }
   }
 }
