@@ -3,11 +3,13 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
-import { insertSugerencia, getDestinatariosWeb } from '@/lib/db'
+import { insertSugerencia, insertContacto, getDestinatariosWeb } from '@/lib/db'
 import {
   getLogoUrl,
   emailSugerenciaColegio,
   emailSugerenciaUsuario,
+  emailContactoColegio,
+  emailContactoUsuario,
 } from '@/lib/email-templates'
 
 /**
@@ -76,7 +78,6 @@ export async function POST(request: NextRequest) {
           mensaje,
           ip,
         })
-        // Campanita + push a ADMINISTRADORES en la intranet (no bloquea el formulario)
         if (saved.ok) {
           const { notificarIntranetWebFormulario } = await import(
             '@/lib/intranet-notify'
@@ -84,6 +85,39 @@ export async function POST(request: NextRequest) {
           notificarIntranetWebFormulario({
             canal: 'sugerencia',
             tipo: String(otrosDatos.tipo || 'sugerencia'),
+            id: saved.id,
+            nombre,
+            email,
+            telefono: String(otrosDatos.telefono || ''),
+            resumen: mensaje,
+          }).catch(() => {})
+        }
+      }
+    }
+
+    if (tipo === 'contacto') {
+      const mensaje = String(otrosDatos.mensaje || '').trim()
+      if (mensaje) {
+        const forwarded = request.headers.get('x-forwarded-for')
+        const ip =
+          forwarded?.split(',')[0]?.trim() ||
+          request.headers.get('x-real-ip') ||
+          null
+        const saved = await insertContacto({
+          nombre,
+          email,
+          telefono: String(otrosDatos.telefono || ''),
+          asunto: String(otrosDatos.asunto || ''),
+          mensaje,
+          ip,
+        })
+        if (saved.ok) {
+          const { notificarIntranetWebFormulario } = await import(
+            '@/lib/intranet-notify'
+          )
+          notificarIntranetWebFormulario({
+            canal: 'contacto',
+            tipo: String(otrosDatos.asunto || 'contacto'),
             id: saved.id,
             nombre,
             email,
@@ -106,16 +140,19 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Destinatarios: BD web_correos_envio (sugerencias) o formularios.json
+    // Destinatarios: BD web_correos_envio (intranet configura) o formularios.json
     let destinatarios = formularioConfig.destinatarios
     if (tipo === 'sugerencias') {
       destinatarios = await getDestinatariosWeb('sugerencias')
+    } else if (tipo === 'contacto') {
+      destinatarios = await getDestinatariosWeb('contacto')
     }
 
     let emailHTML: string
     let confirmacionHTML: string
     let asuntoColegio = formularioConfig.asunto
     let asuntoUsuario = `✅ Gracias por contactarnos - ${emailConfig.nombre_remitente}`
+    let replyToColegio = emailConfig.reply_to
 
     if (tipo === 'sugerencias') {
       emailHTML = emailSugerenciaColegio({
@@ -129,7 +166,20 @@ export async function POST(request: NextRequest) {
       })
       confirmacionHTML = emailSugerenciaUsuario({ logoUrl, nombre })
       asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
-      // Reply al usuario para que el colegio pueda responderle
+      replyToColegio = email
+    } else if (tipo === 'contacto') {
+      emailHTML = emailContactoColegio({
+        logoUrl,
+        nombre,
+        email,
+        telefono: String(otrosDatos.telefono || ''),
+        asunto: String(otrosDatos.asunto || ''),
+        mensaje: String(otrosDatos.mensaje || ''),
+      })
+      confirmacionHTML = emailContactoUsuario({ logoUrl, nombre })
+      asuntoColegio = `Nuevo contacto web — ${String(otrosDatos.asunto || 'Sin asunto')}`
+      asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
+      replyToColegio = email
     } else {
       emailHTML = generateEmailHTML(
         formularioConfig.nombre,
@@ -149,7 +199,7 @@ export async function POST(request: NextRequest) {
       transporter.sendMail({
         from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: destinatario,
-        replyTo: tipo === 'sugerencias' ? email : emailConfig.reply_to,
+        replyTo: replyToColegio,
         subject: asuntoColegio,
         html: emailHTML,
       })

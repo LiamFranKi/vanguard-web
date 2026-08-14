@@ -41,6 +41,15 @@ export type SugerenciaRow = {
   ip?: string | null
 }
 
+export type ContactoRow = {
+  nombre: string
+  email: string
+  telefono?: string
+  asunto?: string
+  mensaje: string
+  ip?: string | null
+}
+
 export type ReclamoRow = {
   numero: string
   fechaRegistro: string
@@ -66,17 +75,22 @@ export type ReclamoRow = {
 }
 
 /**
- * Destinatarios de correo para sugerencias o reclamos.
- * Prioridad: tabla web_correos_envio (activos).
- * Respaldo: config/formularios.json si la BD falla o no hay filas.
+ * Destinatarios de correo (prioridad: tabla web_correos_envio).
+ * Respaldo: config/formularios.json.
+ * La intranet puede administrar quién recibe cada canal.
  */
 export async function getDestinatariosWeb(
-  canal: 'sugerencias' | 'reclamos'
+  canal: 'sugerencias' | 'reclamos' | 'contacto'
 ): Promise<string[]> {
   const db = getPool()
   if (db) {
     try {
-      const flagCol = canal === 'sugerencias' ? 'recibe_sugerencias' : 'recibe_reclamos'
+      const flagCol =
+        canal === 'sugerencias'
+          ? 'recibe_sugerencias'
+          : canal === 'reclamos'
+            ? 'recibe_reclamos'
+            : 'recibe_contacto'
       const [rows] = await db.execute<RowDataPacket[]>(
         `SELECT email FROM web_correos_envio
          WHERE activo = 1 AND ${flagCol} = 1
@@ -94,7 +108,11 @@ export async function getDestinatariosWeb(
   }
 
   const tipoForm =
-    canal === 'sugerencias' ? 'sugerencias' : 'libro-reclamaciones'
+    canal === 'sugerencias'
+      ? 'sugerencias'
+      : canal === 'reclamos'
+        ? 'libro-reclamaciones'
+        : 'contacto'
   const cfg = getFormularioConfig(tipoForm)
   return cfg?.destinatarios?.length ? cfg.destinatarios : []
 }
@@ -127,6 +145,35 @@ export async function insertSugerencia(row: SugerenciaRow): Promise<InsertResult
     return { ok: true, id: Number(result.insertId) || undefined }
   } catch (error) {
     console.error('[MySQL] Error al guardar web_sugerencias (email de respaldo sigue):', error)
+    return { ok: false }
+  }
+}
+
+export async function insertContacto(row: ContactoRow): Promise<InsertResult> {
+  const db = getPool()
+  if (!db) {
+    console.warn('[MySQL] No configurado: se omite guardado de contacto')
+    return { ok: false }
+  }
+
+  try {
+    const [result] = await db.execute<ResultSetHeader>(
+      `INSERT INTO web_contactenos
+        (fecha_registro, nombre, email, telefono, asunto, mensaje, estado, ip)
+       VALUES (?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+      [
+        nowPeruMysql(),
+        row.nombre,
+        row.email,
+        row.telefono || null,
+        row.asunto || null,
+        row.mensaje,
+        row.ip || null,
+      ]
+    )
+    return { ok: true, id: Number(result.insertId) || undefined }
+  } catch (error) {
+    console.error('[MySQL] Error al guardar web_contactenos (email de respaldo sigue):', error)
     return { ok: false }
   }
 }

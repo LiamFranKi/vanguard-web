@@ -97,6 +97,71 @@ function shell(opts: {
 </html>`
 }
 
+/** Correo al colegio: nuevo contacto */
+export function emailContactoColegio(opts: {
+  logoUrl: string
+  nombre: string
+  email: string
+  telefono?: string
+  asunto?: string
+  mensaje: string
+}) {
+  const body = `
+    <p style="margin:0 0 16px 0;color:#334155;font-size:15px;line-height:1.6;">
+      Se recibió un nuevo mensaje desde el formulario <strong>Contáctenos</strong> de la web.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px 0;">
+      ${row('Nombre', opts.nombre)}
+      ${row('Email del remitente', opts.email)}
+      ${row('Teléfono', opts.telefono || '—')}
+      ${row('Asunto', opts.asunto || '—')}
+      ${row('Mensaje', opts.mensaje)}
+    </table>
+    <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del usuario).</p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Formulario web',
+    title: 'Nuevo mensaje de contacto',
+    subtitle: opts.nombre,
+    body,
+  })
+}
+
+/** Correo al usuario: acuse de contacto */
+export function emailContactoUsuario(opts: {
+  logoUrl: string
+  nombre: string
+}) {
+  const body = `
+    <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
+      Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
+    </p>
+    <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
+      Gracias por contactarnos. Hemos recibido su mensaje y nuestro equipo le responderá
+      a la brevedad posible.
+    </p>
+    <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
+      <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
+        Si necesita ayuda inmediata, llámenos a
+        <strong>946 592 100 / 922 084 833</strong>
+        o escriba a <strong>admin@vanguardschools.edu.pe</strong>.
+      </p>
+    </div>
+    <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
+      Atentamente,<br/>
+      <strong style="color:#1e3a8a;">Equipo Vanguard Schools</strong>
+    </p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Vanguard Schools',
+    title: 'Recibimos su mensaje',
+    subtitle: 'Contáctenos',
+    body,
+  })
+}
+
 /** Correo al colegio: nueva sugerencia */
 export function emailSugerenciaColegio(opts: {
   logoUrl: string
