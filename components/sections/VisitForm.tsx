@@ -17,24 +17,21 @@ type VisitaConfig = {
   usaSecuencias: boolean
   slotsPorDia?: Record<string, string[]>
   mensajeDias: string
+  disponible: boolean
 }
 
-const FALLBACK_CONFIG: VisitaConfig = {
-  diasSemana: [2, 4],
-  diasEtiquetas: [
-    { dia_semana: 2, etiqueta: 'Martes' },
-    { dia_semana: 4, etiqueta: 'Jueves' },
-  ],
-  horarios: [
-    { id: 0, etiqueta: 'Mañana (10:00 am - 11:00 am)' },
-    { id: 0, etiqueta: 'Tarde (03:00 pm - 04:00 pm)' },
-  ],
+/** Estado inicial vacío hasta cargar API (no asumir Martes/Jueves) */
+const EMPTY_CONFIG: VisitaConfig = {
+  diasSemana: [],
+  diasEtiquetas: [],
+  horarios: [],
   usaSecuencias: false,
-  mensajeDias: 'Martes y Jueves',
+  mensajeDias: '',
+  disponible: false,
 }
 
 export default function VisitForm() {
-  const [config, setConfig] = useState<VisitaConfig>(FALLBACK_CONFIG)
+  const [config, setConfig] = useState<VisitaConfig>(EMPTY_CONFIG)
   const [configLoaded, setConfigLoaded] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -52,22 +49,44 @@ export default function VisitForm() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
+  const visitasDisponibles =
+    configLoaded &&
+    config.disponible !== false &&
+    config.diasSemana.length > 0 &&
+    config.horarios.length > 0
+
   useEffect(() => {
     let cancelled = false
     fetch('/api/visitas-config')
       .then((r) => r.json())
       .then((data) => {
-        if (cancelled || !data?.diasSemana?.length) return
+        if (cancelled || !data || typeof data !== 'object') return
+        const diasSemana = Array.isArray(data.diasSemana) ? data.diasSemana : []
+        const horarios = Array.isArray(data.horarios) ? data.horarios : []
+        const disponible =
+          data.disponible !== false && diasSemana.length > 0 && horarios.length > 0
         setConfig({
-          diasSemana: data.diasSemana,
-          diasEtiquetas: data.diasEtiquetas || [],
-          horarios: data.horarios || FALLBACK_CONFIG.horarios,
+          diasSemana,
+          diasEtiquetas: Array.isArray(data.diasEtiquetas) ? data.diasEtiquetas : [],
+          horarios,
           usaSecuencias: Boolean(data.usaSecuencias),
           slotsPorDia: data.slotsPorDia,
-          mensajeDias: data.mensajeDias || FALLBACK_CONFIG.mensajeDias,
+          mensajeDias:
+            data.mensajeDias ||
+            (disponible ? 'días configurados' : 'No hay días disponibles'),
+          disponible,
         })
       })
-      .catch(() => {})
+      .catch(() => {
+        // Sin API: dejar cerrado (no inventar Martes/Jueves en el cliente)
+        if (!cancelled) {
+          setConfig({
+            ...EMPTY_CONFIG,
+            mensajeDias: 'No hay días disponibles',
+            disponible: false,
+          })
+        }
+      })
       .finally(() => {
         if (!cancelled) setConfigLoaded(true)
       })
@@ -113,6 +132,11 @@ export default function VisitForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!visitasDisponibles) {
+      setErrorMsg('Por el momento no hay visitas disponibles')
+      setSubmitStatus('error')
+      return
+    }
     setIsSubmitting(true)
     setSubmitStatus('idle')
     setErrorMsg('')
@@ -340,6 +364,13 @@ export default function VisitForm() {
 
                 <h3 className="text-xl font-semibold text-gray-900 mt-4">Detalles de la visita</h3>
 
+                {configLoaded && !visitasDisponibles && (
+                  <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-lg text-sm">
+                    Por el momento no hay visitas disponibles. Vuelve a intentarlo más adelante o
+                    contáctanos por teléfono.
+                  </div>
+                )}
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="fechaPreferida" className="block text-gray-700 font-semibold mb-2">
@@ -347,9 +378,11 @@ export default function VisitForm() {
                     </label>
                     <div
                       className={`flex items-center border rounded-lg px-3 transition-colors ${
-                        formData.fechaPreferida && isValidDay(formData.fechaPreferida)
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-300'
+                        !visitasDisponibles
+                          ? 'border-gray-200 bg-gray-50 opacity-70'
+                          : formData.fechaPreferida && isValidDay(formData.fechaPreferida)
+                            ? 'border-green-500 bg-green-50'
+                            : 'border-gray-300'
                       }`}
                     >
                       <FiCalendar
@@ -363,9 +396,16 @@ export default function VisitForm() {
                         selected={getSelectedDate()}
                         onChange={handleDateChange}
                         filterDate={filterDate}
-                        minDate={getMinDate()}
+                        minDate={visitasDisponibles ? getMinDate() : new Date()}
                         dateFormat="dd/MM/yyyy"
-                        placeholderText="Selecciona una fecha"
+                        placeholderText={
+                          !configLoaded
+                            ? 'Cargando…'
+                            : visitasDisponibles
+                              ? 'Selecciona una fecha'
+                              : 'Sin fechas disponibles'
+                        }
+                        disabled={!visitasDisponibles}
                         className={`w-full py-2.5 outline-none text-gray-900 date-picker-no-autofill ${
                           formData.fechaPreferida && isValidDay(formData.fechaPreferida)
                             ? 'bg-green-50 text-green-900 font-semibold'
@@ -382,15 +422,29 @@ export default function VisitForm() {
                         type="hidden"
                         name="fechaPreferida"
                         value={formData.fechaPreferida}
-                        required
+                        required={visitasDisponibles}
                       />
                     </div>
                     <p className="text-xs text-gray-500 mt-1 flex items-center flex-wrap">
-                      <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1" />
-                      Días disponibles:
-                      <strong className="text-green-600 ml-1">
-                        {configLoaded ? config.mensajeDias : '…'}
-                      </strong>
+                      <span
+                        className={`inline-block w-2 h-2 rounded-full mr-1 ${
+                          visitasDisponibles ? 'bg-green-500' : 'bg-amber-500'
+                        }`}
+                      />
+                      {visitasDisponibles ? (
+                        <>
+                          Días disponibles:
+                          <strong className="text-green-600 ml-1">
+                            {config.mensajeDias}
+                          </strong>
+                        </>
+                      ) : (
+                        <strong className="text-amber-700 ml-1">
+                          {configLoaded
+                            ? config.mensajeDias || 'No hay días disponibles'
+                            : 'Cargando disponibilidad…'}
+                        </strong>
+                      )}
                     </p>
                   </div>
                   <div>
@@ -400,12 +454,17 @@ export default function VisitForm() {
                     <select
                       id="horarioPreferido"
                       name="horarioPreferido"
-                      required
+                      required={visitasDisponibles}
+                      disabled={!visitasDisponibles}
                       value={formData.horarioPreferido}
                       onChange={handleChange}
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 disabled:bg-gray-50 disabled:opacity-70"
                     >
-                      <option value="">Selecciona una franja horaria</option>
+                      <option value="">
+                        {visitasDisponibles
+                          ? 'Selecciona una franja horaria'
+                          : 'Sin horarios disponibles'}
+                      </option>
                       {horariosDisponibles.map((h) => (
                         <option key={`${h.id}-${h.etiqueta}`} value={h.etiqueta}>
                           {h.etiqueta}
@@ -464,11 +523,19 @@ export default function VisitForm() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !visitasDisponibles}
                   className="w-full bg-primary-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg disabled:opacity-60"
                 >
                   <FiSend className={isSubmitting ? 'animate-spin' : ''} />
-                  <span>{isSubmitting ? 'Enviando solicitud...' : 'Reservar visita guiada'}</span>
+                  <span>
+                    {!configLoaded
+                      ? 'Cargando…'
+                      : !visitasDisponibles
+                        ? 'Visitas no disponibles'
+                        : isSubmitting
+                          ? 'Enviando solicitud...'
+                          : 'Reservar visita guiada'}
+                  </span>
                 </button>
               </form>
             </div>

@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server'
-import { getVisitaConfigPublica } from '@/lib/visitas-config'
+import {
+  getVisitaConfigPublica,
+  getFallbackVisitaConfig,
+} from '@/lib/visitas-config'
 
 /**
  * GET /api/visitas-config
- * Días y horarios activos para el formulario (desde MySQL).
+ * Días y horarios activos (MySQL).
+ * - 0 días/horarios activos → 200 con listas vacías y disponible:false (NO fallback)
+ * - Error de MySQL → fallback Martes/Jueves
  */
 export async function GET() {
   try {
@@ -13,7 +18,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('[visitas-config]', error)
-    const { getFallbackVisitaConfig } = await import('@/lib/visitas-config')
     return NextResponse.json(getFallbackVisitaConfig(), {
       headers: { 'Cache-Control': 'no-store' },
     })

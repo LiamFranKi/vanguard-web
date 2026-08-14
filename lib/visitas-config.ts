@@ -13,6 +13,8 @@ export type VisitaConfigPublica = {
   /** Mapa dia_semana -> etiquetas de horario permitidas (solo si usaSecuencias) */
   slotsPorDia?: Record<string, string[]>
   mensajeDias: string
+  /** false cuando MySQL OK pero 0 días o 0 horarios activos (visitas cerradas) */
+  disponible: boolean
   source: 'mysql' | 'fallback'
 }
 
@@ -28,11 +30,26 @@ const FALLBACK: VisitaConfigPublica = {
   ],
   usaSecuencias: false,
   mensajeDias: 'Martes y Jueves',
+  disponible: true,
   source: 'fallback',
 }
 
+/** Solo ante fallo real de MySQL / sin pool — no usar si la BD tiene 0 días a propósito */
 export function getFallbackVisitaConfig(): VisitaConfigPublica {
   return { ...FALLBACK }
+}
+
+/** MySQL OK pero sin días u horarios activos = visitas cerradas */
+export function getVisitaConfigCerrada(): VisitaConfigPublica {
+  return {
+    diasSemana: [],
+    diasEtiquetas: [],
+    horarios: [],
+    usaSecuencias: false,
+    mensajeDias: 'No hay días disponibles',
+    disponible: false,
+    source: 'mysql',
+  }
 }
 
 export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
@@ -56,8 +73,9 @@ export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
       etiqueta: String(r.etiqueta),
     }))
 
+    // Config intencionalmente vacía (intranet cerró visitas) — NO fallback Martes/Jueves
     if (diasEtiquetas.length === 0 || horarios.length === 0) {
-      return getFallbackVisitaConfig()
+      return getVisitaConfigCerrada()
     }
 
     // Secuencias activas (opcional)
@@ -99,6 +117,11 @@ export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
       // Tablas de secuencia aún no creadas: continuar sin secuencias
     }
 
+    // Tras filtrar por secuencias, puede quedar vacío = cerrado
+    if (diasEtiquetas.length === 0 || horarios.length === 0) {
+      return getVisitaConfigCerrada()
+    }
+
     const diasSemana = diasEtiquetas.map((d) => d.dia_semana)
     const mensajeDias = diasEtiquetas.map((d) => d.etiqueta).join(', ')
 
@@ -109,6 +132,7 @@ export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
       usaSecuencias,
       slotsPorDia: usaSecuencias ? slotsPorDia : undefined,
       mensajeDias: mensajeDias || 'días configurados',
+      disponible: true,
       source: 'mysql',
     }
   } catch (error) {
@@ -123,6 +147,14 @@ export async function validarVisitaFechaHorario(
   horarioPreferido: string
 ): Promise<{ ok: boolean; error?: string }> {
   const config = await getVisitaConfigPublica()
+
+  if (!config.disponible || config.diasSemana.length === 0 || config.horarios.length === 0) {
+    return {
+      ok: false,
+      error: 'Por el momento no hay visitas disponibles',
+    }
+  }
+
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaPreferida)) {
     return { ok: false, error: 'Fecha inválida' }
   }
