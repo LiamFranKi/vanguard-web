@@ -5,6 +5,8 @@
 1. Base **vanguard_intranet** → pestaña **SQL**.
 2. Ejecuta `sql/web_sugerencias_reclamos.sql` (tablas de datos).
 3. Ejecuta `sql/web_correos_envio.sql` (correos destino + filas iniciales).
+4. Ejecuta `sql/web_contactenos.sql` (contactos + flag `recibe_contacto`).
+5. Ejecuta `sql/web_visitas_guiadas.sql` (días/horarios configurables + registros + `recibe_visitas`).
 
 ### Tabla `web_correos_envio` (quién recibe los mails)
 
@@ -15,22 +17,34 @@
 | `activo` | 1 = recibe, 0 = no |
 | `recibe_sugerencias` | 1 = recibe sugerencias |
 | `recibe_reclamos` | 1 = recibe reclamos |
+| `recibe_contacto` | 1 = recibe Contáctenos |
+| `recibe_visitas` | 1 = recibe Visitas Guiadas |
 
 **Ejemplos en phpMyAdmin:**
 
 ```sql
--- Agregar un correo nuevo (recibe ambos)
-INSERT INTO web_correos_envio (email, etiqueta, activo, recibe_sugerencias, recibe_reclamos)
-VALUES ('nuevo@correo.com', 'Secretaría', 1, 1, 1);
+-- Agregar un correo nuevo
+INSERT INTO web_correos_envio
+  (email, etiqueta, activo, recibe_sugerencias, recibe_reclamos, recibe_contacto, recibe_visitas)
+VALUES ('nuevo@correo.com', 'Secretaría', 1, 1, 1, 1, 1);
 
--- Solo sugerencias
-UPDATE web_correos_envio SET recibe_sugerencias=1, recibe_reclamos=0 WHERE email='solo@sugerencias.com';
+-- Solo visitas
+UPDATE web_correos_envio
+SET recibe_visitas=1, recibe_sugerencias=0, recibe_reclamos=0, recibe_contacto=0
+WHERE email='admision@correo.com';
 
 -- Desactivar un correo sin borrarlo
 UPDATE web_correos_envio SET activo=0 WHERE email='ya-no@correo.com';
 ```
 
-Si la tabla está vacía o MySQL falla, se usan los correos de `config/formularios.json` como respaldo.
+### Visitas Guiadas (días y horarios)
+
+- `web_visita_dias`: activar/desactivar días (`activo=1`). Seed: martes y jueves.
+- `web_visita_horarios`: franjas (etiquetas).
+- `web_visita_secuencias` + `web_visita_secuencia_slots` (opcional): si hay secuencias activas, solo esas combinaciones día+horario.
+- `web_visitas_guiadas`: solicitudes del formulario.
+
+Si MySQL falla, el formulario usa martes/jueves y los dos horarios por defecto; los correos caen a `config/formularios.json`.
 
 ## 2) Correos: qué ve cada uno
 

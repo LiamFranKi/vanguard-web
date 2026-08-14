@@ -97,6 +97,79 @@ function shell(opts: {
 </html>`
 }
 
+/** Correo al colegio: visita guiada */
+export function emailVisitaColegio(opts: {
+  logoUrl: string
+  nombre: string
+  email: string
+  telefono?: string
+  nivelInteres?: string
+  fechaPreferida?: string
+  horarioPreferido?: string
+  numeroEstudiantes?: string
+  mensaje?: string
+}) {
+  const body = `
+    <p style="margin:0 0 16px 0;color:#334155;font-size:15px;line-height:1.6;">
+      Nueva solicitud de <strong>visita guiada</strong> desde la web institucional.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px 0;">
+      ${row('Nombre', opts.nombre)}
+      ${row('Email', opts.email)}
+      ${row('Teléfono', opts.telefono || '—')}
+      ${row('Nivel de interés', opts.nivelInteres || '—')}
+      ${row('Fecha preferida', opts.fechaPreferida || '—')}
+      ${row('Horario preferido', opts.horarioPreferido || '—')}
+      ${row('N° de estudiantes (aprox.)', opts.numeroEstudiantes || '—')}
+      ${row('Comentarios', opts.mensaje || '—')}
+    </table>
+    <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del interesado).</p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Formulario web',
+    title: 'Nueva visita guiada',
+    subtitle: opts.nombre,
+    body,
+  })
+}
+
+/** Correo al usuario: acuse visita */
+export function emailVisitaUsuario(opts: {
+  logoUrl: string
+  nombre: string
+  fechaPreferida?: string
+  horarioPreferido?: string
+}) {
+  const body = `
+    <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
+      Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
+    </p>
+    <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
+      Gracias por su interés en Vanguard Schools. Hemos recibido su solicitud de
+      <strong>visita guiada</strong> y nos pondremos en contacto para confirmar la fecha y hora.
+    </p>
+    <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
+      <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
+        <strong>Preferencia indicada</strong><br/>
+        Fecha: ${escapeHtml(opts.fechaPreferida || '—')}<br/>
+        Horario: ${escapeHtml(opts.horarioPreferido || '—')}
+      </p>
+    </div>
+    <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
+      Atentamente,<br/>
+      <strong style="color:#1e3a8a;">Equipo de Admisión · Vanguard Schools</strong>
+    </p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Vanguard Schools',
+    title: 'Solicitud recibida',
+    subtitle: 'Visita guiada',
+    body,
+  })
+}
+
 /** Correo al colegio: nuevo contacto */
 export function emailContactoColegio(opts: {
   logoUrl: string

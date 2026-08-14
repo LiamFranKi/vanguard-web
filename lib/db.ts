@@ -50,6 +50,18 @@ export type ContactoRow = {
   ip?: string | null
 }
 
+export type VisitaRow = {
+  nombre: string
+  email: string
+  telefono?: string
+  nivelInteres?: string
+  fechaPreferida: string
+  horarioPreferido: string
+  numeroEstudiantes?: string
+  mensaje?: string
+  ip?: string | null
+}
+
 export type ReclamoRow = {
   numero: string
   fechaRegistro: string
@@ -80,7 +92,7 @@ export type ReclamoRow = {
  * La intranet puede administrar quién recibe cada canal.
  */
 export async function getDestinatariosWeb(
-  canal: 'sugerencias' | 'reclamos' | 'contacto'
+  canal: 'sugerencias' | 'reclamos' | 'contacto' | 'visitas'
 ): Promise<string[]> {
   const db = getPool()
   if (db) {
@@ -90,7 +102,9 @@ export async function getDestinatariosWeb(
           ? 'recibe_sugerencias'
           : canal === 'reclamos'
             ? 'recibe_reclamos'
-            : 'recibe_contacto'
+            : canal === 'contacto'
+              ? 'recibe_contacto'
+              : 'recibe_visitas'
       const [rows] = await db.execute<RowDataPacket[]>(
         `SELECT email FROM web_correos_envio
          WHERE activo = 1 AND ${flagCol} = 1
@@ -112,7 +126,9 @@ export async function getDestinatariosWeb(
       ? 'sugerencias'
       : canal === 'reclamos'
         ? 'libro-reclamaciones'
-        : 'contacto'
+        : canal === 'contacto'
+          ? 'contacto'
+          : 'visita-guiada'
   const cfg = getFormularioConfig(tipoForm)
   return cfg?.destinatarios?.length ? cfg.destinatarios : []
 }
@@ -174,6 +190,39 @@ export async function insertContacto(row: ContactoRow): Promise<InsertResult> {
     return { ok: true, id: Number(result.insertId) || undefined }
   } catch (error) {
     console.error('[MySQL] Error al guardar web_contactenos (email de respaldo sigue):', error)
+    return { ok: false }
+  }
+}
+
+export async function insertVisita(row: VisitaRow): Promise<InsertResult> {
+  const db = getPool()
+  if (!db) {
+    console.warn('[MySQL] No configurado: se omite guardado de visita')
+    return { ok: false }
+  }
+
+  try {
+    const [result] = await db.execute<ResultSetHeader>(
+      `INSERT INTO web_visitas_guiadas
+        (fecha_registro, nombre, email, telefono, nivel_interes, fecha_preferida,
+         horario_preferido, numero_estudiantes, mensaje, estado, ip)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+      [
+        nowPeruMysql(),
+        row.nombre,
+        row.email,
+        row.telefono || null,
+        row.nivelInteres || null,
+        row.fechaPreferida,
+        row.horarioPreferido,
+        row.numeroEstudiantes || null,
+        row.mensaje || null,
+        row.ip || null,
+      ]
+    )
+    return { ok: true, id: Number(result.insertId) || undefined }
+  } catch (error) {
+    console.error('[MySQL] Error al guardar web_visitas_guiadas (email de respaldo sigue):', error)
     return { ok: false }
   }
 }

@@ -8,7 +8,7 @@
  */
 
 export type WebFormularioNotifyPayload = {
-  canal: 'reclamo' | 'sugerencia' | 'queja' | 'contacto'
+  canal: 'reclamo' | 'sugerencia' | 'queja' | 'contacto' | 'visita'
   tipo?: string
   id?: number
   nombre: string

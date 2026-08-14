@@ -3,13 +3,15 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
-import { insertSugerencia, insertContacto, getDestinatariosWeb } from '@/lib/db'
+import { insertSugerencia, insertContacto, insertVisita, getDestinatariosWeb } from '@/lib/db'
 import {
   getLogoUrl,
   emailSugerenciaColegio,
   emailSugerenciaUsuario,
   emailContactoColegio,
   emailContactoUsuario,
+  emailVisitaColegio,
+  emailVisitaUsuario,
 } from '@/lib/email-templates'
 
 /**
@@ -128,6 +130,60 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (tipo === 'visita-guiada') {
+      const fechaPreferida = String(otrosDatos.fechaPreferida || '').trim()
+      const horarioPreferido = String(otrosDatos.horarioPreferido || '').trim()
+      if (!fechaPreferida || !horarioPreferido) {
+        return NextResponse.json(
+          { error: 'Fecha y horario preferidos son requeridos' },
+          { status: 400 }
+        )
+      }
+
+      const { validarVisitaFechaHorario } = await import('@/lib/visitas-config')
+      const validacion = await validarVisitaFechaHorario(
+        fechaPreferida,
+        horarioPreferido
+      )
+      if (!validacion.ok) {
+        return NextResponse.json(
+          { error: validacion.error || 'Fecha u horario no disponibles' },
+          { status: 400 }
+        )
+      }
+
+      const forwarded = request.headers.get('x-forwarded-for')
+      const ip =
+        forwarded?.split(',')[0]?.trim() ||
+        request.headers.get('x-real-ip') ||
+        null
+      const saved = await insertVisita({
+        nombre,
+        email,
+        telefono: String(otrosDatos.telefono || ''),
+        nivelInteres: String(otrosDatos.nivelInteres || ''),
+        fechaPreferida,
+        horarioPreferido,
+        numeroEstudiantes: String(otrosDatos.numeroEstudiantes || ''),
+        mensaje: String(otrosDatos.mensaje || ''),
+        ip,
+      })
+      if (saved.ok) {
+        const { notificarIntranetWebFormulario } = await import(
+          '@/lib/intranet-notify'
+        )
+        notificarIntranetWebFormulario({
+          canal: 'visita',
+          tipo: String(otrosDatos.nivelInteres || 'visita-guiada'),
+          id: saved.id,
+          nombre,
+          email,
+          telefono: String(otrosDatos.telefono || ''),
+          resumen: `${fechaPreferida} · ${horarioPreferido}`,
+        }).catch(() => {})
+      }
+    }
+
     const emailConfig = getEmailConfig()
     const logoUrl = getLogoUrl()
     const transporter = nodemailer.createTransport({
@@ -146,6 +202,8 @@ export async function POST(request: NextRequest) {
       destinatarios = await getDestinatariosWeb('sugerencias')
     } else if (tipo === 'contacto') {
       destinatarios = await getDestinatariosWeb('contacto')
+    } else if (tipo === 'visita-guiada') {
+      destinatarios = await getDestinatariosWeb('visitas')
     }
 
     let emailHTML: string
@@ -179,6 +237,27 @@ export async function POST(request: NextRequest) {
       confirmacionHTML = emailContactoUsuario({ logoUrl, nombre })
       asuntoColegio = `Nuevo contacto web — ${String(otrosDatos.asunto || 'Sin asunto')}`
       asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
+      replyToColegio = email
+    } else if (tipo === 'visita-guiada') {
+      emailHTML = emailVisitaColegio({
+        logoUrl,
+        nombre,
+        email,
+        telefono: String(otrosDatos.telefono || ''),
+        nivelInteres: String(otrosDatos.nivelInteres || ''),
+        fechaPreferida: String(otrosDatos.fechaPreferida || ''),
+        horarioPreferido: String(otrosDatos.horarioPreferido || ''),
+        numeroEstudiantes: String(otrosDatos.numeroEstudiantes || ''),
+        mensaje: String(otrosDatos.mensaje || ''),
+      })
+      confirmacionHTML = emailVisitaUsuario({
+        logoUrl,
+        nombre,
+        fechaPreferida: String(otrosDatos.fechaPreferida || ''),
+        horarioPreferido: String(otrosDatos.horarioPreferido || ''),
+      })
+      asuntoColegio = `Nueva visita guiada — ${String(otrosDatos.fechaPreferida || '')}`
+      asuntoUsuario = `Solicitud de visita recibida — Vanguard Schools`
       replyToColegio = email
     } else {
       emailHTML = generateEmailHTML(

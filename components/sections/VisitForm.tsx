@@ -1,18 +1,42 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { FiCalendar, FiClock, FiUsers, FiMail, FiPhone, FiSend } from 'react-icons/fi'
-import AlertModal from '@/components/AlertModal'
 import DatePicker from 'react-datepicker'
 import { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { es } from 'date-fns/locale/es'
 import 'react-datepicker/dist/react-datepicker.css'
 
-// Registrar locale en español
 registerLocale('es', es)
 setDefaultLocale('es')
 
+type VisitaConfig = {
+  diasSemana: number[]
+  diasEtiquetas: { dia_semana: number; etiqueta: string }[]
+  horarios: { id: number; etiqueta: string }[]
+  usaSecuencias: boolean
+  slotsPorDia?: Record<string, string[]>
+  mensajeDias: string
+}
+
+const FALLBACK_CONFIG: VisitaConfig = {
+  diasSemana: [2, 4],
+  diasEtiquetas: [
+    { dia_semana: 2, etiqueta: 'Martes' },
+    { dia_semana: 4, etiqueta: 'Jueves' },
+  ],
+  horarios: [
+    { id: 0, etiqueta: 'Mañana (10:00 am - 11:00 am)' },
+    { id: 0, etiqueta: 'Tarde (03:00 pm - 04:00 pm)' },
+  ],
+  usaSecuencias: false,
+  mensajeDias: 'Martes y Jueves',
+}
+
 export default function VisitForm() {
+  const [config, setConfig] = useState<VisitaConfig>(FALLBACK_CONFIG)
+  const [configLoaded, setConfigLoaded] = useState(false)
+
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -26,9 +50,32 @@ export default function VisitForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [showAlert, setShowAlert] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
-  // Prevenir autofill del navegador
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/visitas-config')
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled || !data?.diasSemana?.length) return
+        setConfig({
+          diasSemana: data.diasSemana,
+          diasEtiquetas: data.diasEtiquetas || [],
+          horarios: data.horarios || FALLBACK_CONFIG.horarios,
+          usaSecuencias: Boolean(data.usaSecuencias),
+          slotsPorDia: data.slotsPorDia,
+          mensajeDias: data.mensajeDias || FALLBACK_CONFIG.mensajeDias,
+        })
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setConfigLoaded(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   useEffect(() => {
     const preventAutofill = () => {
       const input = document.getElementById('fechaPreferida') as HTMLInputElement
@@ -39,24 +86,41 @@ export default function VisitForm() {
         input.setAttribute('data-1p-ignore', 'true')
       }
     }
-
-    // Ejecutar inmediatamente y después de un pequeño delay
     preventAutofill()
     const timer = setTimeout(preventAutofill, 100)
     return () => clearTimeout(timer)
   }, [formData.fechaPreferida])
 
+  const horariosDisponibles = useMemo(() => {
+    if (!formData.fechaPreferida || !config.usaSecuencias || !config.slotsPorDia) {
+      return config.horarios
+    }
+    const [y, m, d] = formData.fechaPreferida.split('-').map(Number)
+    const dow = new Date(y, m - 1, d).getDay()
+    const allowed = config.slotsPorDia[String(dow)] || []
+    if (allowed.length === 0) return config.horarios
+    return config.horarios.filter((h) => allowed.includes(h.etiqueta))
+  }, [formData.fechaPreferida, config])
+
+  useEffect(() => {
+    if (
+      formData.horarioPreferido &&
+      !horariosDisponibles.some((h) => h.etiqueta === formData.horarioPreferido)
+    ) {
+      setFormData((prev) => ({ ...prev, horarioPreferido: '' }))
+    }
+  }, [horariosDisponibles, formData.horarioPreferido])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus('idle')
+    setErrorMsg('')
 
     try {
       const response = await fetch('/api/formulario?tipo=visita-guiada', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
@@ -73,91 +137,64 @@ export default function VisitForm() {
           mensaje: '',
         })
       } else {
+        const data = await response.json().catch(() => ({}))
+        setErrorMsg(String(data?.error || ''))
         setSubmitStatus('error')
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus('error')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  // Manejar cambio de fecha desde DatePicker
   const handleDateChange = (date: Date | null) => {
     if (date) {
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const day = String(date.getDate()).padStart(2, '0')
-      const dateString = `${year}-${month}-${day}`
-      
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        fechaPreferida: dateString,
+        fechaPreferida: `${year}-${month}-${day}`,
       }))
     } else {
-      setFormData(prev => ({
-        ...prev,
-        fechaPreferida: '',
-      }))
+      setFormData((prev) => ({ ...prev, fechaPreferida: '' }))
     }
   }
 
-  // Función para filtrar días - solo permitir Martes (2) y Jueves (4)
-  const filterDate = (date: Date) => {
-    const dayOfWeek = date.getDay()
-    return dayOfWeek === 2 || dayOfWeek === 4 // Solo Martes y Jueves
-  }
-  
-  // Función para obtener el día mínimo disponible (próximo Martes o Jueves)
+  const filterDate = (date: Date) => config.diasSemana.includes(date.getDay())
+
   const getMinDate = () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const dayOfWeek = today.getDay()
-    let daysToAdd = 0
-    
-    // Si es domingo (0), el próximo martes está a 2 días
-    if (dayOfWeek === 0) daysToAdd = 2
-    // Si es lunes (1), el próximo martes está a 1 día
-    else if (dayOfWeek === 1) daysToAdd = 1
-    // Si es martes (2), el próximo jueves está a 2 días
-    else if (dayOfWeek === 2) daysToAdd = 2
-    // Si es miércoles (3), el próximo jueves está a 1 día
-    else if (dayOfWeek === 3) daysToAdd = 1
-    // Si es jueves (4), el próximo martes está a 5 días
-    else if (dayOfWeek === 4) daysToAdd = 5
-    // Si es viernes (5), el próximo martes está a 4 días
-    else if (dayOfWeek === 5) daysToAdd = 4
-    // Si es sábado (6), el próximo martes está a 3 días
-    else if (dayOfWeek === 6) daysToAdd = 3
-    
-    const minDate = new Date(today)
-    minDate.setDate(today.getDate() + daysToAdd)
-    return minDate
+    const candidate = new Date(today)
+    candidate.setDate(today.getDate() + 1)
+    for (let i = 0; i < 21; i++) {
+      if (config.diasSemana.includes(candidate.getDay())) {
+        return candidate
+      }
+      candidate.setDate(candidate.getDate() + 1)
+    }
+    return candidate
   }
 
-  // Convertir fecha string a Date object para DatePicker
   const getSelectedDate = () => {
     if (!formData.fechaPreferida) return null
     const [year, month, day] = formData.fechaPreferida.split('-').map(Number)
     return new Date(year, month - 1, day)
   }
-  
-  // Función para verificar si una fecha es Martes o Jueves
+
   const isValidDay = (dateString: string) => {
     if (!dateString) return false
-    // Parsear la fecha manualmente para evitar problemas de zona horaria
     const [year, month, day] = dateString.split('-').map(Number)
-    const date = new Date(year, month - 1, day) // month - 1 porque Date usa 0-11 para meses
-    const dayOfWeek = date.getDay()
-    return dayOfWeek === 2 || dayOfWeek === 4 // Martes o Jueves
+    return config.diasSemana.includes(new Date(year, month - 1, day).getDay())
   }
 
   return (
@@ -165,13 +202,12 @@ export default function VisitForm() {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-5 gap-8 items-start">
-            {/* Info lateral con resumen de pasos */}
             <div className="md:col-span-2 bg-white rounded-2xl shadow-md p-6 border border-sky-100 mb-8 md:mb-0 flex flex-col justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-primary-800 mb-4">Reserva tu visita</h2>
                 <p className="text-gray-700 mb-4">
-                Completa este formulario y nuestro equipo de admisión se pondrá en contacto contigo
-                para confirmar la fecha y hora de tu visita.
+                  Completa este formulario y nuestro equipo de admisión se pondrá en contacto contigo
+                  para confirmar la fecha y hora de tu visita.
                 </p>
                 <div className="space-y-4 text-sm text-gray-700">
                   <div className="flex items-start space-x-3">
@@ -204,7 +240,6 @@ export default function VisitForm() {
                 </div>
               </div>
 
-              {/* Badges decorativos inferiores para llenar espacio */}
               <div className="hidden md:flex mt-10 flex-wrap gap-3 items-center justify-center">
                 <div className="inline-flex items-center space-x-2 bg-white/80 border border-primary-100 rounded-full px-4 py-2 shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-primary-500" />
@@ -221,7 +256,6 @@ export default function VisitForm() {
               </div>
             </div>
 
-            {/* Formulario principal */}
             <div className="md:col-span-3 bg-white rounded-2xl shadow-lg p-8 border border-sky-100">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Datos de contacto</h3>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -311,16 +345,20 @@ export default function VisitForm() {
                     <label htmlFor="fechaPreferida" className="block text-gray-700 font-semibold mb-2">
                       Fecha preferida *
                     </label>
-                    <div className={`flex items-center border rounded-lg px-3 transition-colors ${
-                      formData.fechaPreferida && isValidDay(formData.fechaPreferida)
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-gray-300'
-                    }`}>
-                      <FiCalendar className={`mr-2 flex-shrink-0 ${
+                    <div
+                      className={`flex items-center border rounded-lg px-3 transition-colors ${
                         formData.fechaPreferida && isValidDay(formData.fechaPreferida)
-                          ? 'text-green-600'
-                          : 'text-gray-400'
-                      }`} />
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-300'
+                      }`}
+                    >
+                      <FiCalendar
+                        className={`mr-2 flex-shrink-0 ${
+                          formData.fechaPreferida && isValidDay(formData.fechaPreferida)
+                            ? 'text-green-600'
+                            : 'text-gray-400'
+                        }`}
+                      />
                       <DatePicker
                         selected={getSelectedDate()}
                         onChange={handleDateChange}
@@ -340,7 +378,6 @@ export default function VisitForm() {
                         autoComplete="off"
                         autoFocus={false}
                       />
-                      {/* Input oculto para validación HTML5 */}
                       <input
                         type="hidden"
                         name="fechaPreferida"
@@ -348,9 +385,12 @@ export default function VisitForm() {
                         required
                       />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1 flex items-center">
-                      <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                      Solo disponibles: <strong className="text-green-600 ml-1">Martes y Jueves</strong>
+                    <p className="text-xs text-gray-500 mt-1 flex items-center flex-wrap">
+                      <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1" />
+                      Días disponibles:
+                      <strong className="text-green-600 ml-1">
+                        {configLoaded ? config.mensajeDias : '…'}
+                      </strong>
                     </p>
                   </div>
                   <div>
@@ -366,8 +406,11 @@ export default function VisitForm() {
                       className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900"
                     >
                       <option value="">Selecciona una franja horaria</option>
-                      <option value="Mañana (10:00 am - 11:00 am)">Mañana (10:00 am - 11:00 am)</option>
-                      <option value="Tarde (03:00 pm - 04:00 pm)">Tarde (03:00 pm - 04:00 pm)</option>
+                      {horariosDisponibles.map((h) => (
+                        <option key={`${h.id}-${h.etiqueta}`} value={h.etiqueta}>
+                          {h.etiqueta}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -414,7 +457,8 @@ export default function VisitForm() {
 
                 {submitStatus === 'error' && (
                   <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-                    Hubo un problema al enviar tu solicitud. Por favor, intenta nuevamente en unos minutos.
+                    {errorMsg ||
+                      'Hubo un problema al enviar tu solicitud. Por favor, intenta nuevamente en unos minutos.'}
                   </div>
                 )}
 
@@ -431,17 +475,6 @@ export default function VisitForm() {
           </div>
         </div>
       </div>
-
-      {/* Modal de alerta personalizado */}
-      <AlertModal
-        isOpen={showAlert}
-        onClose={() => setShowAlert(false)}
-        type="warning"
-        title="Día no disponible"
-        message="Las visitas guiadas solo están disponibles los días Martes y Jueves. Por favor, selecciona uno de estos días."
-      />
     </section>
   )
 }
-
-
