@@ -238,6 +238,78 @@ export function emailTrabajaUsuario(opts: {
   })
 }
 
+/** Correo al colegio: solicitud de admisión */
+export function emailAdmisionColegio(opts: {
+  logoUrl: string
+  nombresEstudiante: string
+  apellidosEstudiante: string
+  nombresApoderado: string
+  dniApoderado: string
+  telefonoApoderado?: string
+  emailApoderado: string
+  direccionApoderado?: string
+  grado: string
+}) {
+  const body = `
+    <p style="margin:0 0 16px 0;color:#334155;font-size:15px;line-height:1.6;">
+      Nueva solicitud de <strong>admisión / ratificación</strong> desde la web institucional.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px 0;">
+      ${row('Estudiante', `${opts.nombresEstudiante} ${opts.apellidosEstudiante}`)}
+      ${row('Grado de interés', opts.grado)}
+      ${row('Apoderado', opts.nombresApoderado)}
+      ${row('DNI apoderado', opts.dniApoderado)}
+      ${row('Teléfono', opts.telefonoApoderado || '—')}
+      ${row('Email', opts.emailApoderado)}
+      ${row('Dirección', opts.direccionApoderado || '—')}
+    </table>
+    <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del apoderado).</p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Formulario web',
+    title: 'Nueva solicitud de admisión',
+    subtitle: opts.grado,
+    body,
+  })
+}
+
+/** Correo al apoderado: acuse admisión */
+export function emailAdmisionUsuario(opts: {
+  logoUrl: string
+  nombresApoderado: string
+  nombresEstudiante: string
+  grado: string
+}) {
+  const body = `
+    <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
+      Estimado/a <strong>${escapeHtml(opts.nombresApoderado)}</strong>,
+    </p>
+    <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
+      Gracias por su interés en Vanguard Schools. Hemos recibido la solicitud de admisión
+      de <strong>${escapeHtml(opts.nombresEstudiante)}</strong>
+      para <strong>${escapeHtml(opts.grado)}</strong> y nos pondremos en contacto a la brevedad.
+    </p>
+    <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
+      <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
+        Si necesita información inmediata: <strong>946 592 100 / 922 084 833</strong>
+        · <strong>admin@vanguardschools.edu.pe</strong>
+      </p>
+    </div>
+    <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
+      Atentamente,<br/>
+      <strong style="color:#1e3a8a;">Equipo de Admisión · Vanguard Schools</strong>
+    </p>
+  `
+  return shell({
+    logoUrl: opts.logoUrl,
+    eyebrow: 'Vanguard Schools',
+    title: 'Solicitud recibida',
+    subtitle: 'Admisión',
+    body,
+  })
+}
+
 /** Correo al colegio: nuevo contacto */
 export function emailContactoColegio(opts: {
   logoUrl: string

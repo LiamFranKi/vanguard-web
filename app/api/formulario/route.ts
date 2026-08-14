@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
 import { getFormularioConfig, getEmailConfig } from '@/lib/formularios'
-import { insertSugerencia, insertContacto, insertVisita, getDestinatariosWeb } from '@/lib/db'
+import { insertSugerencia, insertContacto, insertVisita, insertAdmision, getDestinatariosWeb } from '@/lib/db'
 import {
   getLogoUrl,
   emailSugerenciaColegio,
@@ -12,6 +12,8 @@ import {
   emailContactoUsuario,
   emailVisitaColegio,
   emailVisitaUsuario,
+  emailAdmisionColegio,
+  emailAdmisionUsuario,
 } from '@/lib/email-templates'
 
 /**
@@ -184,6 +186,61 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (tipo === 'admisión') {
+      const nombresEstudiante = String(otrosDatos.nombresEstudiante || '').trim()
+      const apellidosEstudiante = String(otrosDatos.apellidosEstudiante || '').trim()
+      const nombresApoderado = String(otrosDatos.nombresApoderado || '').trim()
+      const dniApoderado = String(otrosDatos.dniApoderado || '').trim()
+      const telefonoApoderado = String(otrosDatos.telefonoApoderado || '').trim()
+      const emailApoderado = String(otrosDatos.emailApoderado || email || '').trim()
+      const direccionApoderado = String(otrosDatos.direccionApoderado || '').trim()
+      const grado = String(otrosDatos.grado || '').trim()
+
+      if (
+        !nombresEstudiante ||
+        !apellidosEstudiante ||
+        !nombresApoderado ||
+        !dniApoderado ||
+        !grado
+      ) {
+        return NextResponse.json(
+          { error: 'Complete los datos del estudiante, apoderado y grado' },
+          { status: 400 }
+        )
+      }
+
+      const forwarded = request.headers.get('x-forwarded-for')
+      const ip =
+        forwarded?.split(',')[0]?.trim() ||
+        request.headers.get('x-real-ip') ||
+        null
+      const saved = await insertAdmision({
+        nombresEstudiante,
+        apellidosEstudiante,
+        nombresApoderado,
+        dniApoderado,
+        telefonoApoderado,
+        emailApoderado,
+        direccionApoderado,
+        grado,
+        ip,
+      })
+      if (saved.ok) {
+        const { notificarIntranetWebFormulario } = await import(
+          '@/lib/intranet-notify'
+        )
+        notificarIntranetWebFormulario({
+          canal: 'admision',
+          tipo: grado,
+          id: saved.id,
+          nombre: nombresApoderado,
+          email: emailApoderado,
+          telefono: telefonoApoderado,
+          resumen: `${nombresEstudiante} ${apellidosEstudiante} · ${grado}`,
+        }).catch(() => {})
+      }
+    }
+
     const emailConfig = getEmailConfig()
     const logoUrl = getLogoUrl()
     const transporter = nodemailer.createTransport({
@@ -204,6 +261,8 @@ export async function POST(request: NextRequest) {
       destinatarios = await getDestinatariosWeb('contacto')
     } else if (tipo === 'visita-guiada') {
       destinatarios = await getDestinatariosWeb('visitas')
+    } else if (tipo === 'admisión') {
+      destinatarios = await getDestinatariosWeb('admision')
     }
 
     let emailHTML: string
@@ -259,6 +318,31 @@ export async function POST(request: NextRequest) {
       asuntoColegio = `Nueva visita guiada — ${String(otrosDatos.fechaPreferida || '')}`
       asuntoUsuario = `Solicitud de visita recibida — Vanguard Schools`
       replyToColegio = email
+    } else if (tipo === 'admisión') {
+      const nombresEstudiante = String(otrosDatos.nombresEstudiante || '')
+      const apellidosEstudiante = String(otrosDatos.apellidosEstudiante || '')
+      const nombresApoderado = String(otrosDatos.nombresApoderado || '')
+      const grado = String(otrosDatos.grado || '')
+      emailHTML = emailAdmisionColegio({
+        logoUrl,
+        nombresEstudiante,
+        apellidosEstudiante,
+        nombresApoderado,
+        dniApoderado: String(otrosDatos.dniApoderado || ''),
+        telefonoApoderado: String(otrosDatos.telefonoApoderado || ''),
+        emailApoderado: String(otrosDatos.emailApoderado || email),
+        direccionApoderado: String(otrosDatos.direccionApoderado || ''),
+        grado,
+      })
+      confirmacionHTML = emailAdmisionUsuario({
+        logoUrl,
+        nombresApoderado,
+        nombresEstudiante,
+        grado,
+      })
+      asuntoColegio = `Nueva admisión — ${grado || 'Sin grado'}`
+      asuntoUsuario = `Solicitud de admisión recibida — Vanguard Schools`
+      replyToColegio = String(otrosDatos.emailApoderado || email)
     } else {
       emailHTML = generateEmailHTML(
         formularioConfig.nombre,

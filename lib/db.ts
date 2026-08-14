@@ -75,6 +75,18 @@ export type TrabajaRow = {
   ip?: string | null
 }
 
+export type AdmisionRow = {
+  nombresEstudiante: string
+  apellidosEstudiante: string
+  nombresApoderado: string
+  dniApoderado: string
+  telefonoApoderado?: string
+  emailApoderado: string
+  direccionApoderado?: string
+  grado: string
+  ip?: string | null
+}
+
 export type ReclamoRow = {
   numero: string
   fechaRegistro: string
@@ -105,7 +117,13 @@ export type ReclamoRow = {
  * La intranet puede administrar quién recibe cada canal.
  */
 export async function getDestinatariosWeb(
-  canal: 'sugerencias' | 'reclamos' | 'contacto' | 'visitas' | 'trabaja'
+  canal:
+    | 'sugerencias'
+    | 'reclamos'
+    | 'contacto'
+    | 'visitas'
+    | 'trabaja'
+    | 'admision'
 ): Promise<string[]> {
   const db = getPool()
   if (db) {
@@ -119,7 +137,9 @@ export async function getDestinatariosWeb(
               ? 'recibe_contacto'
               : canal === 'visitas'
                 ? 'recibe_visitas'
-                : 'recibe_trabaja'
+                : canal === 'trabaja'
+                  ? 'recibe_trabaja'
+                  : 'recibe_admision'
       const [rows] = await db.execute<RowDataPacket[]>(
         `SELECT email FROM web_correos_envio
          WHERE activo = 1 AND ${flagCol} = 1
@@ -145,7 +165,9 @@ export async function getDestinatariosWeb(
           ? 'contacto'
           : canal === 'visitas'
             ? 'visita-guiada'
-            : 'trabaja-con-nosotros'
+            : canal === 'trabaja'
+              ? 'trabaja-con-nosotros'
+              : 'admisión'
   const cfg = getFormularioConfig(tipoForm)
   return cfg?.destinatarios?.length ? cfg.destinatarios : []
 }
@@ -277,6 +299,40 @@ export async function insertTrabaja(row: TrabajaRow): Promise<InsertResult> {
       '[MySQL] Error al guardar web_trabaja_con_nosotros (email de respaldo sigue):',
       error
     )
+    return { ok: false }
+  }
+}
+
+export async function insertAdmision(row: AdmisionRow): Promise<InsertResult> {
+  const db = getPool()
+  if (!db) {
+    console.warn('[MySQL] No configurado: se omite guardado de admisión')
+    return { ok: false }
+  }
+
+  try {
+    const [result] = await db.execute<ResultSetHeader>(
+      `INSERT INTO web_admision
+        (fecha_registro, nombres_estudiante, apellidos_estudiante, nombres_apoderado,
+         dni_apoderado, telefono_apoderado, email_apoderado, direccion_apoderado,
+         grado, estado, ip)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+      [
+        nowPeruMysql(),
+        row.nombresEstudiante,
+        row.apellidosEstudiante,
+        row.nombresApoderado,
+        row.dniApoderado,
+        row.telefonoApoderado || null,
+        row.emailApoderado,
+        row.direccionApoderado || null,
+        row.grado,
+        row.ip || null,
+      ]
+    )
+    return { ok: true, id: Number(result.insertId) || undefined }
+  } catch (error) {
+    console.error('[MySQL] Error al guardar web_admision (email de respaldo sigue):', error)
     return { ok: false }
   }
 }

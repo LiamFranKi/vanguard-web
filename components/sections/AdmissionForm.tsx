@@ -17,6 +17,7 @@ export default function AdmissionForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
 
   const grados = [
     'Inicial 03 Años',
@@ -39,6 +40,7 @@ export default function AdmissionForm() {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus('idle')
+    setErrorMsg('')
 
     try {
       const response = await fetch('/api/formulario?tipo=admisión', {
@@ -66,6 +68,8 @@ export default function AdmissionForm() {
           grado: '',
         })
       } else {
+        const data = await response.json().catch(() => ({}))
+        setErrorMsg(String(data?.error || ''))
         setSubmitStatus('error')
       }
     } catch (error) {
@@ -273,7 +277,8 @@ export default function AdmissionForm() {
 
                 {submitStatus === 'error' && (
                   <div className="bg-red-50 border-2 border-red-200 text-red-800 px-6 py-4 rounded-xl text-sm font-medium">
-                    Hubo un problema al enviar tu solicitud. Por favor, intenta nuevamente en unos minutos.
+                    {errorMsg ||
+                      'Hubo un problema al enviar tu solicitud. Por favor, intenta nuevamente en unos minutos.'}
                   </div>
                 )}
 
