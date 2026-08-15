@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { FiCalendar, FiClock, FiUsers, FiMail, FiPhone, FiSend } from 'react-icons/fi'
 import DatePicker from 'react-datepicker'
 import { registerLocale, setDefaultLocale } from 'react-datepicker'
@@ -14,8 +14,6 @@ type VisitaConfig = {
   diasSemana: number[]
   diasEtiquetas: { dia_semana: number; etiqueta: string }[]
   horarios: { id: number; etiqueta: string }[]
-  usaSecuencias: boolean
-  slotsPorDia?: Record<string, string[]>
   mensajeDias: string
   disponible: boolean
 }
@@ -25,7 +23,6 @@ const EMPTY_CONFIG: VisitaConfig = {
   diasSemana: [],
   diasEtiquetas: [],
   horarios: [],
-  usaSecuencias: false,
   mensajeDias: '',
   disponible: false,
 }
@@ -69,8 +66,6 @@ export default function VisitForm() {
           diasSemana,
           diasEtiquetas: Array.isArray(data.diasEtiquetas) ? data.diasEtiquetas : [],
           horarios,
-          usaSecuencias: Boolean(data.usaSecuencias),
-          slotsPorDia: data.slotsPorDia,
           mensajeDias:
             data.mensajeDias ||
             (disponible ? 'días configurados' : 'No hay días disponibles'),
@@ -110,16 +105,7 @@ export default function VisitForm() {
     return () => clearTimeout(timer)
   }, [formData.fechaPreferida])
 
-  const horariosDisponibles = useMemo(() => {
-    if (!formData.fechaPreferida || !config.usaSecuencias || !config.slotsPorDia) {
-      return config.horarios
-    }
-    const [y, m, d] = formData.fechaPreferida.split('-').map(Number)
-    const dow = new Date(y, m - 1, d).getDay()
-    const allowed = config.slotsPorDia[String(dow)] || []
-    if (allowed.length === 0) return config.horarios
-    return config.horarios.filter((h) => allowed.includes(h.etiqueta))
-  }, [formData.fechaPreferida, config])
+  const horariosDisponibles = config.horarios
 
   useEffect(() => {
     if (

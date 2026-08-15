@@ -43,10 +43,11 @@ UPDATE web_correos_envio SET activo=0 WHERE email='ya-no@correo.com';
 
 ### Visitas Guiadas (días y horarios)
 
-- `web_visita_dias`: activar/desactivar días (`activo=1`). Seed: martes y jueves.
+- `web_visita_dias`: activar/desactivar días (`activo=1`).
 - `web_visita_horarios`: franjas (etiquetas).
-- `web_visita_secuencias` + `web_visita_secuencia_slots` (opcional): si hay secuencias activas, solo esas combinaciones día+horario.
+- Disponibilidad en la web = **solo** días activos × horarios activos (no usa secuencias).
 - `web_visitas_guiadas`: solicitudes del formulario.
+- Si 0 días o 0 horarios activos → formulario cerrado (`disponible: false`).
 
 ### Trabaja con Nosotros (CV)
 

@@ -8,10 +8,8 @@ export type VisitaConfigPublica = {
   diasSemana: number[]
   diasEtiquetas: VisitaDiaPublic[]
   horarios: VisitaHorarioPublic[]
-  /** Si true, solo combinaciones día+horario de secuencias activas */
+  /** Siempre false: la web ignora secuencias; solo días × horarios activos */
   usaSecuencias: boolean
-  /** Mapa dia_semana -> etiquetas de horario permitidas (solo si usaSecuencias) */
-  slotsPorDia?: Record<string, string[]>
   mensajeDias: string
   /** false cuando MySQL OK pero 0 días o 0 horarios activos (visitas cerradas) */
   disponible: boolean
@@ -52,6 +50,10 @@ export function getVisitaConfigCerrada(): VisitaConfigPublica {
   }
 }
 
+/**
+ * Disponibilidad pública = días activos × horarios activos.
+ * NO lee web_visita_secuencias ni slots (la intranet ya no las usa en UI).
+ */
 export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
   const db = getPool()
   if (!db) return getFallbackVisitaConfig()
@@ -64,60 +66,15 @@ export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
       `SELECT id, etiqueta FROM web_visita_horarios WHERE activo = 1 ORDER BY orden ASC, id ASC`
     )
 
-    let diasEtiquetas = (diasRows || []).map((r) => ({
+    const diasEtiquetas = (diasRows || []).map((r) => ({
       dia_semana: Number(r.dia_semana),
       etiqueta: String(r.etiqueta),
     }))
-    let horarios = (horariosRows || []).map((r) => ({
+    const horarios = (horariosRows || []).map((r) => ({
       id: Number(r.id),
       etiqueta: String(r.etiqueta),
     }))
 
-    // Config intencionalmente vacía (intranet cerró visitas) — NO fallback Martes/Jueves
-    if (diasEtiquetas.length === 0 || horarios.length === 0) {
-      return getVisitaConfigCerrada()
-    }
-
-    // Secuencias activas (opcional)
-    let usaSecuencias = false
-    const slotsPorDia: Record<string, string[]> = {}
-    try {
-      const [seqRows] = await db.execute<RowDataPacket[]>(
-        `SELECT s.id
-         FROM web_visita_secuencias s
-         WHERE s.activo = 1`
-      )
-      if (seqRows && seqRows.length > 0) {
-        const [slotRows] = await db.execute<RowDataPacket[]>(
-          `SELECT ss.dia_semana, h.etiqueta AS horario
-           FROM web_visita_secuencia_slots ss
-           INNER JOIN web_visita_secuencias s ON s.id = ss.secuencia_id AND s.activo = 1
-           INNER JOIN web_visita_horarios h ON h.id = ss.horario_id AND h.activo = 1
-           INNER JOIN web_visita_dias d ON d.dia_semana = ss.dia_semana AND d.activo = 1`
-        )
-        if (slotRows && slotRows.length > 0) {
-          usaSecuencias = true
-          const diasSet = new Set<number>()
-          const horariosSet = new Map<string, VisitaHorarioPublic>()
-          for (const s of slotRows) {
-            const dia = Number(s.dia_semana)
-            const et = String(s.horario)
-            diasSet.add(dia)
-            if (!slotsPorDia[String(dia)]) slotsPorDia[String(dia)] = []
-            if (!slotsPorDia[String(dia)].includes(et)) {
-              slotsPorDia[String(dia)].push(et)
-            }
-            horariosSet.set(et, { id: 0, etiqueta: et })
-          }
-          diasEtiquetas = diasEtiquetas.filter((d) => diasSet.has(d.dia_semana))
-          horarios = Array.from(horariosSet.values())
-        }
-      }
-    } catch {
-      // Tablas de secuencia aún no creadas: continuar sin secuencias
-    }
-
-    // Tras filtrar por secuencias, puede quedar vacío = cerrado
     if (diasEtiquetas.length === 0 || horarios.length === 0) {
       return getVisitaConfigCerrada()
     }
@@ -129,8 +86,7 @@ export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
       diasSemana,
       diasEtiquetas,
       horarios,
-      usaSecuencias,
-      slotsPorDia: usaSecuencias ? slotsPorDia : undefined,
+      usaSecuencias: false,
       mensajeDias: mensajeDias || 'días configurados',
       disponible: true,
       source: 'mysql',
@@ -141,7 +97,7 @@ export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
   }
 }
 
-/** Valida fecha (YYYY-MM-DD) y horario según config BD */
+/** Valida fecha (YYYY-MM-DD) y horario según días × horarios activos */
 export async function validarVisitaFechaHorario(
   fechaPreferida: string,
   horarioPreferido: string
@@ -185,16 +141,6 @@ export async function validarVisitaFechaHorario(
   const horariosOk = config.horarios.map((h) => h.etiqueta)
   if (!horariosOk.includes(horarioPreferido)) {
     return { ok: false, error: 'Horario no disponible' }
-  }
-
-  if (config.usaSecuencias && config.slotsPorDia) {
-    const allowed = config.slotsPorDia[String(dow)] || []
-    if (!allowed.includes(horarioPreferido)) {
-      return {
-        ok: false,
-        error: 'Esa combinación de día y horario no está disponible',
-      }
-    }
   }
 
   return { ok: true }
