@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FiX } from 'react-icons/fi'
 
 interface VideoModalProps {
@@ -10,16 +10,21 @@ interface VideoModalProps {
   title?: string
 }
 
-export default function VideoModal({ isOpen, onClose, videoSrc, title = 'Conoce Vanguard Schools' }: VideoModalProps) {
+export default function VideoModal({
+  isOpen,
+  onClose,
+  videoSrc,
+  title = 'Conoce Vanguard Schools',
+}: VideoModalProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen) {
-      // Prevenir scroll del body cuando el modal está abierto
       document.body.style.overflow = 'hidden'
+      setError(null)
     } else {
       document.body.style.overflow = 'unset'
-      // Pausar el video cuando se cierra el modal
       if (videoRef.current) {
         videoRef.current.pause()
         videoRef.current.currentTime = 0
@@ -31,43 +36,32 @@ export default function VideoModal({ isOpen, onClose, videoSrc, title = 'Conoce 
     }
   }, [isOpen])
 
-  // Cerrar con tecla ESC
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
+      if (e.key === 'Escape' && isOpen) onClose()
     }
-
-    if (isOpen) {
-      window.addEventListener('keydown', handleEscape)
-    }
-
-    return () => {
-      window.removeEventListener('keydown', handleEscape)
-    }
+    if (isOpen) window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
 
   if (!isOpen) return null
+
+  // Evita caché agresiva del navegador tras subir el archivo al VPS
+  const srcWithBust = `${videoSrc}${videoSrc.includes('?') ? '&' : '?'}v=20260814`
 
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      {/* Overlay con backdrop blur */}
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300" />
-      
-      {/* Contenedor del modal */}
+
       <div
         className="relative z-10 w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-300 scale-100"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header del modal */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 flex items-center justify-between">
-          <h3 className="text-xl md:text-2xl font-bold text-white">
-            {title}
-          </h3>
+          <h3 className="text-xl md:text-2xl font-bold text-white">{title}</h3>
           <button
             onClick={onClose}
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all transform hover:scale-110 hover:rotate-90"
@@ -77,20 +71,29 @@ export default function VideoModal({ isOpen, onClose, videoSrc, title = 'Conoce 
           </button>
         </div>
 
-        {/* Contenedor del video */}
-        <div className="relative bg-black">
+        <div className="relative bg-black min-h-[200px]">
           <video
             ref={videoRef}
-            src={videoSrc}
             controls
+            playsInline
+            preload="auto"
             className="w-full h-auto max-h-[80vh]"
-            preload="metadata"
+            onError={() =>
+              setError(
+                'No se pudo cargar el video. Prueba abrir directamente /video-vanguard.mp4 o limpia caché (Ctrl+F5).'
+              )
+            }
           >
+            <source src={srcWithBust} type="video/mp4" />
             Tu navegador no soporta la reproducción de videos.
           </video>
+          {error && (
+            <div className="absolute inset-0 flex items-center justify-center p-6 bg-black/70">
+              <p className="text-white text-center text-sm md:text-base max-w-md">{error}</p>
+            </div>
+          )}
         </div>
 
-        {/* Footer opcional */}
         <div className="bg-gray-50 px-6 py-4 text-center">
           <p className="text-sm text-gray-600">
             Descubre más sobre nuestra institución educativa
@@ -100,5 +103,3 @@ export default function VideoModal({ isOpen, onClose, videoSrc, title = 'Conoce 
     </div>
   )
 }
-
-
