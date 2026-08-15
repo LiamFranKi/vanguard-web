@@ -8,12 +8,12 @@ export type VisitaConfigPublica = {
   diasSemana: number[]
   diasEtiquetas: VisitaDiaPublic[]
   horarios: VisitaHorarioPublic[]
-  /** Siempre false: la web ignora secuencias; solo días × horarios activos */
   usaSecuencias: boolean
   mensajeDias: string
-  /** false cuando MySQL OK pero 0 días o 0 horarios activos (visitas cerradas) */
   disponible: boolean
-  source: 'mysql' | 'fallback'
+  source: 'intranet' | 'mysql' | 'fallback'
+  generatedAt?: string
+  database?: string | null
 }
 
 const FALLBACK: VisitaConfigPublica = {
@@ -32,13 +32,11 @@ const FALLBACK: VisitaConfigPublica = {
   source: 'fallback',
 }
 
-/** Solo ante fallo real de MySQL / sin pool — no usar si la BD tiene 0 días a propósito */
 export function getFallbackVisitaConfig(): VisitaConfigPublica {
-  return { ...FALLBACK }
+  return { ...FALLBACK, generatedAt: new Date().toISOString() }
 }
 
-/** MySQL OK pero sin días u horarios activos = visitas cerradas */
-export function getVisitaConfigCerrada(): VisitaConfigPublica {
+export function getVisitaConfigCerrada(source: VisitaConfigPublica['source'] = 'mysql'): VisitaConfigPublica {
   return {
     diasSemana: [],
     diasEtiquetas: [],
@@ -46,58 +44,127 @@ export function getVisitaConfigCerrada(): VisitaConfigPublica {
     usaSecuencias: false,
     mensajeDias: 'No hay días disponibles',
     disponible: false,
-    source: 'mysql',
+    source,
+    generatedAt: new Date().toISOString(),
+  }
+}
+
+function normalizeFromPayload(data: Record<string, unknown>, source: VisitaConfigPublica['source']): VisitaConfigPublica {
+  const diasSemana = Array.isArray(data.diasSemana) ? data.diasSemana.map(Number).filter(Number.isFinite) : []
+  const diasEtiquetas = Array.isArray(data.diasEtiquetas)
+    ? (data.diasEtiquetas as VisitaDiaPublic[])
+    : []
+  const horarios = Array.isArray(data.horarios) ? (data.horarios as VisitaHorarioPublic[]) : []
+  const disponible =
+    data.disponible !== false && diasSemana.length > 0 && horarios.length > 0
+
+  if (!disponible) {
+    return getVisitaConfigCerrada(source)
+  }
+
+  return {
+    diasSemana,
+    diasEtiquetas,
+    horarios,
+    usaSecuencias: false,
+    mensajeDias: String(data.mensajeDias || diasEtiquetas.map((d) => d.etiqueta).join(', ') || 'días configurados'),
+    disponible: true,
+    source,
+    generatedAt: String(data.generatedAt || new Date().toISOString()),
+    database: (data.database as string) || null,
   }
 }
 
 /**
- * Disponibilidad pública = días activos × horarios activos.
- * NO lee web_visita_secuencias ni slots (la intranet ya no las usa en UI).
+ * Prioridad:
+ * 1) Intranet pública (misma BD que el admin Config. visitas) vía INTRANET_API_URL
+ * 2) MySQL directo de la web
+ * 3) Fallback solo si falla todo
  */
-export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
-  const db = getPool()
-  if (!db) return getFallbackVisitaConfig()
-
+async function fetchFromIntranet(): Promise<VisitaConfigPublica | null> {
+  const base = String(process.env.INTRANET_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '')
+  const url = `${base}/api/public/visitas-config?t=${Date.now()}`
   try {
-    const [diasRows] = await db.execute<RowDataPacket[]>(
-      `SELECT dia_semana, etiqueta FROM web_visita_dias WHERE activo = 1 ORDER BY dia_semana ASC`
-    )
-    const [horariosRows] = await db.execute<RowDataPacket[]>(
-      `SELECT id, etiqueta FROM web_visita_horarios WHERE activo = 1 ORDER BY orden ASC, id ASC`
-    )
-
-    const diasEtiquetas = (diasRows || []).map((r) => ({
-      dia_semana: Number(r.dia_semana),
-      etiqueta: String(r.etiqueta),
-    }))
-    const horarios = (horariosRows || []).map((r) => ({
-      id: Number(r.id),
-      etiqueta: String(r.etiqueta),
-    }))
-
-    if (diasEtiquetas.length === 0 || horarios.length === 0) {
-      return getVisitaConfigCerrada()
+    const ctrl = new AbortController()
+    const timer = setTimeout(() => ctrl.abort(), 4000)
+    const res = await fetch(url, {
+      cache: 'no-store',
+      signal: ctrl.signal,
+      headers: { Accept: 'application/json', Pragma: 'no-cache' },
+    })
+    clearTimeout(timer)
+    if (!res.ok) {
+      console.warn('[visitas-config] intranet HTTP', res.status)
+      return null
     }
-
-    const diasSemana = diasEtiquetas.map((d) => d.dia_semana)
-    const mensajeDias = diasEtiquetas.map((d) => d.etiqueta).join(', ')
-
-    return {
-      diasSemana,
-      diasEtiquetas,
-      horarios,
-      usaSecuencias: false,
-      mensajeDias: mensajeDias || 'días configurados',
-      disponible: true,
-      source: 'mysql',
-    }
-  } catch (error) {
-    console.error('[visitas-config] MySQL:', error)
-    return getFallbackVisitaConfig()
+    const data = (await res.json()) as Record<string, unknown>
+    return normalizeFromPayload(data, 'intranet')
+  } catch (e) {
+    console.warn('[visitas-config] intranet no disponible:', (e as Error)?.message || e)
+    return null
   }
 }
 
-/** Valida fecha (YYYY-MM-DD) y horario según días × horarios activos */
+async function fetchFromMysql(): Promise<VisitaConfigPublica | null> {
+  const db = getPool()
+  if (!db) return null
+
+  try {
+    const [diasRows] = await db.execute<RowDataPacket[]>(
+      `SELECT dia_semana, etiqueta, activo FROM web_visita_dias ORDER BY dia_semana ASC`
+    )
+    const [horariosRows] = await db.execute<RowDataPacket[]>(
+      `SELECT id, etiqueta, activo FROM web_visita_horarios ORDER BY orden ASC, id ASC`
+    )
+
+    const isOn = (v: unknown) => {
+      if (Buffer.isBuffer(v)) return Boolean(v.length && v[0])
+      return v === true || v === 1 || v === '1'
+    }
+
+    const diasEtiquetas = (diasRows || [])
+      .filter((r) => isOn(r.activo))
+      .map((r) => ({
+        dia_semana: Number(r.dia_semana),
+        etiqueta: String(r.etiqueta),
+      }))
+    const horarios = (horariosRows || [])
+      .filter((r) => isOn(r.activo))
+      .map((r) => ({
+        id: Number(r.id),
+        etiqueta: String(r.etiqueta),
+      }))
+
+    if (diasEtiquetas.length === 0 || horarios.length === 0) {
+      return getVisitaConfigCerrada('mysql')
+    }
+
+    return {
+      diasSemana: diasEtiquetas.map((d) => d.dia_semana),
+      diasEtiquetas,
+      horarios,
+      usaSecuencias: false,
+      mensajeDias: diasEtiquetas.map((d) => d.etiqueta).join(', '),
+      disponible: true,
+      source: 'mysql',
+      generatedAt: new Date().toISOString(),
+    }
+  } catch (error) {
+    console.error('[visitas-config] MySQL:', error)
+    return null
+  }
+}
+
+export async function getVisitaConfigPublica(): Promise<VisitaConfigPublica> {
+  const fromIntranet = await fetchFromIntranet()
+  if (fromIntranet) return fromIntranet
+
+  const fromMysql = await fetchFromMysql()
+  if (fromMysql) return fromMysql
+
+  return getFallbackVisitaConfig()
+}
+
 export async function validarVisitaFechaHorario(
   fechaPreferida: string,
   horarioPreferido: string
@@ -116,11 +183,7 @@ export async function validarVisitaFechaHorario(
   }
   const [y, m, d] = fechaPreferida.split('-').map(Number)
   const date = new Date(y, m - 1, d)
-  if (
-    date.getFullYear() !== y ||
-    date.getMonth() !== m - 1 ||
-    date.getDate() !== d
-  ) {
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
     return { ok: false, error: 'Fecha inválida' }
   }
 

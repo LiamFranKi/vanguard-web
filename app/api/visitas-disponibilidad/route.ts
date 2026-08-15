@@ -14,13 +14,16 @@ const NO_CACHE = {
   'Cloudflare-CDN-Cache-Control': 'no-store',
 }
 
-/** Compatibilidad: misma lógica que /api/visitas-disponibilidad */
+/**
+ * Ruta NUEVA (evita caché CDN de /api/visitas-config antigua).
+ * GET /api/visitas-disponibilidad
+ */
 export async function GET() {
   try {
     const config = await getVisitaConfigPublica()
     return NextResponse.json(config, { headers: NO_CACHE })
   } catch (error) {
-    console.error('[visitas-config]', error)
+    console.error('[visitas-disponibilidad]', error)
     return NextResponse.json(getFallbackVisitaConfig(), { headers: NO_CACHE })
   }
 }

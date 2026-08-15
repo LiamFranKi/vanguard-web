@@ -54,7 +54,7 @@ export default function VisitForm() {
 
   useEffect(() => {
     let cancelled = false
-    const url = `/api/visitas-config?t=${Date.now()}`
+    const url = `/api/visitas-disponibilidad?t=${Date.now()}`
     fetch(url, { cache: 'no-store', headers: { Pragma: 'no-cache' } })
       .then((r) => r.json())
       .then((data) => {
