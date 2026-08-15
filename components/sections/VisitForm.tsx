@@ -54,7 +54,8 @@ export default function VisitForm() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/visitas-config')
+    const url = `/api/visitas-config?t=${Date.now()}`
+    fetch(url, { cache: 'no-store', headers: { Pragma: 'no-cache' } })
       .then((r) => r.json())
       .then((data) => {
         if (cancelled || !data || typeof data !== 'object') return
