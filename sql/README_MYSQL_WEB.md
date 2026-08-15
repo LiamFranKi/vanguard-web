@@ -9,6 +9,7 @@
 5. Ejecuta `sql/web_visitas_guiadas.sql` (días/horarios configurables + registros + `recibe_visitas`).
 6. Ejecuta `sql/web_trabaja_con_nosotros.sql` (postulaciones + CV + `recibe_trabaja`).
 7. Ejecuta `sql/web_admision.sql` (admisión/ratificación + `recibe_admision`).
+8. Ejecuta `sql/web_calendarizacion.sql` (calendarización + seed 2026).
 
 ### Tabla `web_correos_envio` (quién recibe los mails)
 
@@ -62,6 +63,17 @@ UPDATE web_correos_envio SET activo=0 WHERE email='ya-no@correo.com';
 - Tabla: `web_admision`
 - Un solo formulario en `/admision-2026` (Admisión y Ratificación).
 - Campos: estudiante, apoderado (DNI, teléfono, email, dirección), grado.
+
+### Calendarización académica
+
+8. Ejecuta `sql/web_calendarizacion.sql` (tablas + seed 2026 desde el JSON; ~142 eventos).
+
+Tablas:
+- `web_calendarizacion` — año activo
+- `web_calendarizacion_conceptos` — tipos/colores (feriado, tema, etc.)
+- `web_calendarizacion_eventos` — eventos: `dia` **o** `rango_inicio`/`rango_fin`, `texto` (puede tener saltos de línea), colores
+
+La web lee `GET /api/calendarizacion`. Si MySQL falla o no hay eventos, usa `config/calendarizacion.json` como respaldo. El diseño de la página no cambia.
 
 Si MySQL falla, el formulario usa martes/jueves y los dos horarios por defecto; los correos caen a `config/formularios.json`.
 
