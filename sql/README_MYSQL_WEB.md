@@ -10,6 +10,7 @@
 6. Ejecuta `sql/web_trabaja_con_nosotros.sql` (postulaciones + CV + `recibe_trabaja`).
 7. Ejecuta `sql/web_admision.sql` (admisión/ratificación + `recibe_admision`).
 8. Ejecuta `sql/web_calendarizacion.sql` (calendarización + seed 2026).
+9. Ejecuta `sql/web_faqs.sql` (preguntas frecuentes + categorías).
 
 ### Tabla `web_correos_envio` (quién recibe los mails)
 
@@ -67,13 +68,22 @@ UPDATE web_correos_envio SET activo=0 WHERE email='ya-no@correo.com';
 ### Calendarización académica
 
 8. Ejecuta `sql/web_calendarizacion.sql` (tablas + seed 2026 desde el JSON; ~142 eventos).
+9. Ejecuta `sql/web_faqs.sql` (categorías/áreas + 20 preguntas frecuentes).
 
-Tablas:
+Tablas calendarización:
 - `web_calendarizacion` — año activo
 - `web_calendarizacion_conceptos` — tipos/colores (feriado, tema, etc.)
 - `web_calendarizacion_eventos` — eventos: `dia` **o** `rango_inicio`/`rango_fin`, `texto` (puede tener saltos de línea), colores
 
 La web lee `GET /api/calendarizacion`. Si MySQL falla o no hay eventos, usa `config/calendarizacion.json` como respaldo. El diseño de la página no cambia.
+
+### Preguntas frecuentes
+
+Tablas:
+- `web_faq_categorias` — áreas/secciones (ADMISIÓN Y MATRÍCULA, COSTOS Y PAGOS, …)
+- `web_faqs` — pregunta/respuesta ligadas a una categoría (`orden`, `activo`)
+
+La web lee MySQL (agrupa por categoría, mismo diseño). Respaldo: `config/faqs.json`. API: `GET /api/faqs`.
 
 Si MySQL falla, el formulario usa martes/jueves y los dos horarios por defecto; los correos caen a `config/formularios.json`.
 

@@ -56,14 +56,14 @@ function FaqItem({
   )
 }
 
-export default function PreguntasFrecuentesPage() {
-  const faqs: FaqItemType[] = getFaqs()
+export default async function PreguntasFrecuentesPage() {
+  const faqs: FaqItemType[] = await getFaqs()
 
-  // Agrupar FAQs por categoría
+  // Agrupar FAQs por categoría (áreas: Admisión, Costos, Horarios, etc.)
   const grupos = faqs.reduce<{ categoria: string; preguntas: FaqItemType[] }[]>(
     (acc, faq) => {
       const categoria = faq.categoria || 'Otras consultas'
-      const existente = acc.find(g => g.categoria === categoria)
+      const existente = acc.find((g) => g.categoria === categoria)
       if (existente) {
         existente.preguntas.push(faq)
       } else {
