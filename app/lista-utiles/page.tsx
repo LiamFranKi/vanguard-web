@@ -1,59 +1,17 @@
 import { Metadata } from 'next'
 import { FiDownload, FiBook, FiUsers, FiAward, FiFileText } from 'react-icons/fi'
 import { getListaUtiles } from '@/lib/lista-utiles'
+import { resolveNivelTheme } from '@/lib/lista-utiles-colors'
 
 export const metadata: Metadata = {
   title: 'Lista de Útiles - Vanguard Schools',
   description: 'Lista de útiles escolares por nivel educativo en Vanguard Schools. Descarga las listas de materiales necesarios para cada grado.',
 }
 
-const colorConfig = {
-  inicial: {
-    gradient: 'from-pink-500 to-rose-500',
-    bg: 'bg-pink-50',
-    text: 'text-pink-600',
-    hover: 'hover:bg-pink-100',
-    border: 'border-pink-200',
-    icon: 'bg-pink-500',
-  },
-  primaria: {
-    gradient: 'from-blue-500 to-cyan-500',
-    bg: 'bg-blue-50',
-    text: 'text-blue-600',
-    hover: 'hover:bg-blue-100',
-    border: 'border-blue-200',
-    icon: 'bg-blue-500',
-  },
-  secundaria: {
-    gradient: 'from-purple-500 to-indigo-500',
-    bg: 'bg-purple-50',
-    text: 'text-purple-600',
-    hover: 'hover:bg-purple-100',
-    border: 'border-purple-200',
-    icon: 'bg-purple-500',
-  },
-}
-
 const nivelIcons = {
   inicial: FiBook,
   primaria: FiUsers,
   secundaria: FiAward,
-}
-
-function resolveColors(nivelId: string, color: string) {
-  if (nivelId in colorConfig) {
-    return colorConfig[nivelId as keyof typeof colorConfig]
-  }
-  if (color in colorConfig) {
-    return colorConfig[color as keyof typeof colorConfig]
-  }
-  const byColorName: Record<string, keyof typeof colorConfig> = {
-    pink: 'inicial',
-    blue: 'primaria',
-    purple: 'secundaria',
-  }
-  const mapped = byColorName[color]
-  return mapped ? colorConfig[mapped] : colorConfig.primaria
 }
 
 export default async function ListaUtilesPage() {
@@ -97,25 +55,45 @@ export default async function ListaUtilesPage() {
             {/* Levels Grid */}
             <div className="space-y-16">
               {listaUtilesData.niveles.map((nivel) => {
-                const colors = resolveColors(nivel.id, nivel.color)
+                const theme = resolveNivelTheme(nivel.id, nivel.color)
                 const Icon = nivelIcons[nivel.id as keyof typeof nivelIcons] || FiFileText
-                
+                const isPreset = theme.kind === 'preset'
+
                 return (
                   <div key={nivel.id} className="bg-white rounded-3xl shadow-xl overflow-hidden">
                     {/* Level Header */}
-                    <div className={`bg-gradient-to-r ${colors.gradient} text-white p-8`}>
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-16 h-16 ${colors.icon} rounded-xl flex items-center justify-center shadow-lg`}>
-                          <Icon size={28} className="text-white" />
-                        </div>
-                        <div>
-                          <h3 className="text-3xl font-bold mb-2">{nivel.nombre}</h3>
-                          <p className="text-white/90">
-                            {nivel.grados.length} {nivel.grados.length === 1 ? 'grado disponible' : 'grados disponibles'}
-                          </p>
+                    {isPreset ? (
+                      <div className={`bg-gradient-to-r ${theme.gradient} text-white p-8`}>
+                        <div className="flex items-center space-x-4">
+                          <div className={`w-16 h-16 ${theme.icon} rounded-xl flex items-center justify-center shadow-lg`}>
+                            <Icon size={28} className="text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-3xl font-bold mb-2">{nivel.nombre}</h3>
+                            <p className="text-white/90">
+                              {nivel.grados.length} {nivel.grados.length === 1 ? 'grado disponible' : 'grados disponibles'}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="p-8" style={theme.headerStyle}>
+                        <div className="flex items-center space-x-4">
+                          <div
+                            className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg"
+                            style={theme.iconStyle}
+                          >
+                            <Icon size={28} className="text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-3xl font-bold mb-2">{nivel.nombre}</h3>
+                            <p className="text-white/90">
+                              {nivel.grados.length} {nivel.grados.length === 1 ? 'grado disponible' : 'grados disponibles'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Grades Grid */}
                     <div className="p-8">
@@ -123,26 +101,46 @@ export default async function ListaUtilesPage() {
                         {nivel.grados.map((grado) => (
                           <div
                             key={grado.id}
-                            className={`${colors.bg} rounded-xl p-6 border-2 ${colors.border} hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}
+                            className={
+                              isPreset
+                                ? `${theme.bg} rounded-xl p-6 border-2 ${theme.border} hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`
+                                : `${theme.cardBorderClass} rounded-xl p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`
+                            }
+                            style={isPreset ? undefined : theme.cardStyle}
                           >
                             <div className="flex items-start justify-between mb-4">
                               <div className="flex-1">
-                                <h4 className={`text-xl font-bold ${colors.text} mb-2`}>
+                                <h4
+                                  className={isPreset ? `text-xl font-bold ${theme.text} mb-2` : 'text-xl font-bold mb-2'}
+                                  style={isPreset ? undefined : theme.textStyle}
+                                >
                                   {grado.nombre}
                                 </h4>
                                 <p className="text-sm text-gray-600">
                                   Lista completa de materiales
                                 </p>
                               </div>
-                              <div className={`w-12 h-12 ${colors.icon} rounded-lg flex items-center justify-center flex-shrink-0 shadow-md`}>
+                              <div
+                                className={
+                                  isPreset
+                                    ? `w-12 h-12 ${theme.icon} rounded-lg flex items-center justify-center flex-shrink-0 shadow-md`
+                                    : 'w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md'
+                                }
+                                style={isPreset ? undefined : theme.iconStyle}
+                              >
                                 <FiFileText size={20} className="text-white" />
                               </div>
                             </div>
-                            
+
                             <a
                               href={grado.ruta}
                               download={grado.archivo}
-                              className={`w-full ${colors.bg} ${colors.text} ${colors.hover} px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 border-2 ${colors.border} hover:shadow-md transform hover:scale-105`}
+                              className={
+                                isPreset
+                                  ? `w-full ${theme.bg} ${theme.text} ${theme.hover} px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 border-2 ${theme.border} hover:shadow-md transform hover:scale-105`
+                                  : 'w-full px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 hover:shadow-md transform hover:scale-105 hover:brightness-95'
+                              }
+                              style={isPreset ? undefined : theme.buttonStyle}
                             >
                               <FiDownload size={18} />
                               <span>Descargar PDF</span>
