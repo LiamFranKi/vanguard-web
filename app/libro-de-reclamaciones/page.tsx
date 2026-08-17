@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import LibroReclamaciones from '@/components/sections/LibroReclamaciones'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Libro de Reclamaciones - Vanguard Schools',
   description:

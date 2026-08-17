@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import Contact from '@/components/sections/Contact'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Contacto - Vanguard Schools',
   description: 'Contáctanos para más información sobre admisiones, programas educativos y servicios de Vanguard Schools.',

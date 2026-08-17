@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import VisitForm from '@/components/sections/VisitForm'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Visita Guiada - Vanguard Schools',
   description: 'Agenda una visita guiada a Vanguard Schools y conoce nuestras instalaciones, metodología educativa y más.',

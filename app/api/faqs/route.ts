@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getFaqsData } from '@/lib/faqs'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /**
  * GET /api/faqs
  * Lista plana con categoria (mismo shape que config/faqs.json) + categorias.

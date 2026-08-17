@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import AdmissionForm from '@/components/sections/AdmissionForm'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Admisión 2026 - Vanguard Schools',
   description: 'Formulario de admisión y ratificación para el año 2026 en Vanguard Schools. Regístrate y nos comunicaremos contigo.',

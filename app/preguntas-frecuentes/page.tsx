@@ -2,6 +2,9 @@ import { Metadata } from 'next'
 import { FiChevronDown, FiHelpCircle } from 'react-icons/fi'
 import { getFaqs, FaqItem as FaqItemType } from '@/lib/faqs'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Preguntas Frecuentes - Vanguard Schools',
   description:

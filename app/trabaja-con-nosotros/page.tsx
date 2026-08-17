@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import WorkWithUsForm from '@/components/sections/WorkWithUsForm'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Trabaja con Nosotros - Vanguard Schools',
   description:

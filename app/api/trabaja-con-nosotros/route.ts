@@ -10,6 +10,9 @@ import {
   emailTrabajaUsuario,
 } from '@/lib/email-templates'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /**
  * CVs en la web nueva (Zarkiel):
  *   {cwd}/data/curriculums  →  /home/vanguard/web-vanguard/data/curriculums

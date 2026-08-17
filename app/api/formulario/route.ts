@@ -16,6 +16,9 @@ import {
   emailAdmisionUsuario,
 } from '@/lib/email-templates'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /**
  * API genérica para manejar cualquier tipo de formulario
  * Uso: POST /api/formulario?tipo=contacto|admisión|sugerencias|trabaja-con-nosotros

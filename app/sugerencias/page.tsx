@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import Suggestions from '@/components/sections/Suggestions'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Sugerencias - Vanguard Schools',
   description:

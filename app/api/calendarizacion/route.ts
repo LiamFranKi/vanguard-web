@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCalendarizacion } from '@/lib/calendarizacion'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /**
  * GET /api/calendarizacion?anio=2026
  * Mismo shape que config/calendarizacion.json (+ source, conceptos opcionales).

@@ -11,6 +11,9 @@ import {
 } from '@/lib/email-templates'
 import { nowPeruMysql } from '@/lib/datetime-peru'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const DATA_DIR = path.join(process.cwd(), 'data', 'libro-reclamaciones')
 const JSON_FILE = path.join(DATA_DIR, 'registros.json')
 const ADJUNTOS_DIR = path.join(DATA_DIR, 'adjuntos')

@@ -52,7 +52,7 @@ export default function CalendarizationCalendar() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/calendarizacion')
+    fetch('/api/calendarizacion', { cache: 'no-store', headers: { Pragma: 'no-cache' } })
       .then((r) => r.json())
       .then((data) => {
         if (cancelled || !data) return

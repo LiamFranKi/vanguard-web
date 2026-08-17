@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getDocumentos } from '@/lib/documentos'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /** GET /api/documentos — mismo shape que config/documentos.json */
 export async function GET() {
   try {
