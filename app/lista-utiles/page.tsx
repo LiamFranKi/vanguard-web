@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { FiDownload, FiBook, FiUsers, FiAward, FiFileText } from 'react-icons/fi'
-import listaUtilesData from '@/config/lista-utiles.json'
+import { getListaUtiles } from '@/lib/lista-utiles'
 
 export const metadata: Metadata = {
   title: 'Lista de Útiles - Vanguard Schools',
@@ -40,7 +40,25 @@ const nivelIcons = {
   secundaria: FiAward,
 }
 
-export default function ListaUtilesPage() {
+function resolveColors(nivelId: string, color: string) {
+  if (nivelId in colorConfig) {
+    return colorConfig[nivelId as keyof typeof colorConfig]
+  }
+  if (color in colorConfig) {
+    return colorConfig[color as keyof typeof colorConfig]
+  }
+  const byColorName: Record<string, keyof typeof colorConfig> = {
+    pink: 'inicial',
+    blue: 'primaria',
+    purple: 'secundaria',
+  }
+  const mapped = byColorName[color]
+  return mapped ? colorConfig[mapped] : colorConfig.primaria
+}
+
+export default async function ListaUtilesPage() {
+  const listaUtilesData = await getListaUtiles()
+
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -78,18 +96,9 @@ export default function ListaUtilesPage() {
 
             {/* Levels Grid */}
             <div className="space-y-16">
-              {listaUtilesData.niveles
-                .filter((nivel) => {
-                  // Filtrar niveles que no tienen configuración de color
-                  const hasColorConfig = nivel.id in colorConfig
-                  if (!hasColorConfig) {
-                    console.error(`Color config no encontrado para nivel: ${nivel.id}`)
-                  }
-                  return hasColorConfig
-                })
-                .map((nivel) => {
-                const colors = colorConfig[nivel.id as keyof typeof colorConfig]!
-                const Icon = nivelIcons[nivel.id as keyof typeof nivelIcons]!
+              {listaUtilesData.niveles.map((nivel) => {
+                const colors = resolveColors(nivel.id, nivel.color)
+                const Icon = nivelIcons[nivel.id as keyof typeof nivelIcons] || FiFileText
                 
                 return (
                   <div key={nivel.id} className="bg-white rounded-3xl shadow-xl overflow-hidden">

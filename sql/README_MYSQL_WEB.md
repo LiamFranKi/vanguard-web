@@ -11,6 +11,8 @@
 7. Ejecuta `sql/web_admision.sql` (admisión/ratificación + `recibe_admision`).
 8. Ejecuta `sql/web_calendarizacion.sql` (calendarización + seed 2026).
 9. Ejecuta `sql/web_faqs.sql` (preguntas frecuentes + categorías).
+10. Ejecuta `sql/web_lista_utiles.sql` (niveles + grados/PDFs de útiles).
+11. Ejecuta `sql/web_documentos.sql` (categorías + PDFs de documentos de interés).
 
 ### Tabla `web_correos_envio` (quién recibe los mails)
 
@@ -84,6 +86,20 @@ Tablas:
 - `web_faqs` — pregunta/respuesta ligadas a una categoría (`orden`, `activo`)
 
 La web lee MySQL (agrupa por categoría, mismo diseño). Respaldo: `config/faqs.json`. API: `GET /api/faqs`.
+
+### Lista de Útiles
+
+- `web_utiles_niveles`: inicial / primaria / secundaria (`codigo`, `nombre`, `color` pink|blue|purple, `orden`, `activo`)
+- `web_utiles_grados`: grado/año con PDF (`archivo` para descarga, `ruta` pública `/utiles/...`)
+- PDFs en disco: `/home/vanguard/web-vanguard/public/utiles/`
+- API: `GET /api/lista-utiles`. Respaldo: `config/lista-utiles.json`.
+
+### Documentos de Interés
+
+- `web_documentos_categorias`: Admisión, Contratos y Reglamentos, Información General
+- `web_documentos`: PDF por categoría (`nombre`, `tipo`, `archivo`, `ruta` pública `/documentos/...`)
+- PDFs en disco: `/home/vanguard/web-vanguard/public/documentos/`
+- API: `GET /api/documentos`. Respaldo: `config/documentos.json`.
 
 Si MySQL falla, el formulario usa martes/jueves y los dos horarios por defecto; los correos caen a `config/formularios.json`.
 

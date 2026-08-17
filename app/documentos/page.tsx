@@ -1,13 +1,15 @@
 import { Metadata } from 'next'
 import { FiFileText, FiDownload } from 'react-icons/fi'
-import documentosData from '@/config/documentos.json'
+import { getDocumentos } from '@/lib/documentos'
 
 export const metadata: Metadata = {
   title: 'Documentos de Interés - Vanguard Schools',
   description: 'Documentos importantes y recursos de interés para padres y estudiantes de Vanguard Schools.',
 }
 
-export default function DocumentosPage() {
+export default async function DocumentosPage() {
+  const documentosData = await getDocumentos()
+
   return (
     <div className="pt-20">
       <section className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-16">
