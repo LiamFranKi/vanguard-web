@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getListaUtiles } from '@/lib/lista-utiles'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /** GET /api/lista-utiles — mismo shape que config/lista-utiles.json */
 export async function GET() {
   try {
