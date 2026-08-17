@@ -74,14 +74,12 @@ export async function getListaUtiles(): Promise<ListaUtilesData> {
       gradosPorNivel.set(nivelId, list)
     }
 
-    const niveles: UtilesNivel[] = nivelRows
-      .map((n) => ({
-        id: String(n.codigo),
-        nombre: String(n.nombre),
-        color: String(n.color || 'blue'),
-        grados: gradosPorNivel.get(Number(n.id)) || [],
-      }))
-      .filter((n) => n.grados.length > 0)
+    const niveles: UtilesNivel[] = nivelRows.map((n) => ({
+      id: String(n.codigo),
+      nombre: String(n.nombre),
+      color: String(n.color || 'blue'),
+      grados: gradosPorNivel.get(Number(n.id)) || [],
+    }))
 
     if (niveles.length === 0) return loadJsonFallback()
 

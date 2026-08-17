@@ -97,6 +97,11 @@ export default async function ListaUtilesPage() {
 
                     {/* Grades Grid */}
                     <div className="p-8">
+                      {nivel.grados.length === 0 ? (
+                        <p className="text-center text-gray-600 py-6">
+                          Aún no hay grados publicados para este nivel.
+                        </p>
+                      ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {nivel.grados.map((grado) => (
                           <div
@@ -148,6 +153,7 @@ export default async function ListaUtilesPage() {
                           </div>
                         ))}
                       </div>
+                      )}
                     </div>
                   </div>
                 )
