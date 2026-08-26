@@ -140,19 +140,16 @@ export default async function ListaUtilesPage() {
                               </div>
                             </div>
 
-                            <a
-                              href={grado.ruta}
-                              download={grado.archivo}
-                              className={
-                                isPreset
-                                  ? `w-full ${theme.bg} ${theme.text} ${theme.hover} px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 border-2 ${theme.border} hover:shadow-md transform hover:scale-105`
-                                  : 'w-full px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 hover:shadow-md transform hover:scale-105 hover:brightness-95'
-                              }
-                              style={isPreset ? undefined : theme.buttonStyle}
+                            <button
+                              type="button"
+                              disabled
+                              aria-disabled="true"
+                              title="Descargas temporalmente deshabilitadas"
+                              className="w-full px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 border-2 border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-70"
                             >
                               <FiDownload size={18} />
-                              <span>Descargar PDF</span>
-                            </a>
+                              <span>Descarga no disponible</span>
+                            </button>
                           </div>
                         ))}
                       </div>
