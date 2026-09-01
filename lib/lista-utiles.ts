@@ -20,28 +20,58 @@ export type UtilesNivel = {
 export type ListaUtilesData = {
   niveles: UtilesNivel[]
   source: 'mysql' | 'fallback'
+  descargas_habilitadas: boolean
 }
 
-function loadJsonFallback(): ListaUtilesData {
+function isOn(v: unknown): boolean {
+  if (Buffer.isBuffer(v)) return Boolean(v.length && v[0])
+  return v === true || v === 1 || v === '1'
+}
+
+function loadJsonFallback(descargasHabilitadas = false): ListaUtilesData {
   try {
     const filePath = path.join(process.cwd(), 'config', 'lista-utiles.json')
     const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')) as {
       niveles?: UtilesNivel[]
     }
-    return { niveles: parsed.niveles || [], source: 'fallback' }
+    return {
+      niveles: parsed.niveles || [],
+      source: 'fallback',
+      descargas_habilitadas: descargasHabilitadas,
+    }
   } catch (error) {
     console.error('Error leyendo config/lista-utiles.json:', error)
-    return { niveles: [], source: 'fallback' }
+    return { niveles: [], source: 'fallback', descargas_habilitadas: descargasHabilitadas }
+  }
+}
+
+async function leerDescargasHabilitadas(): Promise<boolean | null> {
+  const db = getPool()
+  if (!db) return null
+  try {
+    const [rows] = await db.execute<RowDataPacket[]>(
+      `SELECT descargas_habilitadas FROM web_utiles_config WHERE id = 1 LIMIT 1`
+    )
+    if (!rows?.length) return false
+    return isOn(rows[0].descargas_habilitadas)
+  } catch (error) {
+    console.warn('[lista-utiles] web_utiles_config:', (error as Error)?.message || error)
+    return null
   }
 }
 
 /**
  * Lista de útiles: mismos niveles/grados que el JSON.
  * PDFs en /public/utiles (ruta pública /utiles/...).
+ * descargas_habilitadas lo controla la intranet (web_utiles_config).
  */
 export async function getListaUtiles(): Promise<ListaUtilesData> {
   const db = getPool()
-  if (!db) return loadJsonFallback()
+  const flag = await leerDescargasHabilitadas()
+  // null = no se pudo leer la tabla → no romper descargas; false = apagado desde intranet
+  const descargasHabilitadas = flag !== false
+
+  if (!db) return loadJsonFallback(descargasHabilitadas)
 
   try {
     const [nivelRows] = await db.execute<RowDataPacket[]>(
@@ -51,7 +81,7 @@ export async function getListaUtiles(): Promise<ListaUtilesData> {
        ORDER BY orden ASC, id ASC`
     )
     if (!nivelRows || nivelRows.length === 0) {
-      return loadJsonFallback()
+      return loadJsonFallback(descargasHabilitadas)
     }
 
     const [gradoRows] = await db.execute<RowDataPacket[]>(
@@ -68,8 +98,8 @@ export async function getListaUtiles(): Promise<ListaUtilesData> {
       list.push({
         id: String(g.codigo),
         nombre: String(g.nombre),
-        archivo: String(g.archivo),
-        ruta: String(g.ruta),
+        archivo: descargasHabilitadas ? String(g.archivo) : '',
+        ruta: descargasHabilitadas ? String(g.ruta) : '',
       })
       gradosPorNivel.set(nivelId, list)
     }
@@ -81,11 +111,12 @@ export async function getListaUtiles(): Promise<ListaUtilesData> {
       grados: gradosPorNivel.get(Number(n.id)) || [],
     }))
 
-    if (niveles.length === 0) return loadJsonFallback()
+    if (niveles.length === 0) return loadJsonFallback(descargasHabilitadas)
 
-    return { niveles, source: 'mysql' }
+    return { niveles, source: 'mysql', descargas_habilitadas: descargasHabilitadas }
   } catch (error) {
     console.error('[lista-utiles] MySQL:', error)
-    return loadJsonFallback()
+    return loadJsonFallback(descargasHabilitadas)
   }
 }
+

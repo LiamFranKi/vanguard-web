@@ -19,6 +19,7 @@ const nivelIcons = {
 
 export default async function ListaUtilesPage() {
   const listaUtilesData = await getListaUtiles()
+  const descargasOn = listaUtilesData.descargas_habilitadas !== false
 
   return (
     <div className="pt-20">
@@ -50,8 +51,9 @@ export default async function ListaUtilesPage() {
               </h2>
               <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-6"></div>
               <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
-                Descarga la lista de útiles correspondiente al grado de tu hijo. 
-                Cada lista incluye todos los materiales necesarios para el año escolar.
+                {descargasOn
+                  ? 'Descarga la lista de útiles correspondiente al grado de tu hijo. Cada lista incluye todos los materiales necesarios para el año escolar.'
+                  : 'Las descargas de listas de útiles están temporalmente desactivadas. Vuelve a consultar más adelante o contáctanos si necesitas información.'}
               </p>
             </div>
 
@@ -140,6 +142,7 @@ export default async function ListaUtilesPage() {
                               </div>
                             </div>
 
+                            {descargasOn && grado.ruta ? (
                             <a
                               href={grado.ruta}
                               download={grado.archivo}
@@ -153,6 +156,11 @@ export default async function ListaUtilesPage() {
                               <FiDownload size={18} />
                               <span>Descargar PDF</span>
                             </a>
+                            ) : (
+                            <p className="w-full text-center text-sm font-semibold text-gray-500 px-4 py-3 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50">
+                              Descarga no disponible
+                            </p>
+                            )}
                           </div>
                         ))}
                       </div>
