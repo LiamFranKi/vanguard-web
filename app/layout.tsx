@@ -7,6 +7,7 @@ import StructuredData from '@/components/StructuredData'
 import ChatWidget from '@/components/ChatWidget'
 import BannerModalWrapper from '@/components/BannerModalWrapper'
 import BannerButton from '@/components/BannerButton'
+import AdmisionCampaignBar from '@/components/AdmisionCampaignBar'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
 
@@ -98,6 +99,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <StructuredData />
         <Header />
+        <AdmisionCampaignBar />
         <main className="flex-grow">
           {children}
         </main>

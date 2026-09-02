@@ -3,7 +3,7 @@
  * Base: vanguard_intranet
  * phpMyAdmin → SQL → pegar y Continuar
  *
- * La página /admision-2026 usa un solo formulario (Admisión y Ratificación).
+ * La página canónica es /admision (el año lo define intranet: web_admision_config, migración 078).
  */
 
 -- 1) Solicitudes de admisión

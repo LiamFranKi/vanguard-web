@@ -20,7 +20,12 @@ const nextConfig = {
     return [
       {
         source: '/admision-2026',
-        destination: '/admision-2027',
+        destination: '/admision',
+        permanent: true,
+      },
+      {
+        source: '/admision-2027',
+        destination: '/admision',
         permanent: true,
       },
     ]

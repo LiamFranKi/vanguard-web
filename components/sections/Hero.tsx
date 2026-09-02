@@ -5,13 +5,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo } from 'react-icons/fi'
 import VideoModal from '@/components/VideoModal'
+import type { AdmisionConfigPublica } from '@/lib/admision-config'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
+  const [admision, setAdmision] = useState<AdmisionConfigPublica | null>(null)
 
   useEffect(() => {
     setIsVisible(true)
+    fetch(`/api/admision-config?t=${Date.now()}`, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setAdmision(data)
+      })
+      .catch(() => {})
   }, [])
 
   return (
@@ -30,6 +38,16 @@ export default function Hero() {
       
       <div className="container mx-auto px-4 pt-32 pb-16 md:pt-40 md:pb-20 relative z-10">
         <div className={`max-w-4xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          {admision?.chipHero && (
+            <div className="mb-5 flex flex-col items-center gap-1.5">
+              <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs sm:text-sm font-bold px-4 py-1.5 shadow-lg">
+                {admision.textoChip}
+              </span>
+              <p className="text-white/90 text-xs sm:text-sm font-medium">
+                {admision.textoChipSub}
+              </p>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
             <Link
               href="/contacto"
@@ -46,11 +64,11 @@ export default function Hero() {
               <span>Visita Guiada</span>
             </Link>
             <Link
-              href="/admision-2027"
+              href={admision?.rutaFormulario || '/admision'}
               className="group bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:from-amber-600 hover:to-orange-700 transition-all transform hover:scale-105 flex items-center justify-center space-x-2 shadow-2xl hover:shadow-amber-600/50 text-sm sm:text-base w-full sm:w-auto"
             >
               <FiArrowRight size={18} className="sm:w-5 sm:h-5" />
-              <span>Admisión 2027</span>
+              <span>{admision?.etiquetaBoton || 'Admisión 2027'}</span>
             </Link>
             <button
               onClick={() => setIsVideoModalOpen(true)}
