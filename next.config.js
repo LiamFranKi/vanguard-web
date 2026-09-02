@@ -16,6 +16,15 @@ const nextConfig = {
   experimental: {
     optimizeCss: false,
   },
+  async redirects() {
+    return [
+      {
+        source: '/admision-2026',
+        destination: '/admision-2027',
+        permanent: true,
+      },
+    ]
+  },
   // Standalone desactivado temporalmente para evitar problemas con archivos estáticos
   // ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 }

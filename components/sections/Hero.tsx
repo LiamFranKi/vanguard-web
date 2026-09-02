@@ -46,11 +46,11 @@ export default function Hero() {
               <span>Visita Guiada</span>
             </Link>
             <Link
-              href="/admision-2026"
+              href="/admision-2027"
               className="group bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:from-amber-600 hover:to-orange-700 transition-all transform hover:scale-105 flex items-center justify-center space-x-2 shadow-2xl hover:shadow-amber-600/50 text-sm sm:text-base w-full sm:w-auto"
             >
               <FiArrowRight size={18} className="sm:w-5 sm:h-5" />
-              <span>Admisión 2026</span>
+              <span>Admisión 2027</span>
             </Link>
             <button
               onClick={() => setIsVideoModalOpen(true)}
