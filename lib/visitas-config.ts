@@ -178,11 +178,14 @@ async function fetchFromMysql(): Promise<VisitaConfigPublica | null> {
     }
     if (modoFechas === 'lista') {
       if (!fechas.length) return getVisitaConfigCerrada('mysql')
+      const diasUnicos: number[] = []
+      for (let i = 0; i < fechas.length; i++) {
+        const parts = fechas[i].split('-').map(Number)
+        const dow = new Date(parts[0], parts[1] - 1, parts[2]).getDay()
+        if (diasUnicos.indexOf(dow) === -1) diasUnicos.push(dow)
+      }
       return {
-        diasSemana: [...new Set(fechas.map((f) => {
-          const [y, mo, d] = f.split('-').map(Number)
-          return new Date(y, mo - 1, d).getDay()
-        }))],
+        diasSemana: diasUnicos,
         diasEtiquetas,
         horarios,
         fechas,
