@@ -8,6 +8,8 @@ export type VisitaConfigPublica = {
   diasSemana: number[]
   diasEtiquetas: VisitaDiaPublic[]
   horarios: VisitaHorarioPublic[]
+  fechas: string[]
+  modoFechas: 'semana' | 'lista'
   usaSecuencias: boolean
   mensajeDias: string
   disponible: boolean
@@ -29,6 +31,8 @@ const FALLBACK: VisitaConfigPublica = {
   usaSecuencias: false,
   mensajeDias: 'Martes y Jueves',
   disponible: true,
+  fechas: [],
+  modoFechas: 'semana',
   source: 'fallback',
 }
 
@@ -41,6 +45,8 @@ export function getVisitaConfigCerrada(source: VisitaConfigPublica['source'] = '
     diasSemana: [],
     diasEtiquetas: [],
     horarios: [],
+    fechas: [],
+    modoFechas: 'semana',
     usaSecuencias: false,
     mensajeDias: 'No hay días disponibles',
     disponible: false,
@@ -55,8 +61,14 @@ function normalizeFromPayload(data: Record<string, unknown>, source: VisitaConfi
     ? (data.diasEtiquetas as VisitaDiaPublic[])
     : []
   const horarios = Array.isArray(data.horarios) ? (data.horarios as VisitaHorarioPublic[]) : []
+  const fechas = Array.isArray(data.fechas)
+    ? (data.fechas as unknown[]).map(String).filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s))
+    : []
+  const modoFechas: VisitaConfigPublica['modoFechas'] = data.modoFechas === 'lista' ? 'lista' : 'semana'
+  const abiertaPorLista = modoFechas === 'lista' && fechas.length > 0
+  const abiertaPorSemana = modoFechas !== 'lista' && diasSemana.length > 0
   const disponible =
-    data.disponible !== false && diasSemana.length > 0 && horarios.length > 0
+    data.disponible !== false && horarios.length > 0 && (abiertaPorLista || abiertaPorSemana)
 
   if (!disponible) {
     return getVisitaConfigCerrada(source)
@@ -66,6 +78,8 @@ function normalizeFromPayload(data: Record<string, unknown>, source: VisitaConfi
     diasSemana,
     diasEtiquetas,
     horarios,
+    fechas,
+    modoFechas,
     usaSecuencias: false,
     mensajeDias: String(data.mensajeDias || diasEtiquetas.map((d) => d.etiqueta).join(', ') || 'días configurados'),
     disponible: true,
@@ -135,7 +149,53 @@ async function fetchFromMysql(): Promise<VisitaConfigPublica | null> {
         etiqueta: String(r.etiqueta),
       }))
 
-    if (diasEtiquetas.length === 0 || horarios.length === 0) {
+    let modoFechas: VisitaConfigPublica['modoFechas'] = 'semana'
+    let fechas: string[] = []
+    try {
+      const [cfgRows] = await db.execute<RowDataPacket[]>(
+        `SELECT modo_fechas FROM web_visita_config WHERE id = 1 LIMIT 1`
+      )
+      if (String(cfgRows?.[0]?.modo_fechas || '') === 'lista') modoFechas = 'lista'
+    } catch {
+      /* tabla 077 opcional */
+    }
+    if (modoFechas === 'lista') {
+      try {
+        const [fRows] = await db.execute<RowDataPacket[]>(
+          `SELECT DATE_FORMAT(fecha, '%Y-%m-%d') AS fecha
+           FROM web_visita_fechas
+           WHERE activo = 1 AND fecha > CURDATE()
+           ORDER BY fecha ASC`
+        )
+        fechas = (fRows || []).map((r) => String(r.fecha).slice(0, 10))
+      } catch {
+        fechas = []
+      }
+    }
+
+    if (!horarios.length) {
+      return getVisitaConfigCerrada('mysql')
+    }
+    if (modoFechas === 'lista') {
+      if (!fechas.length) return getVisitaConfigCerrada('mysql')
+      return {
+        diasSemana: [...new Set(fechas.map((f) => {
+          const [y, mo, d] = f.split('-').map(Number)
+          return new Date(y, mo - 1, d).getDay()
+        }))],
+        diasEtiquetas,
+        horarios,
+        fechas,
+        modoFechas,
+        usaSecuencias: false,
+        mensajeDias: fechas.slice(0, 6).join(', '),
+        disponible: true,
+        source: 'mysql',
+        generatedAt: new Date().toISOString(),
+      }
+    }
+
+    if (diasEtiquetas.length === 0) {
       return getVisitaConfigCerrada('mysql')
     }
 
@@ -143,6 +203,8 @@ async function fetchFromMysql(): Promise<VisitaConfigPublica | null> {
       diasSemana: diasEtiquetas.map((d) => d.dia_semana),
       diasEtiquetas,
       horarios,
+      fechas: [],
+      modoFechas: 'semana',
       usaSecuencias: false,
       mensajeDias: diasEtiquetas.map((d) => d.etiqueta).join(', '),
       disponible: true,
@@ -171,7 +233,7 @@ export async function validarVisitaFechaHorario(
 ): Promise<{ ok: boolean; error?: string }> {
   const config = await getVisitaConfigPublica()
 
-  if (!config.disponible || config.diasSemana.length === 0 || config.horarios.length === 0) {
+  if (!config.disponible || config.horarios.length === 0) {
     return {
       ok: false,
       error: 'Por el momento no hay visitas disponibles',
@@ -193,11 +255,20 @@ export async function validarVisitaFechaHorario(
     return { ok: false, error: 'La fecha debe ser posterior a hoy' }
   }
 
-  const dow = date.getDay()
-  if (!config.diasSemana.includes(dow)) {
-    return {
-      ok: false,
-      error: `Ese día no está disponible. Días permitidos: ${config.mensajeDias}`,
+  if (config.modoFechas === 'lista' || (config.fechas && config.fechas.length > 0)) {
+    if (!config.fechas.includes(fechaPreferida)) {
+      return {
+        ok: false,
+        error: `Esa fecha no está disponible. Fechas permitidas: ${config.mensajeDias}`,
+      }
+    }
+  } else {
+    const dow = date.getDay()
+    if (!config.diasSemana.includes(dow)) {
+      return {
+        ok: false,
+        error: `Ese día no está disponible. Días permitidos: ${config.mensajeDias}`,
+      }
     }
   }
 

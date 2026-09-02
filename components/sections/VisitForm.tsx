@@ -14,6 +14,8 @@ type VisitaConfig = {
   diasSemana: number[]
   diasEtiquetas: { dia_semana: number; etiqueta: string }[]
   horarios: { id: number; etiqueta: string }[]
+  fechas: string[]
+  modoFechas: 'semana' | 'lista'
   mensajeDias: string
   disponible: boolean
 }
@@ -23,6 +25,8 @@ const EMPTY_CONFIG: VisitaConfig = {
   diasSemana: [],
   diasEtiquetas: [],
   horarios: [],
+  fechas: [],
+  modoFechas: 'semana',
   mensajeDias: '',
   disponible: false,
 }
@@ -49,8 +53,9 @@ export default function VisitForm() {
   const visitasDisponibles =
     configLoaded &&
     config.disponible !== false &&
-    config.diasSemana.length > 0 &&
-    config.horarios.length > 0
+    config.horarios.length > 0 &&
+    ((config.modoFechas === 'lista' && config.fechas.length > 0) ||
+      (config.modoFechas !== 'lista' && config.diasSemana.length > 0))
 
   useEffect(() => {
     let cancelled = false
@@ -61,12 +66,18 @@ export default function VisitForm() {
         if (cancelled || !data || typeof data !== 'object') return
         const diasSemana = Array.isArray(data.diasSemana) ? data.diasSemana : []
         const horarios = Array.isArray(data.horarios) ? data.horarios : []
+        const fechas = Array.isArray(data.fechas) ? data.fechas.map(String) : []
+        const modoFechas = data.modoFechas === 'lista' ? 'lista' : 'semana'
         const disponible =
-          data.disponible !== false && diasSemana.length > 0 && horarios.length > 0
+          data.disponible !== false &&
+          horarios.length > 0 &&
+          (modoFechas === 'lista' ? fechas.length > 0 : diasSemana.length > 0)
         setConfig({
           diasSemana,
           diasEtiquetas: Array.isArray(data.diasEtiquetas) ? data.diasEtiquetas : [],
           horarios,
+          fechas,
+          modoFechas,
           mensajeDias:
             data.mensajeDias ||
             (disponible ? 'días configurados' : 'No hay días disponibles'),
@@ -180,11 +191,27 @@ export default function VisitForm() {
     }
   }
 
-  const filterDate = (date: Date) => config.diasSemana.includes(date.getDay())
+  const toYmd = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const usaFechasConcretas = config.modoFechas === 'lista' || config.fechas.length > 0
+
+  const filterDate = (date: Date) => {
+    if (usaFechasConcretas) return config.fechas.includes(toYmd(date))
+    return config.diasSemana.includes(date.getDay())
+  }
 
   const getMinDate = () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
+    if (usaFechasConcretas && config.fechas.length) {
+      const [y, m, d] = config.fechas[0].split('-').map(Number)
+      return new Date(y, m - 1, d)
+    }
     const candidate = new Date(today)
     candidate.setDate(today.getDate() + 1)
     for (let i = 0; i < 21; i++) {
@@ -196,6 +223,15 @@ export default function VisitForm() {
     return candidate
   }
 
+  const getMaxDate = () => {
+    if (usaFechasConcretas && config.fechas.length) {
+      const last = config.fechas[config.fechas.length - 1]
+      const [y, m, d] = last.split('-').map(Number)
+      return new Date(y, m - 1, d)
+    }
+    return undefined
+  }
+
   const getSelectedDate = () => {
     if (!formData.fechaPreferida) return null
     const [year, month, day] = formData.fechaPreferida.split('-').map(Number)
@@ -204,6 +240,7 @@ export default function VisitForm() {
 
   const isValidDay = (dateString: string) => {
     if (!dateString) return false
+    if (usaFechasConcretas) return config.fechas.includes(dateString)
     const [year, month, day] = dateString.split('-').map(Number)
     return config.diasSemana.includes(new Date(year, month - 1, day).getDay())
   }
@@ -384,6 +421,7 @@ export default function VisitForm() {
                         onChange={handleDateChange}
                         filterDate={filterDate}
                         minDate={visitasDisponibles ? getMinDate() : new Date()}
+                        maxDate={visitasDisponibles ? getMaxDate() : undefined}
                         dateFormat="dd/MM/yyyy"
                         placeholderText={
                           !configLoaded
