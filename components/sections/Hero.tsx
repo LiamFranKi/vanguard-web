@@ -41,7 +41,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center text-white overflow-hidden">
+    <section className="relative min-h-[60vh] sm:min-h-[70vh] flex flex-col text-white overflow-hidden">
       {/* Imagen de fondo */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -54,7 +54,7 @@ export default function Hero() {
         />
       </div>
       
-      <div className="container mx-auto px-4 pt-32 pb-16 md:pt-40 md:pb-20 relative z-10">
+      <div className="container mx-auto px-4 pt-32 pb-10 md:pt-40 md:pb-12 relative z-10 flex-1 flex items-center justify-center">
         <div className={`max-w-4xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           {admision?.chipHero && (
             <div className="mb-5 flex flex-col items-center gap-1.5">
@@ -132,7 +132,7 @@ export default function Hero() {
       </div>
 
       {showBanner && (
-        <div className="relative z-20 w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+        <div className="relative z-20 mt-auto w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white">
           <div className="relative container mx-auto px-4 py-2.5 pr-12 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <span className="font-bold text-sm sm:text-base text-center">{admision?.textoBanner}</span>
             <Link
