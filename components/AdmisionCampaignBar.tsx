@@ -14,7 +14,6 @@ export default function AdmisionCampaignBar() {
   const pathname = usePathname()
   const [config, setConfig] = useState<AdmisionConfigPublica | null>(null)
   const [cerrado, setCerrado] = useState(true)
-  const [topPx, setTopPx] = useState(128)
 
   useEffect(() => {
     let cancel = false
@@ -34,17 +33,8 @@ export default function AdmisionCampaignBar() {
     }
   }, [])
 
-  useEffect(() => {
-    const updateTop = () => {
-      const header = document.querySelector('header')
-      if (!header) return
-      setTopPx(Math.ceil(header.getBoundingClientRect().height))
-    }
-    updateTop()
-    window.addEventListener('resize', updateTop)
-    return () => window.removeEventListener('resize', updateTop)
-  }, [config, cerrado])
-
+  const esHome = pathname === '/'
+  if (esHome) return null
   if (!config || !config.bannerFlotante || cerrado) return null
   if (pathname === '/admision' || (pathname && pathname.indexOf('/admision-') === 0)) return null
 
@@ -58,10 +48,7 @@ export default function AdmisionCampaignBar() {
   }
 
   return (
-    <div
-      className="fixed left-0 right-0 z-40 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg"
-      style={{ top: topPx }}
-    >
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg">
       <div className="relative container mx-auto px-4 py-2.5 pr-12 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
         <span className="font-bold text-sm sm:text-base text-center">{config.textoBanner}</span>
         <Link

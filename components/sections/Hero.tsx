@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo } from 'react-icons/fi'
+import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo, FiX } from 'react-icons/fi'
 import VideoModal from '@/components/VideoModal'
 import type { AdmisionConfigPublica } from '@/lib/admision-config'
 
@@ -11,16 +11,34 @@ export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
   const [admision, setAdmision] = useState<AdmisionConfigPublica | null>(null)
+  const [bannerCerrado, setBannerCerrado] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
     fetch(`/api/admision-config?t=${Date.now()}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data) setAdmision(data)
+        if (!data) return
+        setAdmision(data)
+        try {
+          setBannerCerrado(window.localStorage.getItem(`vanguard-admision-bar-${data.anio}`) === '1')
+        } catch {
+          setBannerCerrado(false)
+        }
       })
       .catch(() => {})
   }, [])
+
+  const showBanner = Boolean(admision?.bannerFlotante && !bannerCerrado)
+
+  const cerrarBanner = () => {
+    try {
+      window.localStorage.setItem(`vanguard-admision-bar-${admision?.anio || 2027}`, '1')
+    } catch {
+      /* ignore */
+    }
+    setBannerCerrado(true)
+  }
 
   return (
     <section className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center text-white overflow-hidden">
@@ -113,12 +131,36 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
+      {showBanner && (
+        <div className="relative z-20 w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+          <div className="relative container mx-auto px-4 py-2.5 pr-12 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <span className="font-bold text-sm sm:text-base text-center">{admision?.textoBanner}</span>
+            <Link
+              href={admision?.rutaFormulario || '/admision'}
+              className="inline-flex items-center gap-1.5 bg-white text-orange-600 font-bold text-sm px-3 py-1 rounded-lg hover:bg-amber-50 transition-colors"
+            >
+              Postula ahora
+              <FiArrowRight size={16} />
+            </Link>
+            <button
+              type="button"
+              onClick={cerrarBanner}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-white/20"
+              aria-label="Cerrar aviso de admisión"
+            >
+              <FiX size={18} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {!showBanner && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Video */}
       <VideoModal
