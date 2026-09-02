@@ -41,7 +41,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative min-h-[60vh] sm:min-h-[70vh] flex flex-col text-white overflow-hidden">
+    <section className="relative flex flex-col text-white">
       {/* Imagen de fondo */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -54,7 +54,7 @@ export default function Hero() {
         />
       </div>
       
-      <div className="container mx-auto px-4 pt-32 pb-10 md:pt-40 md:pb-12 relative z-10 flex-1 flex items-center justify-center">
+      <div className="container mx-auto px-4 pt-32 pb-10 md:pt-40 md:pb-12 relative z-10">
         <div className={`max-w-4xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           {admision?.chipHero && (
             <div className="mb-5 flex flex-col items-center gap-1.5">
