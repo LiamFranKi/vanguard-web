@@ -1,4 +1,8 @@
-export default function StructuredData() {
+import { getNivelesInversion, priceRangeSeo } from '@/lib/niveles-inversion'
+
+export default async function StructuredData() {
+  const inversion = await getNivelesInversion()
+  const priceRange = priceRangeSeo(inversion)
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
@@ -47,7 +51,7 @@ export default function StructuredData() {
     url: 'https://www.vanguardschools.com',
     logo: 'https://www.vanguardschools.com/LOGO6.png',
     image: 'https://www.vanguardschools.com/FONDOBANNER.jpg',
-    priceRange: 'S/.510.00 - S/.530.00',
+    priceRange,
     areaServed: {
       '@type': 'City',
       name: 'Lima',

@@ -1,13 +1,18 @@
 import { Metadata } from 'next'
-import Image from 'next/image'
 import { FiBook, FiUsers, FiCpu, FiAward, FiHome, FiMonitor, FiDroplet, FiGrid, FiBookOpen, FiUsers as FiUsersIcon, FiSmartphone, FiDatabase, FiMusic, FiCoffee, FiFilm, FiTablet, FiGlobe } from 'react-icons/fi'
+import NivelInversion from '@/components/niveles/NivelInversion'
+import { getNivelesInversion } from '@/lib/niveles-inversion'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Educación Primaria - Vanguard Schools',
   description: 'Educación Primaria en Vanguard Schools. Formación académica sólida con enfoque en competencias y valores para niños de 6 a 11 años.',
 }
 
-export default function PrimariaPage() {
+export default async function PrimariaPage() {
+  const inversion = await getNivelesInversion()
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -155,35 +160,17 @@ export default function PrimariaPage() {
               </div>
             </div>
 
-            {/* Inversión/Precios */}
-            <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-8 border-2 border-primary-200">
-              <h2 className="text-3xl font-extrabold text-primary-800 mb-6 text-center">
-                Inversión del Nivel Primaria en Vanguard Schools
-              </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-8"></div>
-              <div className="grid md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-white rounded-xl p-6 text-center shadow-md">
-                  <h3 className="font-bold text-lg text-gray-900 mb-3">1° de Primaria</h3>
-                  <div className="text-3xl font-extrabold text-primary-600 mb-2">S/.510.00</div>
-                  <p className="text-sm text-gray-600">Matrícula y Pensión</p>
-                </div>
-                <div className="bg-white rounded-xl p-6 text-center shadow-md">
-                  <h3 className="font-bold text-lg text-gray-900 mb-3">2° y 3° de Primaria</h3>
-                  <div className="text-3xl font-extrabold text-primary-600 mb-2">S/.510.00</div>
-                  <p className="text-sm text-gray-600">Matrícula y Pensión</p>
-                </div>
-                <div className="bg-white rounded-xl p-6 text-center shadow-md">
-                  <h3 className="font-bold text-lg text-gray-900 mb-3">4°, 5° y 6° de Primaria</h3>
-                  <div className="text-3xl font-extrabold text-primary-600 mb-2">S/.510.00</div>
-                  <p className="text-sm text-gray-600">Matrícula y Pensión</p>
-                </div>
-              </div>
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg text-center">
-                <p className="text-gray-800 font-semibold">
-                  Descuento de S/.20.00 soles por cada hermano matriculado.
-                </p>
-              </div>
-            </div>
+            <NivelInversion
+              titulo="Inversión del Nivel Primaria en Vanguard Schools"
+              grupos={[
+                { etiqueta: '1° de Primaria' },
+                { etiqueta: '2° y 3° de Primaria' },
+                { etiqueta: '4°, 5° y 6° de Primaria' },
+              ]}
+              monto={inversion.primaria}
+              textoLinea={inversion.textoLinea}
+              descuentoHermano={inversion.descuentoHermano}
+            />
           </div>
         </div>
       </section>

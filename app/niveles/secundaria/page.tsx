@@ -1,13 +1,18 @@
 import { Metadata } from 'next'
-import Image from 'next/image'
 import { FiBook, FiUsers, FiCpu, FiAward, FiHome, FiMonitor, FiDroplet, FiGrid, FiBookOpen, FiUsers as FiUsersIcon, FiSmartphone, FiDatabase, FiMusic, FiCoffee, FiFilm, FiTablet, FiGlobe, FiCode, FiTarget, FiHeart, FiMic } from 'react-icons/fi'
+import NivelInversion from '@/components/niveles/NivelInversion'
+import { getNivelesInversion } from '@/lib/niveles-inversion'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Educación Secundaria - Vanguard Schools',
   description: 'Educación Secundaria en Vanguard Schools. Preparación integral para la vida universitaria y profesional para jóvenes de 12 a 16 años.',
 }
 
-export default function SecundariaPage() {
+export default async function SecundariaPage() {
+  const inversion = await getNivelesInversion()
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -166,30 +171,16 @@ export default function SecundariaPage() {
               </div>
             </div>
 
-            {/* Inversión/Precios */}
-            <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-8 border-2 border-primary-200">
-              <h2 className="text-3xl font-extrabold text-primary-800 mb-6 text-center">
-                Inversión del Nivel Secundaria en Vanguard Schools
-              </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-8"></div>
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white rounded-xl p-6 text-center shadow-md">
-                  <h3 className="font-bold text-lg text-gray-900 mb-3">1° de Secundaria</h3>
-                  <div className="text-3xl font-extrabold text-primary-600 mb-2">S/.530.00</div>
-                  <p className="text-sm text-gray-600">Matrícula y Pensión</p>
-                </div>
-                <div className="bg-white rounded-xl p-6 text-center shadow-md">
-                  <h3 className="font-bold text-lg text-gray-900 mb-3">2° a 5° de Secundaria</h3>
-                  <div className="text-3xl font-extrabold text-primary-600 mb-2">S/.530.00</div>
-                  <p className="text-sm text-gray-600">Matrícula y Pensión</p>
-                </div>
-              </div>
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg text-center">
-                <p className="text-gray-800 font-semibold">
-                  Descuento de S/.20.00 soles por cada hermano matriculado.
-                </p>
-              </div>
-            </div>
+            <NivelInversion
+              titulo="Inversión del Nivel Secundaria en Vanguard Schools"
+              grupos={[
+                { etiqueta: '1° de Secundaria' },
+                { etiqueta: '2° a 5° de Secundaria' },
+              ]}
+              monto={inversion.secundaria}
+              textoLinea={inversion.textoLinea}
+              descuentoHermano={inversion.descuentoHermano}
+            />
           </div>
         </div>
       </section>
