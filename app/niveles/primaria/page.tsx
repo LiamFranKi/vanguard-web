@@ -113,7 +113,7 @@ export default async function PrimariaPage() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiBookOpen className="text-blue-600 mt-1 flex-shrink-0" size={20} />
-                  <span className="text-gray-700">Libros COREFO incluidos.</span>
+                  <span className="text-gray-700">Sistema de libros digitales e interactivos (gratuitos).</span>
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiDatabase className="text-blue-600 mt-1 flex-shrink-0" size={20} />
