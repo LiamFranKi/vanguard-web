@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { FiBook, FiUsers, FiCpu, FiAward, FiHome, FiMonitor, FiDroplet, FiGrid, FiBookOpen, FiUsers as FiUsersIcon, FiSmartphone, FiDatabase, FiMusic, FiCoffee, FiFilm, FiTablet, FiGlobe, FiCode, FiTarget, FiHeart, FiMic } from 'react-icons/fi'
+import { FiBook, FiUsers, FiCpu, FiAward, FiHome, FiDroplet, FiGrid, FiBookOpen, FiUsers as FiUsersIcon, FiSmartphone, FiDatabase, FiMusic, FiCoffee, FiFilm, FiTablet, FiGlobe, FiCode, FiTarget, FiHeart, FiMic } from 'react-icons/fi'
 import NivelInversion from '@/components/niveles/NivelInversion'
 import { getNivelesInversion } from '@/lib/niveles-inversion'
 
@@ -95,10 +95,6 @@ export default async function SecundariaPage() {
                   <span className="text-gray-700">Trabajamos con la metodología &quot;Aula Invertida&quot;.</span>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <FiMonitor className="text-green-600 mt-1 flex-shrink-0" size={20} />
-                  <span className="text-gray-700">Pizarras interactivas en todas nuestras aulas.</span>
-                </div>
-                <div className="flex items-start space-x-3">
                   <FiTablet className="text-green-600 mt-1 flex-shrink-0" size={20} />
                   <span className="text-gray-700">Uso de Tablets en el aula.</span>
                 </div>
@@ -132,7 +128,7 @@ export default async function SecundariaPage() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiBookOpen className="text-green-600 mt-1 flex-shrink-0" size={20} />
-                  <span className="text-gray-700">Sistema de libros digitales e interactivos (gratuitos).</span>
+                  <span className="text-gray-700">Libros COREFO incluidos.</span>
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiDatabase className="text-green-600 mt-1 flex-shrink-0" size={20} />
