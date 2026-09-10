@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
+import { publicFileUrl } from '@/lib/public-asset-url'
 
 interface BannerImage {
   id: string
@@ -138,7 +139,7 @@ export default function BannerModal({ isOpen, onClose }: BannerModalProps) {
             }}
           >
             <Image
-              src={currentImage.ruta}
+              src={publicFileUrl(currentImage.ruta)}
               alt={`Banner ${currentIndex + 1}`}
               fill
               className="object-contain"
@@ -150,7 +151,7 @@ export default function BannerModal({ isOpen, onClose }: BannerModalProps) {
         ) : (
           <div className={`relative w-full max-w-6xl h-full max-h-[90vh] transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <Image
-              src={currentImage.ruta}
+              src={publicFileUrl(currentImage.ruta)}
               alt={`Banner ${currentIndex + 1}`}
               fill
               className="object-contain"

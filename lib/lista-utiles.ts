@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { RowDataPacket } from 'mysql2/promise'
 import { getPool } from '@/lib/db'
+import { publicFileUrl } from '@/lib/public-asset-url'
 
 export type UtilesGrado = {
   id: string
@@ -35,7 +36,13 @@ function loadJsonFallback(descargasHabilitadas = false): ListaUtilesData {
       niveles?: UtilesNivel[]
     }
     return {
-      niveles: parsed.niveles || [],
+      niveles: (parsed.niveles || []).map((n) => ({
+        ...n,
+        grados: (n.grados || []).map((g) => ({
+          ...g,
+          ruta: g.ruta ? publicFileUrl(g.ruta, null, { download: true }) : g.ruta,
+        })),
+      })),
       source: 'fallback',
       descargas_habilitadas: descargasHabilitadas,
     }
@@ -43,6 +50,11 @@ function loadJsonFallback(descargasHabilitadas = false): ListaUtilesData {
     console.error('Error leyendo config/lista-utiles.json:', error)
     return { niveles: [], source: 'fallback', descargas_habilitadas: descargasHabilitadas }
   }
+}
+
+export async function utilesDescargasHabilitadas(): Promise<boolean> {
+  const flag = await leerDescargasHabilitadas()
+  return flag !== false
 }
 
 async function leerDescargasHabilitadas(): Promise<boolean | null> {
@@ -99,7 +111,7 @@ export async function getListaUtiles(): Promise<ListaUtilesData> {
         id: String(g.codigo),
         nombre: String(g.nombre),
         archivo: descargasHabilitadas ? String(g.archivo) : '',
-        ruta: descargasHabilitadas ? String(g.ruta) : '',
+        ruta: descargasHabilitadas ? publicFileUrl(String(g.ruta), null, { download: true }) : '',
       })
       gradosPorNivel.set(nivelId, list)
     }

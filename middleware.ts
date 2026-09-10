@@ -6,6 +6,11 @@ import type { NextRequest } from 'next/server'
  * Lee el flag vía API de la intranet (Edge no usa mysql2).
  */
 export async function middleware(req: NextRequest) {
+  const ruta = String(req.nextUrl.searchParams.get('ruta') || '')
+  const esUtiles =
+    req.nextUrl.pathname.startsWith('/utiles/') || ruta.startsWith('/utiles/')
+  if (!esUtiles) return NextResponse.next()
+
   const base = String(process.env.INTRANET_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '')
   try {
     const ctrl = new AbortController()
@@ -32,5 +37,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/utiles/:path*'],
+  matcher: ['/utiles/:path*', '/api/web-public-file', '/api/web-public-image'],
 }

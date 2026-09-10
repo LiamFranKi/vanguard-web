@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { RowDataPacket } from 'mysql2/promise'
 import { getPool } from '@/lib/db'
+import { publicFileUrl } from '@/lib/public-asset-url'
 
 export type DocumentoItem = {
   id: string
@@ -28,7 +29,16 @@ function loadJsonFallback(): DocumentosData {
     const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8')) as {
       categorias?: DocumentoCategoria[]
     }
-    return { categorias: parsed.categorias || [], source: 'fallback' }
+    return {
+      categorias: (parsed.categorias || []).map((c) => ({
+        ...c,
+        items: (c.items || []).map((item) => ({
+          ...item,
+          ruta: item.ruta ? publicFileUrl(item.ruta, null, { download: true }) : item.ruta,
+        })),
+      })),
+      source: 'fallback',
+    }
   } catch (error) {
     console.error('Error leyendo config/documentos.json:', error)
     return { categorias: [], source: 'fallback' }
@@ -70,7 +80,7 @@ export async function getDocumentos(): Promise<DocumentosData> {
         nombre: String(d.nombre),
         tipo: String(d.tipo || 'PDF'),
         archivo: String(d.archivo),
-        ruta: String(d.ruta),
+        ruta: publicFileUrl(String(d.ruta), null, { download: true }),
       })
       itemsPorCat.set(catId, list)
     }

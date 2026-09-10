@@ -50,7 +50,7 @@ export default async function StructuredData() {
     email: 'admin@vanguardschools.edu.pe',
     url: 'https://www.vanguardschools.com',
     logo: 'https://www.vanguardschools.com/LOGO6.png',
-    image: 'https://www.vanguardschools.com/FONDOBANNER.jpg',
+    image: 'https://www.vanguardschools.com/api/banner-inicio',
     priceRange,
     areaServed: {
       '@type': 'City',

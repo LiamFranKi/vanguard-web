@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo, FiX } from 'react-icons/fi'
 import VideoModal from '@/components/VideoModal'
 import type { AdmisionConfigPublica } from '@/lib/admision-config'
 
-export default function Hero({ fondoSrc = '/FONDOBANNER.jpg' }: { fondoSrc?: string }) {
+export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
   const [admision, setAdmision] = useState<AdmisionConfigPublica | null>(null)
@@ -42,16 +41,12 @@ export default function Hero({ fondoSrc = '/FONDOBANNER.jpg' }: { fondoSrc?: str
 
   return (
     <section className="relative flex flex-col text-white">
-      {/* Imagen de fondo */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={fondoSrc || '/FONDOBANNER.jpg'}
+      {/* Se sirve por API: Next no publica fotos subidas a public/ después del build. */}
+      <div className="absolute inset-0 z-0 bg-slate-900">
+        <img
+          src="/api/banner-inicio"
           alt="Campus Vanguard Schools"
-          fill
-          className="object-cover"
-          priority
-          quality={90}
-          unoptimized
+          className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
       

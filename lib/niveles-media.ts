@@ -1,6 +1,7 @@
 import { RowDataPacket } from 'mysql2/promise'
 import { getPool } from '@/lib/db'
 import type { NivelKey, NivelLandingData } from '@/lib/niveles-landing'
+import { publicFileUrl } from '@/lib/public-asset-url'
 
 export type NivelMedia = {
   nivel: NivelKey
@@ -19,15 +20,17 @@ export type NivelMedia = {
 }
 
 function bust(src: string, stamp?: string | null) {
-  const s = String(src || '').trim()
-  if (!s) return s
-  if (!stamp) return s
-  const t = encodeURIComponent(String(stamp))
-  return s.includes('?') ? `${s}&v=${t}` : `${s}?v=${t}`
+  return publicFileUrl(src, stamp)
 }
 
 export function aplicarMedia(base: NivelLandingData, media: NivelMedia | null): NivelLandingData {
-  if (!media) return base
+  if (!media) {
+    return {
+      ...base,
+      heroImage: publicFileUrl(base.heroImage),
+      campus: base.campus.map((item) => ({ ...item, image: publicFileUrl(item.image) })),
+    }
+  }
   const v = media.updated_at || null
   const campus = [
     {
@@ -122,6 +125,6 @@ export async function getAllNivelMedia(): Promise<Record<NivelKey, NivelMedia | 
 }
 
 export function fotoInicio(nivel: NivelKey, fallback: string, media: NivelMedia | null): string {
-  if (!media) return fallback
+  if (!media) return publicFileUrl(fallback)
   return bust(media.home_ruta || media.hero_ruta || fallback, media.updated_at)
 }

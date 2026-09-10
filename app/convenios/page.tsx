@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { FiGlobe, FiDroplet, FiCpu, FiFileText, FiMail } from 'react-icons/fi'
+import { publicFileUrl } from '@/lib/public-asset-url'
 
 export const metadata: Metadata = {
   title: 'Convenios - Vanguard Schools',
@@ -15,7 +16,7 @@ export default function ConveniosPage() {
       descripcion: 'Programa de inglés certificado por Cambridge Assessment English',
       icon: FiGlobe,
       color: 'from-green-500 to-emerald-500',
-      pdf: '/documentos/ConvenioCambridge.pdf',
+      pdf: publicFileUrl('/documentos/ConvenioCambridge.pdf'),
       beneficios: [
         'Certificación internacional reconocida',
         'Metodología comunicativa',
@@ -29,7 +30,7 @@ export default function ConveniosPage() {
       descripcion: 'Programa de natación y desarrollo acuático',
       icon: FiDroplet,
       color: 'from-cyan-500 to-blue-500',
-      pdf: '/documentos/ConvenioAquaxtreme.pdf',
+      pdf: publicFileUrl('/documentos/ConvenioAquaxtreme.pdf'),
       beneficios: [
         'Instalaciones modernas',
         'Instructores certificados',
@@ -43,7 +44,7 @@ export default function ConveniosPage() {
       descripcion: 'Programa de robótica y tecnología educativa',
       icon: FiCpu,
       color: 'from-purple-500 to-pink-500',
-      pdf: '/documentos/ConvenioValley.pdf',
+      pdf: publicFileUrl('/documentos/ConvenioValley.pdf'),
       beneficios: [
         'Pensamiento computacional',
         'Proyectos prácticos',
