@@ -79,7 +79,7 @@ export default function NivelLanding({
         <div className="absolute inset-0 nivel-hero-shine" />
         <div className="relative z-10 container mx-auto px-4 pb-14 md:pb-20 pt-32">
           <p className={`inline-flex items-center ${t.chip} text-white text-xs md:text-sm font-bold tracking-widest uppercase rounded-full px-4 py-1.5 shadow-lg mb-5`}>
-            {data.kicker} · {data.ages}
+            {data.kicker}{data.ages ? ` · ${data.ages}` : ''}
           </p>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white max-w-4xl leading-[0.95] drop-shadow-lg">
             {data.title}
