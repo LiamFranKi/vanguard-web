@@ -40,7 +40,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative flex flex-col text-white">
+    <section className="relative flex min-h-[85vh] md:min-h-screen flex-col text-white">
       {/* Se sirve por API: Next no publica fotos subidas a public/ después del build. */}
       <div className="absolute inset-0 z-0 bg-slate-900">
         <img
@@ -49,9 +49,9 @@ export default function Hero() {
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
-      
-      <div className="container mx-auto px-4 pt-32 pb-10 md:pt-40 md:pb-12 relative z-10">
-        <div className={`max-w-4xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+
+      <div className="relative z-10 flex flex-1 items-center justify-center px-4 pt-24 md:pt-28 pb-8">
+        <div className={`container mx-auto max-w-4xl text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           {admision?.chipHero && (
             <div className="mb-5 flex flex-col items-center gap-1.5">
               <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs sm:text-sm font-bold px-4 py-1.5 shadow-lg">
@@ -62,7 +62,7 @@ export default function Hero() {
               </p>
             </div>
           )}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6 sm:mb-8">
             <Link
               href="/contacto"
               className="group bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center justify-center space-x-2 shadow-2xl hover:shadow-blue-600/50 text-sm sm:text-base w-full sm:w-auto"
@@ -93,8 +93,7 @@ export default function Hero() {
             </button>
           </div>
 
-          {/* Quick Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto mt-8 sm:mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto">
             <a
               href="https://www.google.com/maps/search/?api=1&query=Jr.+Toribio+de+Luzuriaga+Mz+F+Lote+18+y+19,+San+Martín+de+Porres,+Lima"
               target="_blank"
@@ -128,7 +127,7 @@ export default function Hero() {
       </div>
 
       {showBanner && (
-        <div className="relative z-20 mt-auto w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+        <div className="relative z-20 w-full shrink-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white">
           <div className="relative container mx-auto px-4 py-2.5 pr-12 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <span className="font-bold text-sm sm:text-base text-center">{admision?.textoBanner}</span>
             <Link
