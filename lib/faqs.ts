@@ -89,3 +89,27 @@ export async function getFaqs(): Promise<FaqItem[]> {
   const data = await getFaqsData()
   return data.faqs
 }
+
+const GENERAL_FAQ = /hermano|matr[ií]cula|pensi[oó]n|horario|receso|vacaciones|psicolog|nataci[oó]n|danza|ingl[eé]s|intranet|comunic/i
+
+export async function getFaqsParaNivel(nivel: 'inicial' | 'primaria' | 'secundaria'): Promise<FaqItem[]> {
+  const all = await getFaqs()
+  const propio =
+    nivel === 'inicial' ? /inicial|3 a[nñ]os|primera infancia|steam/i
+    : nivel === 'primaria' ? /primaria|aula invertida|tablets|4\.?[°ºo]/i
+    : /secundaria|aula invertida|vocacional|oratoria|rob[oó]tica|tablets/i
+
+  const picked: FaqItem[] = []
+  const seen = new Set<string>()
+  for (const faq of all) {
+    const t = `${faq.pregunta} ${faq.respuesta}`
+    if (!propio.test(t) && !GENERAL_FAQ.test(t)) continue
+    if (nivel === 'inicial' && /tablets/i.test(t) && !/inicial/i.test(t)) continue
+    const key = faq.pregunta.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    picked.push(faq)
+    if (picked.length >= 8) break
+  }
+  return picked
+}
