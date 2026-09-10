@@ -99,28 +99,28 @@ export default function Hero() {
               href="https://www.google.com/maps/search/?api=1&query=Jr.+Toribio+de+Luzuriaga+Mz+F+Lote+18+y+19,+San+Martín+de+Porres,+Lima"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gradient-to-br from-sky-800/45 via-blue-900/35 to-amber-900/25 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/40 hover:from-sky-800/55 hover:via-blue-900/45 hover:border-white/55 transition-all transform hover:scale-105 shadow-lg shadow-blue-950/15 cursor-pointer"
+              className="bg-gradient-to-br from-white/28 via-white/12 to-amber-200/15 backdrop-blur-sm rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/50 hover:from-white/38 hover:via-white/18 hover:border-gold-300/50 transition-all transform hover:scale-105 shadow-md cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/25 rounded-xl flex items-center justify-center flex-shrink-0 border border-white/40">
-                <FiMapPin className="text-amber-200" size={20} />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold-500/25 rounded-xl flex items-center justify-center flex-shrink-0 border border-gold-300/40">
+                <FiMapPin className="text-gold-300" size={20} />
               </div>
               <div className="text-left flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-white/80 mb-1 font-medium">Ubicación</p>
-                <p className="font-bold text-white text-sm sm:text-base leading-relaxed drop-shadow-sm">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
+                <p className="text-xs sm:text-sm text-gold-200 mb-1 font-semibold">Ubicación</p>
+                <p className="font-bold text-gold-300 text-sm sm:text-base leading-relaxed drop-shadow">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
               </div>
             </a>
             <a
               href="https://wa.me/51946592100"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gradient-to-br from-sky-800/45 via-blue-900/35 to-amber-900/25 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/40 hover:from-sky-800/55 hover:via-blue-900/45 hover:border-white/55 transition-all transform hover:scale-105 shadow-lg shadow-blue-950/15 cursor-pointer"
+              className="bg-gradient-to-br from-white/28 via-white/12 to-amber-200/15 backdrop-blur-sm rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/50 hover:from-white/38 hover:via-white/18 hover:border-gold-300/50 transition-all transform hover:scale-105 shadow-md cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/25 rounded-xl flex items-center justify-center flex-shrink-0 border border-white/40">
-                <FiPhone className="text-amber-200" size={20} />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold-500/25 rounded-xl flex items-center justify-center flex-shrink-0 border border-gold-300/40">
+                <FiPhone className="text-gold-300" size={20} />
               </div>
               <div className="text-left flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-white/80 mb-1 font-medium">Teléfonos</p>
-                <p className="font-bold text-white text-sm sm:text-base leading-relaxed drop-shadow-sm">946 592 100 / 922 084 833</p>
+                <p className="text-xs sm:text-sm text-gold-200 mb-1 font-semibold">Teléfonos</p>
+                <p className="font-bold text-gold-300 text-sm sm:text-base leading-relaxed drop-shadow">946 592 100 / 922 084 833</p>
               </div>
             </a>
           </div>
