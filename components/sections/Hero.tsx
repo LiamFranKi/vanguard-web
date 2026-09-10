@@ -105,8 +105,8 @@ export default function Hero() {
                 <FiMapPin className="text-white" size={20} />
               </div>
               <div className="text-left flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-gold-600 mb-0.5 font-semibold">Ubicación</p>
-                <p className="font-bold text-slate-800 text-sm sm:text-base leading-relaxed">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
+                <p className="text-xs sm:text-sm text-orange-500 mb-0.5 font-semibold">Ubicación</p>
+                <p className="font-bold text-orange-600 text-sm sm:text-base leading-relaxed">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
               </div>
             </a>
             <a
@@ -119,8 +119,8 @@ export default function Hero() {
                 <FiPhone className="text-white" size={20} />
               </div>
               <div className="text-left flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-gold-600 mb-0.5 font-semibold">Teléfonos</p>
-                <p className="font-bold text-slate-800 text-sm sm:text-base leading-relaxed">946 592 100 / 922 084 833</p>
+                <p className="text-xs sm:text-sm text-orange-500 mb-0.5 font-semibold">Teléfonos</p>
+                <p className="font-bold text-orange-600 text-sm sm:text-base leading-relaxed">946 592 100 / 922 084 833</p>
               </div>
             </a>
           </div>
