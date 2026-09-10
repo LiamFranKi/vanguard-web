@@ -7,7 +7,7 @@ import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo, FiX } from 'rea
 import VideoModal from '@/components/VideoModal'
 import type { AdmisionConfigPublica } from '@/lib/admision-config'
 
-export default function Hero() {
+export default function Hero({ fondoSrc = '/FONDOBANNER.jpg' }: { fondoSrc?: string }) {
   const [isVisible, setIsVisible] = useState(false)
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
   const [admision, setAdmision] = useState<AdmisionConfigPublica | null>(null)
@@ -45,12 +45,13 @@ export default function Hero() {
       {/* Imagen de fondo */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/FONDOBANNER.jpg"
-          alt="Fondo Vanguard Schools"
+          src={fondoSrc || '/FONDOBANNER.jpg'}
+          alt="Campus Vanguard Schools"
           fill
           className="object-cover"
           priority
           quality={90}
+          unoptimized
         />
       </div>
       

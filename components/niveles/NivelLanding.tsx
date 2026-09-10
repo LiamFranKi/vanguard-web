@@ -28,7 +28,7 @@ const THEME = {
     section: 'from-orange-50 via-white to-rose-50',
   },
   primaria: {
-    overlay: 'from-[#071536]/92 via-[#0b1f4a]/78 to-sky-950/50',
+    overlay: 'from-[#071536]/70 via-[#0b1f4a]/28 to-transparent',
     chip: 'bg-sky-500',
     cta: 'from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800',
     ghost: 'border-sky-200 bg-white text-sky-950 hover:bg-sky-50 shadow-lg',
@@ -73,7 +73,7 @@ export default function NivelLanding({
           fill
           priority
           unoptimized
-          className="object-cover object-center scale-105"
+          className={`object-cover scale-105 ${data.key === 'primaria' ? 'object-[center_32%]' : 'object-center'}`}
         />
         <div className={`absolute inset-0 bg-gradient-to-t ${t.overlay}`} />
         <div className="absolute inset-0 nivel-hero-shine" />
@@ -186,7 +186,10 @@ export default function NivelLanding({
           )}
           <div className="flex flex-wrap gap-2 mb-8">
             {data.grados.map((g) => (
-              <span key={g} className="bg-white/15 border border-white/25 rounded-full px-4 py-1.5 text-sm font-semibold">
+              <span
+                key={g}
+                className="inline-flex justify-center min-w-[8.5rem] bg-white/18 border border-white/30 rounded-2xl px-3.5 py-2 text-sm font-semibold text-center"
+              >
                 {g}
               </span>
             ))}
@@ -229,16 +232,23 @@ export default function NivelLanding({
       </section>
 
       {faqs.length > 0 && (
-        <section className="container mx-auto px-4 py-14 max-w-3xl">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Preguntas frecuentes</h2>
-          <div className="space-y-3">
+        <section className="container mx-auto px-4 py-14 max-w-5xl">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">Preguntas frecuentes</h2>
+          <p className="text-gray-600 mb-8">Respuestas rápidas de este nivel. Si hace falta, también estamos en contacto.</p>
+          <div className="grid md:grid-cols-2 gap-4">
             {faqs.map((faq, i) => (
-              <details key={`${faq.pregunta}-${i}`} className={`nivel-faq group ${t.soft} rounded-2xl border border-black/5 shadow-sm`}>
-                <summary className="cursor-pointer list-none px-5 py-4 font-semibold text-gray-900 flex justify-between gap-3">
-                  <span>{faq.pregunta}</span>
-                  <span className="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+              <details
+                key={`${faq.pregunta}-${i}`}
+                className="nivel-faq group rounded-3xl bg-white border border-black/5 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all"
+              >
+                <summary className="cursor-pointer list-none px-5 py-4 flex items-start gap-3">
+                  <span className={`shrink-0 w-9 h-9 rounded-2xl ${t.pill} flex items-center justify-center text-sm font-extrabold`}>
+                    {i + 1}
+                  </span>
+                  <span className="font-bold text-gray-900 leading-snug pt-1">{faq.pregunta}</span>
+                  <span className="ml-auto text-gray-400 group-open:rotate-180 transition-transform pt-1">▾</span>
                 </summary>
-                <div className="px-5 pb-4 text-gray-700 leading-relaxed whitespace-pre-line border-t border-black/5 pt-3">
+                <div className="px-5 pb-5 md:pl-16 text-gray-700 leading-relaxed whitespace-pre-line border-t border-black/5 pt-3">
                   {faq.respuesta}
                 </div>
               </details>

@@ -4,6 +4,7 @@ import { NIVELES_LANDING } from '@/lib/niveles-landing'
 import { getNivelesInversion } from '@/lib/niveles-inversion'
 import { getFaqsParaNivel } from '@/lib/faqs'
 import { getAdmisionConfigPublica } from '@/lib/admision-config'
+import { aplicarMedia, getNivelMedia } from '@/lib/niveles-media'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -15,14 +16,15 @@ export const metadata: Metadata = {
 }
 
 export default async function InicialPage() {
-  const [inversion, faqs, admision] = await Promise.all([
+  const [inversion, faqs, admision, media] = await Promise.all([
     getNivelesInversion(),
     getFaqsParaNivel('inicial'),
     getAdmisionConfigPublica(),
+    getNivelMedia('inicial'),
   ])
   return (
     <NivelLanding
-      data={NIVELES_LANDING.inicial}
+      data={aplicarMedia(NIVELES_LANDING.inicial, media)}
       monto={inversion.inicial}
       textoLinea={inversion.textoLinea}
       descuentoHermano={inversion.descuentoHermano}

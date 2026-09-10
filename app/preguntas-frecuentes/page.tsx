@@ -32,7 +32,7 @@ function FaqItem({
 
   return (
     <details
-      className={`group ${color.bg} ${color.border} border rounded-2xl shadow-md hover:shadow-lg transition-all`}
+      className={`group ${color.bg} ${color.border} border rounded-3xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all`}
     >
       <summary
         className="list-none flex items-center justify-between px-5 py-4 cursor-pointer select-none"

@@ -7,6 +7,7 @@ export interface FaqItem {
   categoria?: string
   pregunta: string
   respuesta: string
+  pagina_nivel?: string
 }
 
 export interface FaqCategoria {
@@ -44,7 +45,7 @@ export async function getFaqsData(): Promise<FaqsPayload> {
   try {
     const [rows] = await db.execute<RowDataPacket[]>(
       `SELECT c.etiqueta AS categoria, c.codigo, c.orden AS cat_orden,
-              f.pregunta, f.respuesta, f.orden AS faq_orden
+              f.pregunta, f.respuesta, f.orden AS faq_orden, f.pagina_nivel
        FROM web_faqs f
        INNER JOIN web_faq_categorias c ON c.id = f.categoria_id
        WHERE f.activo = 1 AND c.activo = 1
@@ -59,6 +60,7 @@ export async function getFaqsData(): Promise<FaqsPayload> {
       categoria: String(r.categoria),
       pregunta: String(r.pregunta),
       respuesta: String(r.respuesta),
+      pagina_nivel: String(r.pagina_nivel || 'todos'),
     }))
 
     const catMap = new Map<string, FaqCategoria>()
@@ -79,6 +81,32 @@ export async function getFaqsData(): Promise<FaqsPayload> {
       source: 'mysql',
     }
   } catch (error) {
+    const msg = String((error as Error)?.message || error || '')
+    if (msg.includes('pagina_nivel')) {
+      try {
+        const [rows] = await db.execute<RowDataPacket[]>(
+          `SELECT c.etiqueta AS categoria, c.codigo, c.orden AS cat_orden,
+                  f.pregunta, f.respuesta, f.orden AS faq_orden
+           FROM web_faqs f
+           INNER JOIN web_faq_categorias c ON c.id = f.categoria_id
+           WHERE f.activo = 1 AND c.activo = 1
+           ORDER BY c.orden ASC, f.orden ASC, f.id ASC`
+        )
+        if (rows?.length) {
+          return {
+            faqs: rows.map((r) => ({
+              categoria: String(r.categoria),
+              pregunta: String(r.pregunta),
+              respuesta: String(r.respuesta),
+              pagina_nivel: 'todos',
+            })),
+            source: 'mysql' as const,
+          }
+        }
+      } catch {
+        /* fallback json */
+      }
+    }
     console.error('[faqs] MySQL:', error)
     return loadJsonFallback()
   }
@@ -90,26 +118,11 @@ export async function getFaqs(): Promise<FaqItem[]> {
   return data.faqs
 }
 
-const GENERAL_FAQ = /hermano|matr[ií]cula|pensi[oó]n|horario|receso|vacaciones|psicolog|nataci[oó]n|danza|ingl[eé]s|intranet|comunic/i
-
 export async function getFaqsParaNivel(nivel: 'inicial' | 'primaria' | 'secundaria'): Promise<FaqItem[]> {
   const all = await getFaqs()
-  const propio =
-    nivel === 'inicial' ? /inicial|3 a[nñ]os|primera infancia|steam/i
-    : nivel === 'primaria' ? /primaria|aula invertida|tablets|4\.?[°ºo]/i
-    : /secundaria|aula invertida|vocacional|oratoria|rob[oó]tica|tablets/i
-
-  const picked: FaqItem[] = []
-  const seen = new Set<string>()
-  for (const faq of all) {
-    const t = `${faq.pregunta} ${faq.respuesta}`
-    if (!propio.test(t) && !GENERAL_FAQ.test(t)) continue
-    if (nivel === 'inicial' && /tablets/i.test(t) && !/inicial/i.test(t)) continue
-    const key = faq.pregunta.toLowerCase()
-    if (seen.has(key)) continue
-    seen.add(key)
-    picked.push(faq)
-    if (picked.length >= 8) break
-  }
-  return picked
+  const picked = all.filter((faq) => {
+    const nv = String(faq.pagina_nivel || 'todos').toLowerCase()
+    return nv === 'todos' || nv === nivel
+  })
+  return picked.slice(0, 10)
 }
