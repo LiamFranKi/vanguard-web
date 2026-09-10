@@ -1,0 +1,32 @@
+---
+description: Despliegue VPS de la web publica. PM2 es vanguard-web-test, nunca vanguard-web.
+globs:
+alwaysApply: true
+---
+
+# Despliegue web publica (PuTTY)
+
+Ruta VPS: `/home/vanguard/web-vanguard`
+Repo: https://github.com/LiamFranKi/vanguard-web
+Proceso PM2: **`vanguard-web-test`**
+
+NO usar `vanguard-web` (no existe en este VPS).
+NO usar `intranet2026-backend` (eso es la intranet).
+NO usar `pm2 restart all` salvo que el usuario lo pida.
+
+## Plantillas
+
+**Sin deps nuevas:**
+```bash
+cd /home/vanguard/web-vanguard && git pull origin main && npm run build && pm2 restart vanguard-web-test
+```
+
+**Con deps nuevas** (`package.json` / lock):
+```bash
+cd /home/vanguard/web-vanguard && git pull origin main && npm install && npm run build && pm2 restart vanguard-web-test
+```
+
+Si el pull y el build ya salieron y solo falto el restart:
+```bash
+pm2 restart vanguard-web-test
+```

@@ -15,6 +15,10 @@ export type NivelLandingData = {
   talleres: string[]
   grados: string[]
   clasicoHref: string
+  showUtilesCta?: boolean
+  showClasicoLink?: boolean
+  priceNote?: string
+  incluidos?: { badge: string; title: string; text: string }[]
 }
 
 export const NIVELES_LANDING: Record<NivelKey, NivelLandingData> = {
@@ -43,6 +47,20 @@ export const NIVELES_LANDING: Record<NivelKey, NivelLandingData> = {
     talleres: ['Natación', 'Danza', 'Minichef', 'Escenificación', 'Psicomotricidad'],
     grados: ['Inicial 3 años', 'Inicial 4 años', 'Inicial 5 años'],
     clasicoHref: '/niveles/inicial/clasico',
+    showUtilesCta: false,
+    showClasicoLink: false,
+    incluidos: [
+      {
+        badge: 'GRATIS',
+        title: 'Lista de útiles',
+        text: 'Ya está incluida en la pensión. No hay lista aparte ni compra extra: se entrega todo lo que tu hijo necesita.',
+      },
+      {
+        badge: 'GRATIS',
+        title: 'Pack de libros COREFO',
+        text: 'El pack de libros COREFO también lo entregamos nosotros, sin costo adicional.',
+      },
+    ],
   },
   primaria: {
     key: 'primaria',
@@ -69,6 +87,7 @@ export const NIVELES_LANDING: Record<NivelKey, NivelLandingData> = {
     talleres: ['Natación', 'Danza', 'Minichef', 'Escenificación'],
     grados: ['1.° de Primaria', '2.° y 3.°', '4.°, 5.° y 6.°'],
     clasicoHref: '/niveles/primaria/clasico',
+    showClasicoLink: false,
   },
   secundaria: {
     key: 'secundaria',
@@ -95,5 +114,6 @@ export const NIVELES_LANDING: Record<NivelKey, NivelLandingData> = {
     talleres: ['Natación', 'Danza', 'Oratoria'],
     grados: ['1.° de Secundaria', '2.° a 5.° de Secundaria'],
     clasicoHref: '/niveles/secundaria/clasico',
+    showClasicoLink: false,
   },
 }

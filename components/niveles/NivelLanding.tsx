@@ -19,7 +19,7 @@ const THEME = {
     overlay: 'from-[#3b1020]/85 via-rose-900/45 to-amber-500/25',
     chip: 'bg-rose-500',
     cta: 'from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600',
-    ghost: 'border-white/40 bg-white/10 hover:bg-white/20',
+    ghost: 'border-white/40 bg-white/10 hover:bg-white/20 text-white',
     soft: 'bg-rose-50',
     text: 'text-rose-700',
     bar: 'from-rose-400 via-amber-400 to-orange-300',
@@ -28,10 +28,10 @@ const THEME = {
     section: 'from-orange-50 via-white to-rose-50',
   },
   primaria: {
-    overlay: 'from-[#0b1f4a]/88 via-sky-800/50 to-cyan-500/20',
+    overlay: 'from-[#071536]/92 via-[#0b1f4a]/78 to-sky-950/50',
     chip: 'bg-sky-500',
     cta: 'from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800',
-    ghost: 'border-white/40 bg-white/10 hover:bg-white/20',
+    ghost: 'border-sky-200 bg-white text-sky-950 hover:bg-sky-50 shadow-lg',
     soft: 'bg-sky-50',
     text: 'text-sky-800',
     bar: 'from-sky-400 via-blue-500 to-indigo-400',
@@ -43,7 +43,7 @@ const THEME = {
     overlay: 'from-[#04140f]/90 via-emerald-950/60 to-teal-700/25',
     chip: 'bg-emerald-600',
     cta: 'from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800',
-    ghost: 'border-white/40 bg-white/10 hover:bg-white/20',
+    ghost: 'border-white/40 bg-white/10 hover:bg-white/20 text-white',
     soft: 'bg-emerald-50',
     text: 'text-emerald-800',
     bar: 'from-emerald-400 via-teal-400 to-gold-400',
@@ -102,7 +102,7 @@ export default function NivelLanding({
             </Link>
             <Link
               href="/contacto"
-              className={`inline-flex justify-center items-center rounded-2xl border ${t.ghost} text-white font-semibold px-6 py-3.5 backdrop-blur-md`}
+              className={`inline-flex justify-center items-center rounded-2xl border ${t.ghost} font-semibold px-6 py-3.5`}
             >
               Contáctanos
             </Link>
@@ -110,7 +110,7 @@ export default function NivelLanding({
               href="https://tour.vanguardschools.edu.pe/"
               target="_blank"
               rel="noopener noreferrer"
-              className={`inline-flex justify-center items-center rounded-2xl border ${t.ghost} text-white font-semibold px-6 py-3.5 backdrop-blur-md`}
+              className={`inline-flex justify-center items-center rounded-2xl border ${t.ghost} font-semibold px-6 py-3.5`}
             >
               Tour virtual
             </a>
@@ -180,10 +180,10 @@ export default function NivelLanding({
         <div className={`rounded-[2.2rem] bg-gradient-to-br ${t.price} text-white p-8 md:p-12 shadow-2xl overflow-hidden relative`}>
           <div className="absolute -right-10 -top-10 w-56 h-56 rounded-full bg-white/10" />
           <p className="uppercase tracking-[0.2em] text-xs font-bold text-white/80 mb-2">Esquema de pagos</p>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-2">Un mismo monto en todo el nivel</h2>
-          <p className="text-white/85 mb-8 max-w-xl">
-            Matrícula y pensión unificadas. El precio lo actualiza el colegio desde la intranet (Web → Páginas).
-          </p>
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-6">Un mismo monto en todo el nivel</h2>
+          {data.priceNote && (
+            <p className="text-white/85 mb-8 max-w-xl">{data.priceNote}</p>
+          )}
           <div className="flex flex-wrap gap-2 mb-8">
             {data.grados.map((g) => (
               <span key={g} className="bg-white/15 border border-white/25 rounded-full px-4 py-1.5 text-sm font-semibold">
@@ -196,13 +196,31 @@ export default function NivelLanding({
           <p className="mt-4 font-semibold bg-white/15 inline-block rounded-2xl px-4 py-2">
             {textoDescuentoHermano(descuentoHermano)}
           </p>
+          {data.incluidos && data.incluidos.length > 0 && (
+            <div className="mt-8 grid sm:grid-cols-2 gap-3">
+              {data.incluidos.map((item) => (
+                <article
+                  key={item.title}
+                  className="rounded-2xl bg-white text-gray-900 p-5 shadow-lg border border-white/40"
+                >
+                  <span className="inline-block text-[11px] font-extrabold tracking-[0.18em] text-rose-600 mb-2">
+                    {item.badge}
+                  </span>
+                  <h3 className="text-lg font-extrabold leading-tight">{item.title}</h3>
+                  <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{item.text}</p>
+                </article>
+              ))}
+            </div>
+          )}
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Link href={admisionHref} className="inline-flex justify-center bg-white text-gray-900 font-bold rounded-2xl px-6 py-3.5 hover:bg-amber-50">
               {admisionLabel}
             </Link>
-            <Link href="/lista-utiles" className="inline-flex justify-center border border-white/40 font-semibold rounded-2xl px-6 py-3.5 hover:bg-white/10">
-              Lista de útiles
-            </Link>
+            {data.showUtilesCta !== false && (
+              <Link href="/lista-utiles" className="inline-flex justify-center border border-white/40 font-semibold rounded-2xl px-6 py-3.5 hover:bg-white/10">
+                Lista de útiles
+              </Link>
+            )}
             <Link href="/documentos" className="inline-flex justify-center border border-white/40 font-semibold rounded-2xl px-6 py-3.5 hover:bg-white/10">
               Documentos
             </Link>
@@ -212,13 +230,7 @@ export default function NivelLanding({
 
       {faqs.length > 0 && (
         <section className="container mx-auto px-4 py-14 max-w-3xl">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Preguntas frecuentes</h2>
-          <p className="text-gray-600 mb-6">
-            Editables en la intranet (Web → FAQs).{' '}
-            <Link href="/preguntas-frecuentes" className={`${t.text} font-semibold underline underline-offset-2`}>
-              Ver todas
-            </Link>
-          </p>
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Preguntas frecuentes</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <details key={`${faq.pregunta}-${i}`} className={`nivel-faq group ${t.soft} rounded-2xl border border-black/5 shadow-sm`}>
@@ -250,11 +262,13 @@ export default function NivelLanding({
             </Link>
           </div>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-8">
-          <Link href={data.clasicoHref} className="underline underline-offset-2 hover:text-gray-600">
-            Ver el diseño anterior de esta página
-          </Link>
-        </p>
+        {data.showClasicoLink !== false && (
+          <p className="text-center text-xs text-gray-400 mt-8">
+            <Link href={data.clasicoHref} className="underline underline-offset-2 hover:text-gray-600">
+              Ver el diseño anterior de esta página
+            </Link>
+          </p>
+        )}
       </section>
     </div>
   )
