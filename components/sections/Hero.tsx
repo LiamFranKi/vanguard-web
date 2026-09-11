@@ -40,7 +40,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative flex min-h-[85vh] md:min-h-screen flex-col text-white">
+    <section className="relative flex min-h-[100svh] md:min-h-screen flex-col text-white">
       {/* Se sirve por API: Next no publica fotos subidas a public/ después del build. */}
       <div className="absolute inset-0 z-0 bg-slate-900">
         <img
@@ -50,7 +50,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative z-10 flex flex-1 items-center justify-center px-4 pt-24 md:pt-28 pb-8">
+      <div className="relative z-10 flex flex-1 items-start md:items-center justify-center px-4 pt-36 pb-6 md:pt-40 md:pb-8">
         <div className={`container mx-auto max-w-4xl text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           {admision?.chipHero && (
             <div className="mb-5 flex flex-col items-center gap-1.5">
@@ -128,7 +128,7 @@ export default function Hero() {
 
       {showBanner && (
         <div className="relative z-20 w-full shrink-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white">
-          <div className="relative container mx-auto px-4 py-2.5 pr-12 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+          <div className="relative container mx-auto px-4 py-2.5 pr-16 sm:pr-12 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <span className="font-bold text-sm sm:text-base text-center">{admision?.textoBanner}</span>
             <Link
               href={admision?.rutaFormulario || '/admision'}

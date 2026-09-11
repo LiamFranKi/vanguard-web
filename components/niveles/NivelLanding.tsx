@@ -65,29 +65,31 @@ export default function NivelLanding({
   const t = THEME[data.key]
 
   return (
-    <div className={`pt-20 bg-gradient-to-b ${t.section}`}>
-      <section className="relative min-h-[88vh] flex items-end overflow-hidden">
-        <Image
-          src={data.heroImage}
-          alt={data.title}
-          fill
-          priority
-          unoptimized
-          className={`object-cover scale-105 ${data.key === 'primaria' ? 'object-[center_32%]' : 'object-center'}`}
-        />
-        <div className={`absolute inset-0 bg-gradient-to-t ${t.overlay}`} />
-        <div className="absolute inset-0 nivel-hero-shine" />
-        <div className="relative z-10 container mx-auto px-4 pb-14 md:pb-20 pt-32">
-          <p className={`inline-flex items-center ${t.chip} text-white text-xs md:text-sm font-bold tracking-widest uppercase rounded-full px-4 py-1.5 shadow-lg mb-5`}>
+    <div className={`pt-28 md:pt-32 bg-gradient-to-b ${t.section}`}>
+      <section className="relative min-h-[72vh] md:min-h-[88vh] flex items-end">
+        <div className="absolute inset-0 overflow-hidden">
+          <Image
+            src={data.heroImage}
+            alt={data.title}
+            fill
+            priority
+            unoptimized
+            className={`object-cover scale-105 ${data.key === 'primaria' ? 'object-[center_32%]' : 'object-center'}`}
+          />
+          <div className={`absolute inset-0 bg-gradient-to-t ${t.overlay}`} />
+          <div className="absolute inset-0 nivel-hero-shine" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4 pb-10 md:pb-20 pt-6 md:pt-32">
+          <p className={`inline-flex items-center ${t.chip} text-white text-xs md:text-sm font-bold tracking-widest uppercase rounded-full px-4 py-1.5 shadow-lg mb-4 md:mb-5`}>
             {data.kicker}{data.ages ? ` · ${data.ages}` : ''}
           </p>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white max-w-4xl leading-[0.95] drop-shadow-lg">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white max-w-4xl leading-[0.95] drop-shadow-lg">
             {data.title}
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
+          <p className="mt-4 md:mt-6 text-base md:text-xl text-white/90 max-w-2xl leading-relaxed">
             {data.lead}
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+          <div className="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link
               href="/visita-guiada"
               className={`inline-flex justify-center items-center rounded-2xl bg-gradient-to-r ${t.cta} text-white font-bold px-6 py-3.5 shadow-xl`}
