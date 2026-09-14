@@ -2,6 +2,8 @@
  * Plantillas HTML de correo institucionales (logo + formato)
  */
 
+import { TELEFONOS_DISPLAY } from '@/lib/contacto'
+
 function siteBase(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com').replace(/\/+$/, '')
 }
@@ -83,7 +85,7 @@ function shell(opts: {
               <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;color:#64748b;font-size:12px;line-height:1.55;">
                 <strong style="color:#1e3a8a;">Vanguard Schools</strong><br/>
                 Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP<br/>
-                Tel: 946 592 100 / 922 084 833 · admin@vanguardschools.edu.pe<br/>
+                Tel: ${TELEFONOS_DISPLAY} · admin@vanguardschools.edu.pe<br/>
                 ${opts.footerExtra || ''}
                 <span style="display:block;margin-top:8px;">© ${year} Vanguard Schools — Mensaje automático del sitio web</span>
               </div>
@@ -292,7 +294,7 @@ export function emailAdmisionUsuario(opts: {
     </p>
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
-        Si necesita información inmediata: <strong>946 592 100 / 922 084 833</strong>
+        Si necesita información inmediata: <strong>${TELEFONOS_DISPLAY}</strong>
         · <strong>admin@vanguardschools.edu.pe</strong>
       </p>
     </div>
@@ -357,7 +359,7 @@ export function emailContactoUsuario(opts: {
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
         Si necesita ayuda inmediata, llámenos a
-        <strong>946 592 100 / 922 084 833</strong>
+        <strong>${TELEFONOS_DISPLAY}</strong>
         o escriba a <strong>admin@vanguardschools.edu.pe</strong>.
       </p>
     </div>
@@ -424,7 +426,7 @@ export function emailSugerenciaUsuario(opts: {
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
         No es necesario responder a este correo. Si necesita ayuda inmediata, llámenos a
-        <strong>946 592 100 / 922 084 833</strong>.
+        <strong>${TELEFONOS_DISPLAY}</strong>.
       </p>
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">

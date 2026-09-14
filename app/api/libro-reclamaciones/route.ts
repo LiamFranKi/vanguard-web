@@ -39,7 +39,7 @@ function getInstitucionConfig(): InstitucionConfig {
       nombreComercial: 'Vanguard Schools',
       ruc: 'PENDIENTE-ACTUALIZAR',
       direccion: 'Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP',
-      telefonos: '946 592 100 / 922 084 833',
+      telefonos: '922 084 833 - 947 345 887 - 947 346 735',
       email: 'admin@vanguardschools.edu.pe',
       adjuntoMaxMb: 5,
       adjuntoTipos: ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'image/webp'],

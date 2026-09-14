@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi'
+import { TELEFONOS_DISPLAY } from '@/lib/contacto'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -79,7 +80,7 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 mb-2">Teléfonos</h3>
-                      <p className="text-gray-700">946 592 100 / 922 084 833</p>
+                      <p className="text-gray-700">{TELEFONOS_DISPLAY}</p>
                     </div>
                   </div>
                 </div>

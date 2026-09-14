@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo, FiX } from 'react-icons/fi'
 import VideoModal from '@/components/VideoModal'
 import type { AdmisionConfigPublica } from '@/lib/admision-config'
+import { TELEFONOS_DISPLAY, TELEFONO_WHATSAPP_URL } from '@/lib/contacto'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
@@ -109,7 +110,7 @@ export default function Hero() {
               </div>
             </a>
             <a
-              href="https://wa.me/51946592100"
+              href={TELEFONO_WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-slate-900/55 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/25 shadow-lg hover:bg-slate-900/65 hover:-translate-y-0.5 transition-all cursor-pointer"
@@ -119,7 +120,7 @@ export default function Hero() {
               </div>
               <div className="text-left flex-1 min-w-0">
                 <p className="text-xs sm:text-sm text-white/90 mb-0.5 font-semibold">Teléfonos</p>
-                <p className="font-bold text-white text-sm sm:text-base leading-relaxed">946 592 100 / 922 084 833</p>
+                <p className="font-bold text-white text-sm sm:text-base leading-relaxed">{TELEFONOS_DISPLAY}</p>
               </div>
             </a>
           </div>

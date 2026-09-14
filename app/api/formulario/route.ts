@@ -15,6 +15,7 @@ import {
   emailAdmisionColegio,
   emailAdmisionUsuario,
 } from '@/lib/email-templates'
+import { TELEFONOS_DISPLAY } from '@/lib/contacto'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -559,7 +560,7 @@ function generateConfirmacionHTML(nombre: string, tipoFormulario: string, logoUr
                   <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0;">
                     <p style="color: #1e40af; margin: 0; font-size: 14px;">
                       <strong>¿Necesitas información inmediata?</strong><br>
-                      Teléfonos: 946 592 100 / 922 084 833<br>
+                      Teléfonos: ${TELEFONOS_DISPLAY}<br>
                       Email: admin@vanguardschools.edu.pe
                     </p>
                   </div>

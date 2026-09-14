@@ -1,4 +1,5 @@
 import { getNivelesInversion, priceRangeSeo } from '@/lib/niveles-inversion'
+import { TELEFONOS_SCHEMA } from '@/lib/contacto'
 
 export default async function StructuredData() {
   const inversion = await getNivelesInversion()
@@ -20,7 +21,7 @@ export default async function StructuredData() {
     },
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+51-946-592-100',
+      telephone: TELEFONOS_SCHEMA[0],
       contactType: 'Admisiones',
       areaServed: 'PE',
       availableLanguage: ['Spanish', 'English'],
@@ -46,7 +47,7 @@ export default async function StructuredData() {
       postalCode: '15107',
       addressCountry: 'PE',
     },
-    telephone: ['+51-946-592-100', '+51-922-084-833'],
+    telephone: [...TELEFONOS_SCHEMA],
     email: 'admin@vanguardschools.edu.pe',
     url: 'https://www.vanguardschools.com',
     logo: 'https://www.vanguardschools.com/LOGO6.png',

@@ -194,7 +194,7 @@ export default function AdmissionForm() {
                           value={formData.telefonoApoderado}
                           onChange={handleChange}
                           className="w-full py-3 outline-none text-gray-900"
-                          placeholder="946 592 100"
+                          placeholder="922 084 833"
                         />
                       </div>
                     </div>

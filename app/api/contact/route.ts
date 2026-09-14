@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
+import { TELEFONOS_DISPLAY } from '@/lib/contacto'
 
 const contactSchema = z.object({
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -213,7 +214,7 @@ function generateEmailToUser(nombre: string, logoUrl: string): string {
                   <div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px; margin: 20px 0;">
                     <p style="color: #0369a1; margin: 0; font-size: 14px;">
                       <strong>¿Necesitas información inmediata?</strong><br>
-                      Teléfonos: 946 592 100 / 922 084 833<br>
+                      Teléfonos: ${TELEFONOS_DISPLAY}<br>
                       Email: admin@vanguardschools.edu.pe
                     </p>
                   </div>

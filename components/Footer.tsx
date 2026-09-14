@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { FiFacebook, FiInstagram, FiYoutube, FiHome, FiLayers, FiShield, FiCamera, FiMessageSquare, FiMail, FiPhone, FiMapPin, FiBookOpen } from 'react-icons/fi'
 import { FaTiktok } from 'react-icons/fa6'
+import { TELEFONOS_DISPLAY } from '@/lib/contacto'
 
 export default function Footer() {
   return (
@@ -144,7 +145,7 @@ export default function Footer() {
                   <FiPhone className="text-white mt-1 flex-shrink-0" size={14} />
                   <div>
                     <strong className="text-white">Teléfonos:</strong><br />
-                    <span>946 592 100 / 922 084 833</span>
+                    <span>{TELEFONOS_DISPLAY}</span>
                   </div>
                 </div>
               </li>
