@@ -148,12 +148,12 @@ export function emailVisitaUsuario(opts: {
       Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
     </p>
     <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
-      Gracias por su interés en Vanguard Schools. Hemos recibido su solicitud de
-      <strong>visita guiada</strong> y nos pondremos en contacto para confirmar la fecha y hora.
+      Gracias por su interés en Vanguard Schools. Su registro de
+      <strong>visita guiada</strong> fue confirmado con la fecha y hora que seleccionó.
     </p>
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
-        <strong>Preferencia indicada</strong><br/>
+        <strong>Fecha y hora confirmadas</strong><br/>
         Fecha: ${escapeHtml(opts.fechaPreferida || '—')}<br/>
         Horario: ${escapeHtml(opts.horarioPreferido || '—')}
       </p>
@@ -166,7 +166,7 @@ export function emailVisitaUsuario(opts: {
   return shell({
     logoUrl: opts.logoUrl,
     eyebrow: 'Vanguard Schools',
-    title: 'Solicitud recibida',
+    title: 'Registro confirmado',
     subtitle: 'Visita guiada',
     body,
   })

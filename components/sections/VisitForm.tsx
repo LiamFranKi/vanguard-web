@@ -254,8 +254,8 @@ export default function VisitForm() {
               <div>
                 <h2 className="text-2xl font-bold text-primary-800 mb-4">Reserva tu visita</h2>
                 <p className="text-gray-700 mb-4">
-                  Completa este formulario y nuestro equipo de admisión se pondrá en contacto contigo
-                  para confirmar la fecha y hora de tu visita.
+                  Completa este formulario, elige la fecha y hora disponibles y tu visita quedará
+                  registrada. Recibirás la confirmación en tu correo.
                 </p>
                 <div className="space-y-4 text-sm text-gray-700">
                   <div className="flex items-start space-x-3">
@@ -281,8 +281,8 @@ export default function VisitForm() {
                       <FiClock className="text-primary-600" size={16} />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">Confirmación rápida</p>
-                      <p>Te contactaremos por correo o teléfono para validar tu visita.</p>
+                      <p className="font-semibold text-gray-900">Confirmación inmediata</p>
+                      <p>Recibirás un correo confirmando tu visita con la fecha y hora que elegiste.</p>
                     </div>
                   </div>
                 </div>
@@ -534,8 +534,8 @@ export default function VisitForm() {
 
                 {submitStatus === 'success' && (
                   <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
-                    ¡Gracias por tu interés! Hemos recibido tu solicitud y nos pondremos en contacto para
-                    confirmar la fecha y hora de tu visita.
+                    ¡Gracias por tu interés! Tu registro fue confirmado con la fecha y hora que elegiste.
+                    Recibirás un correo de confirmación.
                   </div>
                 )}
 

@@ -320,7 +320,7 @@ export async function POST(request: NextRequest) {
         horarioPreferido: String(otrosDatos.horarioPreferido || ''),
       })
       asuntoColegio = `Nueva visita guiada — ${String(otrosDatos.fechaPreferida || '')}`
-      asuntoUsuario = `Solicitud de visita recibida — Vanguard Schools`
+      asuntoUsuario = `Registro de visita confirmado — Vanguard Schools`
       replyToColegio = email
     } else if (tipo === 'admisión') {
       const nombresEstudiante = String(otrosDatos.nombresEstudiante || '')
