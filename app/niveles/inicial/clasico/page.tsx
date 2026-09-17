@@ -112,7 +112,7 @@ export default async function InicialPage() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiUsersIcon className="text-pink-600 mt-1 flex-shrink-0" size={20} />
-                  <span className="text-gray-700">Trabajamos con 1 maestra por 10 estudiantes.</span>
+                  <span className="text-gray-700">Dos maestras por aula.</span>
                 </div>
                 <div className="flex items-start space-x-3">
                   <FiUsersIcon className="text-pink-600 mt-1 flex-shrink-0" size={20} />
@@ -162,9 +162,9 @@ export default async function InicialPage() {
             <NivelInversion
               titulo="Inversión del Nivel Inicial en Vanguard Schools"
               grupos={[
-                { etiqueta: 'Inicial 03 años' },
-                { etiqueta: 'Inicial 04 años' },
-                { etiqueta: 'Inicial 05 años' },
+                { etiqueta: 'Early Year' },
+                { etiqueta: 'Pre Kinder' },
+                { etiqueta: 'Kinder' },
               ]}
               monto={inversion.inicial}
               textoLinea={inversion.textoLinea}

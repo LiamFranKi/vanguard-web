@@ -1,4 +1,4 @@
-const PREFIXES = ['/inicio/', '/niveles/', '/utiles/', '/documentos/', '/banner/']
+const PREFIXES = ['/inicio/', '/niveles/', '/utiles/', '/documentos/', '/banner/', '/convenios/']
 const ROOTS = [
   /^\/FONDOBANNER\.jpg$/i,
   /^\/inicial\.jpeg$/i,

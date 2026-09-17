@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { FiArrowRight, FiMapPin, FiPhone, FiMail, FiMap, FiInfo, FiX } from 'react-icons/fi'
+import { FiArrowRight, FiMail, FiMap, FiInfo, FiX } from 'react-icons/fi'
 import VideoModal from '@/components/VideoModal'
 import type { AdmisionConfigPublica } from '@/lib/admision-config'
-import { TELEFONOS_DISPLAY, TELEFONO_WHATSAPP_URL } from '@/lib/contacto'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
@@ -49,12 +48,13 @@ export default function Hero() {
           alt="Campus Vanguard Schools"
           className="absolute inset-0 w-full h-full object-cover"
         />
+        <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 flex flex-1 items-start md:items-center justify-center px-4 pt-36 pb-6 md:pt-40 md:pb-8">
-        <div className={`container mx-auto max-w-4xl text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+      <div className="relative z-10 flex flex-1 flex-col justify-end px-4 pb-8 pt-28 md:pb-12">
+        <div className={`container mx-auto max-w-5xl text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           {admision?.chipHero && (
-            <div className="mb-5 flex flex-col items-center gap-1.5">
+            <div className="mb-4 flex flex-col items-center gap-1.5">
               <span className="inline-flex items-center rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs sm:text-sm font-bold px-4 py-1.5 shadow-lg">
                 {admision.textoChip}
               </span>
@@ -63,7 +63,7 @@ export default function Hero() {
               </p>
             </div>
           )}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center items-center">
             <Link
               href="/contacto"
               className="group bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center justify-center space-x-2 shadow-2xl hover:shadow-blue-600/50 text-sm sm:text-base w-full sm:w-auto"
@@ -93,37 +93,6 @@ export default function Hero() {
               <span>Conócenos</span>
             </button>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto">
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Jr.+Toribio+de+Luzuriaga+Mz+F+Lote+18+y+19,+San+Martín+de+Porres,+Lima"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-slate-900/55 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/25 shadow-lg hover:bg-slate-900/65 hover:-translate-y-0.5 transition-all cursor-pointer"
-            >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                <FiMapPin className="text-white" size={20} />
-              </div>
-              <div className="text-left flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-white/90 mb-0.5 font-semibold">Ubicación</p>
-                <p className="font-bold text-white text-sm sm:text-base leading-relaxed">Jr. Toribio de Luzuriaga Mz &quot;F&quot; Lote 18 y 19 - SMP</p>
-              </div>
-            </a>
-            <a
-              href={TELEFONO_WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-slate-900/55 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex items-center space-x-3 sm:space-x-4 border border-white/25 shadow-lg hover:bg-slate-900/65 hover:-translate-y-0.5 transition-all cursor-pointer"
-            >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gold-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                <FiPhone className="text-white" size={20} />
-              </div>
-              <div className="text-left flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-white/90 mb-0.5 font-semibold">Teléfonos</p>
-                <p className="font-bold text-white text-sm sm:text-base leading-relaxed">{TELEFONOS_DISPLAY}</p>
-              </div>
-            </a>
-          </div>
         </div>
       </div>
 
@@ -150,15 +119,6 @@ export default function Hero() {
         </div>
       )}
 
-      {!showBanner && (
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Video */}
       <VideoModal
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
@@ -168,5 +128,3 @@ export default function Hero() {
     </section>
   )
 }
-
-

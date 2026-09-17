@@ -12,7 +12,7 @@ export const revalidate = 0
 export const metadata: Metadata = {
   title: 'Educación Inicial - Vanguard Schools',
   description:
-    'Educación Inicial en Vanguard Schools. Niños de 3 a 5 años con STEAM, juego, piscina patera y 10 estudiantes por maestra.',
+    'Educación Inicial en Vanguard Schools. Early Year, Pre Kinder y Kinder con STEAM, juego, piscina patera y dos maestras por aula.',
 }
 
 export default async function InicialPage() {

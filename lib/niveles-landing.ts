@@ -36,7 +36,7 @@ export const NIVELES_LANDING: Record<NivelKey, NivelLandingData> = {
     pillars: [
       { title: 'Psicomotricidad', text: 'Cuerpo, equilibrio y coordinación en espacios pensados para la primera infancia.' },
       { title: 'Aula de sectores', text: 'Ambientes que invitan a investigar, crear y convivir.' },
-      { title: '10 niños por maestra', text: 'Acompañamiento cercano, cálido y especializado por edad.' },
+      { title: 'Dos Maestras por Aula', text: 'Acompañamiento cercano, cálido y especializado por edad.' },
       { title: 'Socialización', text: 'Aprender a compartir, hablar y cuidar al otro desde el primer día.' },
     ],
     campus: [
@@ -45,7 +45,7 @@ export const NIVELES_LANDING: Record<NivelKey, NivelLandingData> = {
       { title: 'Campus de 7 500 m²', text: 'Infraestructura antisísmica, aulas amplias y libros COREFO incluidos.', image: '/primaria.jpeg' },
     ],
     talleres: ['Natación', 'Danza', 'Minichef', 'Escenificación', 'Psicomotricidad'],
-    grados: ['Inicial 3 años', 'Inicial 4 años', 'Inicial 5 años'],
+    grados: ['Early Year', 'Pre Kinder', 'Kinder'],
     clasicoHref: '/niveles/inicial/clasico',
     showUtilesCta: false,
     showClasicoLink: false,
