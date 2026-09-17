@@ -46,7 +46,7 @@ export default function Hero() {
         <img
           src="/api/banner-inicio"
           alt="Campus Vanguard Schools"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-top"
         />
         <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
       </div>
