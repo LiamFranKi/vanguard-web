@@ -12,6 +12,7 @@ export interface FaqItem {
   respuesta: string
   pagina_nivel?: string
   pagina_destinos?: FaqDestino[]
+  orden?: number
 }
 
 export interface FaqCategoria {
@@ -80,9 +81,14 @@ function loadJsonFallback(): FaqsPayload {
     const filePath = path.join(process.cwd(), 'config', 'faqs.json')
     const data = fs.readFileSync(filePath, 'utf8')
     const parsed = JSON.parse(data) as { faqs?: FaqItem[] }
-    const faqs = (parsed.faqs || []).map((f) => {
+    const faqs = (parsed.faqs || []).map((f, i) => {
       const pagina_destinos = parseFaqDestinos(f.pagina_destinos, f.pagina_nivel || 'todos')
-      return { ...f, pagina_destinos, pagina_nivel: f.pagina_nivel || 'todos' }
+      return {
+        ...f,
+        pagina_destinos,
+        pagina_nivel: f.pagina_nivel || 'todos',
+        orden: Number(f.orden) || i + 1,
+      }
     })
     return { faqs, source: 'fallback' }
   } catch (error) {
@@ -100,6 +106,7 @@ function mapRows(rows: RowDataPacket[]): FaqItem[] {
       respuesta: String(r.respuesta),
       pagina_nivel: String(r.pagina_nivel || 'todos'),
       pagina_destinos,
+      orden: Number(r.faq_orden) || 0,
     }
   })
 }
@@ -133,7 +140,7 @@ export async function getFaqsData(): Promise<FaqsPayload> {
        FROM web_faqs f
        INNER JOIN web_faq_categorias c ON c.id = f.categoria_id
        WHERE f.activo = 1 AND c.activo = 1
-       ORDER BY c.orden ASC, f.orden ASC, f.id ASC`
+       ORDER BY f.orden ASC, f.id ASC`
     )
 
     if (!rows || rows.length === 0) {
@@ -155,13 +162,13 @@ export async function getFaqsData(): Promise<FaqsPayload> {
              FROM web_faqs f
              INNER JOIN web_faq_categorias c ON c.id = f.categoria_id
              WHERE f.activo = 1 AND c.activo = 1
-             ORDER BY c.orden ASC, f.orden ASC, f.id ASC`
+             ORDER BY f.orden ASC, f.id ASC`
           : `SELECT c.etiqueta AS categoria, c.codigo, c.orden AS cat_orden,
                     f.pregunta, f.respuesta, f.orden AS faq_orden, f.pagina_nivel
              FROM web_faqs f
              INNER JOIN web_faq_categorias c ON c.id = f.categoria_id
              WHERE f.activo = 1 AND c.activo = 1
-             ORDER BY c.orden ASC, f.orden ASC, f.id ASC`
+             ORDER BY f.orden ASC, f.id ASC`
         const [rows] = await db.execute<RowDataPacket[]>(sql)
         if (rows?.length) {
           return {
@@ -179,14 +186,17 @@ export async function getFaqsData(): Promise<FaqsPayload> {
   }
 }
 
+function porOrden(a: FaqItem, b: FaqItem) {
+  return (a.orden || 0) - (b.orden || 0)
+}
+
 /** Menú Preguntas frecuentes de la web pública. */
 export async function getFaqs(): Promise<FaqItem[]> {
   const data = await getFaqsData()
-  return data.faqs.filter((faq) => faqTieneDestino(faq, 'web'))
+  return data.faqs.filter((faq) => faqTieneDestino(faq, 'web')).sort(porOrden)
 }
 
 export async function getFaqsParaNivel(nivel: 'inicial' | 'primaria' | 'secundaria'): Promise<FaqItem[]> {
   const data = await getFaqsData()
-  const picked = data.faqs.filter((faq) => faqTieneDestino(faq, nivel))
-  return picked.slice(0, 10)
+  return data.faqs.filter((faq) => faqTieneDestino(faq, nivel)).sort(porOrden).slice(0, 10)
 }

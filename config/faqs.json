@@ -2,106 +2,164 @@
   "faqs": [
     {
       "categoria": "ADMISIÓN Y MATRÍCULA",
-      "pregunta": "¿Cuál es la edad mínima para ingresar a inicial?",
-      "respuesta": "En inicial, a partir de los 3 años cumplidos hasta el 31 de marzo 2026."
+      "pregunta": "¿Cómo puedo iniciar el proceso de admisión o traslado de mi hijo(a)?",
+      "respuesta": "Puedes iniciar el proceso de manera virtual o presencial. El proceso comprende el registro del postulante, una entrevista personalizada, una evaluación formativa de acuerdo con el nivel escolar y, finalmente, la confirmación con las indicaciones para realizar la matrícula.",
+      "pagina_nivel": "web",
+      "pagina_destinos": ["web"]
     },
     {
       "categoria": "ADMISIÓN Y MATRÍCULA",
-      "pregunta": "¿Cuál es la capacidad máxima de estudiantes por salón?",
-      "respuesta": "Nivel inicial: máximo 25 estudiantes.\nNivel primaria: máximo 30 estudiantes.\nNivel secundaria: máximo 30 estudiantes."
+      "pregunta": "¿Qué requisitos y documentos necesito para postular?",
+      "respuesta": "Los requisitos y documentos pueden variar según el nivel, grado y condición del postulante. Nuestro equipo de Admisión te brindará la relación correspondiente y te acompañará durante todo el proceso.",
+      "pagina_nivel": "web",
+      "pagina_destinos": ["web"]
     },
     {
       "categoria": "ADMISIÓN Y MATRÍCULA",
-      "pregunta": "¿Puedo trasladar a mi hijo una vez iniciado el año escolar?",
-      "respuesta": "Sí, pero el traslado estará sujeto a la disponibilidad de vacantes. Si es aprobado, deberás cumplir con las condiciones y obligaciones correspondientes a un estudiante nuevo."
+      "pregunta": "¿Puedo solicitar el traslado de mi hijo durante el año escolar?",
+      "respuesta": "Sí. Los traslados durante el año escolar son posibles y están sujetos a la disponibilidad de vacantes. Una vez aprobado el traslado, la familia deberá cumplir con los requisitos y condiciones establecidos para los estudiantes nuevos.",
+      "pagina_nivel": "web",
+      "pagina_destinos": ["web"]
     },
     {
-      "categoria": "COSTOS Y PAGOS",
-      "pregunta": "¿Cuáles son los costos de la matrícula, pensión y otros?",
-      "respuesta": "Nivel inicial: matrícula S/510 – pensión S/510.\nNivel primaria: matrícula S/510 – pensión S/510.\nNivel secundaria: matrícula S/530 – pensión S/530.\nEvaluación psicopedagógica S/50."
+      "categoria": "ADMISIÓN Y MATRÍCULA",
+      "pregunta": "¿Cómo puedo consultar si hay vacantes disponibles?",
+      "respuesta": "Puedes consultar la disponibilidad de vacantes comunicándote con nuestro equipo de Admisión. También puedes registrar tus datos y el grado de interés para recibir orientación sobre el proceso.",
+      "pagina_nivel": "web",
+      "pagina_destinos": ["web"]
     },
     {
-      "categoria": "COSTOS Y PAGOS",
-      "pregunta": "¿Hay descuentos por hermanos?",
-      "respuesta": "Sí, a partir del 2do hermano, descuento de S/20 en matrícula y pensión."
+      "categoria": "ADMISIÓN Y MATRÍCULA",
+      "pregunta": "¿Cómo puedo agendar una visita o solicitar más información?",
+      "respuesta": "Puedes solicitar una visita guiada desde nuestra página web o comunicarte con nuestro equipo de Admisión. Estaremos encantados de mostrarte nuestras instalaciones, resolver tus dudas y brindarte información sobre nuestra propuesta educativa.",
+      "pagina_nivel": "web",
+      "pagina_destinos": ["web"]
+    },
+    {
+      "categoria": "ADMISIÓN Y MATRÍCULA",
+      "pregunta": "¿Desde qué edad reciben a los niños en el nivel Inicial?",
+      "respuesta": "Recibimos niños desde los 3 años, cumplidos hasta el 31 de marzo del año de ingreso. Nuestro nivel Inicial comprende las edades de 3, 4 y 5 años.",
+      "pagina_nivel": "inicial",
+      "pagina_destinos": ["inicial"]
     },
     {
       "categoria": "HORARIOS Y CALENDARIO",
-      "pregunta": "¿Cuál es el horario de clases por nivel?",
-      "respuesta": "Inicial: 8:00 am – 12:30 pm.\nPrimaria: 7:35 am – 1:30 pm.\nSecundaria: 7:35 am – 2:00 pm."
-    },
-    {
-      "categoria": "HORARIOS Y CALENDARIO",
-      "pregunta": "¿Cuándo es el inicio de clases?",
-      "respuesta": "El inicio de clases en nuestros 3 niveles es el viernes 6 de marzo."
-    },
-    {
-      "categoria": "HORARIOS Y CALENDARIO",
-      "pregunta": "¿Hay vacaciones durante el año para los estudiantes?",
-      "respuesta": "Sí, al final de cada bimestre, los estudiantes de los 3 niveles tienen una semana de receso."
+      "pregunta": "¿Cuál es el horario de clases y cuántos estudiantes hay por aula?",
+      "respuesta": "El horario de Inicial es de 7:20 a. m. a 1:30 p. m. La capacidad máxima es de 25 estudiantes por salón y trabajamos con una proporción de 1 maestra por cada 10 estudiantes, favoreciendo un acompañamiento cercano y especializado.",
+      "pagina_nivel": "inicial",
+      "pagina_destinos": ["inicial"]
     },
     {
       "categoria": "ACADÉMICO Y PEDAGÓGICO",
-      "pregunta": "¿Cuál es la metodología educativa en el nivel inicial?",
-      "respuesta": "Basada en el enfoque STEAM (Science, Technology, Engineering, Arts and Mathematics), con proyectos, resolución de problemas, aprendizaje activo y colaborativo."
+      "pregunta": "¿Cómo acompañan a los niños durante su proceso de adaptación al colegio?",
+      "respuesta": "Promovemos un acompañamiento cercano y respetuoso, con maestras especializadas y espacios que favorecen la socialización, autonomía y seguridad de cada niño. A través del juego y las experiencias cotidianas, buscamos que se integren progresivamente y construyan vínculos positivos con sus compañeros y docentes.",
+      "pagina_nivel": "inicial",
+      "pagina_destinos": ["inicial"]
     },
     {
       "categoria": "ACADÉMICO Y PEDAGÓGICO",
-      "pregunta": "¿Cuál es la metodología educativa en primaria y secundaria?",
-      "respuesta": "Aplicamos el modelo de Aula Invertida (Flipped Classroom), donde los estudiantes ven la teoría en casa y en clase trabajan práctica, debates y proyectos."
-    },
-    {
-      "categoria": "ACADÉMICO Y PEDAGÓGICO",
-      "pregunta": "¿Qué idiomas imparten y desde qué grado comienzan?",
-      "respuesta": "Inglés desde inicial, con proyectos, debates y club de conversación en inglés, además de visitas de profesores nativos."
-    },
-    {
-      "categoria": "ACADÉMICO Y PEDAGÓGICO",
-      "pregunta": "¿Cómo se evalúa a los estudiantes?",
-      "respuesta": "Evaluación continua, formativa y multidimensional: prácticas, trabajos, presentaciones y observaciones con retroalimentación y rúbricas claras."
-    },
-    {
-      "categoria": "ACADÉMICO Y PEDAGÓGICO",
-      "pregunta": "¿Se permite el uso de tecnología en clase?",
-      "respuesta": "Sí. Desde 4.º de primaria hasta 5.º de secundaria los estudiantes usan tablets como herramienta educativa. La compra es asumida por los padres."
+      "pregunta": "¿Cuál es la metodología de enseñanza que aplican en el nivel Inicial?",
+      "respuesta": "Trabajamos con el enfoque STEAM, integrando ciencia, tecnología, ingeniería, arte y matemáticas mediante el juego, la exploración y la investigación. Buscamos estimular la curiosidad, creatividad, autonomía, pensamiento crítico y trabajo en equipo desde los primeros años.",
+      "pagina_nivel": "inicial",
+      "pagina_destinos": ["inicial"]
     },
     {
       "categoria": "SERVICIOS Y ACTIVIDADES",
-      "pregunta": "¿Qué actividades extracurriculares ofrecen?",
-      "respuesta": "Talleres gratuitos de natación y danzas, además de fútbol, vóley y balonmano dentro de Educación Física."
+      "pregunta": "¿Los niños de Inicial cuentan con espacios exclusivos según su edad?",
+      "respuesta": "El nivel Inicial dispone de espacios diseñados para favorecer el aprendizaje y desarrollo de los más pequeños, como aulas de sectores, espacios vivenciales y piscina patera temperada. Además, el campus cuenta con amplias áreas para actividades deportivas, psicomotrices y recreativas.",
+      "pagina_nivel": "inicial",
+      "pagina_destinos": ["inicial"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Enseñan inglés desde Inicial?",
+      "respuesta": "Sí. En Vanguard Schools la formación en inglés comienza desde Inicial mediante una propuesta de inmersión que busca que los niños se familiaricen con el idioma desde sus primeros años y desarrollen progresivamente sus habilidades comunicativas.",
+      "pagina_nivel": "inicial",
+      "pagina_destinos": ["inicial"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cuál es la metodología de enseñanza para el nivel Primaria?",
+      "respuesta": "En Primaria trabajamos mediante proyectos y Aula Invertida (Flipped Classroom). Los estudiantes revisan contenidos teóricos y utilizan recursos digitales, mientras que en clase desarrollan actividades prácticas, debates, proyectos y experiencias que fortalecen su pensamiento crítico y autonomía.",
+      "pagina_nivel": "primaria",
+      "pagina_destinos": ["primaria"]
+    },
+    {
+      "categoria": "HORARIOS Y CALENDARIO",
+      "pregunta": "¿Cuál es el horario de clases en Primaria y cuántos estudiantes hay por aula?",
+      "respuesta": "El horario de Primaria es de 7:20 a. m. a 2:00 p. m., con una capacidad máxima de 30 estudiantes por salón.",
+      "pagina_nivel": "primaria",
+      "pagina_destinos": ["primaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cómo se desarrolla la enseñanza del inglés en Primaria?",
+      "respuesta": "Trabajamos un inglés intensivo y vivencial, orientado a que los estudiantes desarrollen sus habilidades comunicativas y utilicen el idioma con seguridad y naturalidad. Nuestra propuesta de inglés también contempla la preparación progresiva para acreditaciones internacionales.",
+      "pagina_nivel": "primaria",
+      "pagina_destinos": ["primaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cómo se utilizan las herramientas tecnológicas dentro del aula?",
+      "respuesta": "La tecnología forma parte del proceso de aprendizaje. Contamos con pizarras interactivas en las aulas, tablets desde 4.º de Primaria, libros digitales e interactivos, tareas y evaluaciones en línea, además de laboratorio de cómputo y recursos tecnológicos que complementan las experiencias de aprendizaje.",
+      "pagina_nivel": "primaria",
+      "pagina_destinos": ["primaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Cuántas horas de inglés llevan en el nivel Primaria?",
+      "respuesta": "Vanguard Schools desarrolla un programa de inglés intensivo y vivencial, con experiencias orientadas al desarrollo progresivo de las competencias comunicativas de los estudiantes.",
+      "pagina_nivel": "primaria",
+      "pagina_destinos": ["primaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Los estudiantes realizan proyectos, exposiciones o actividades prácticas?",
+      "respuesta": "Sí. Nuestra metodología promueve un aprendizaje activo mediante proyectos, actividades prácticas y debates, permitiendo que los estudiantes apliquen lo aprendido, desarrollen pensamiento crítico, fortalezcan su comunicación y participen activamente en la construcción de sus conocimientos.",
+      "pagina_nivel": "primaria",
+      "pagina_destinos": ["primaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Qué metodología de enseñanza se aplica en Secundaria?",
+      "respuesta": "En Secundaria aplicamos el modelo de Aula Invertida, donde los estudiantes revisan contenidos teóricos con apoyo de recursos digitales y aprovechan las clases para desarrollar actividades prácticas, debates y proyectos. Esta metodología busca fortalecer la autonomía, el pensamiento crítico y la participación activa.",
+      "pagina_nivel": "secundaria",
+      "pagina_destinos": ["secundaria"]
+    },
+    {
+      "categoria": "HORARIOS Y CALENDARIO",
+      "pregunta": "¿Cuál es el horario de clases y cuántos estudiantes hay por aula?",
+      "respuesta": "El horario de Secundaria es de 7:20 a. m. a 3:00 p. m., con una capacidad máxima de 36 estudiantes por salón.",
+      "pagina_nivel": "secundaria",
+      "pagina_destinos": ["secundaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿El colegio brinda orientación vocacional y tiene convenios con universidades o institutos?",
+      "respuesta": "Sí brindamos orientación vocacional como parte del Proyecto de Vida de nuestros estudiantes, complementada con psicología escolar y charlas vocacionales que los ayudan a tomar decisiones informadas sobre su futuro académico y profesional.",
+      "pagina_nivel": "secundaria",
+      "pagina_destinos": ["secundaria"]
+    },
+    {
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Qué nivel de inglés alcanzan los estudiantes al finalizar la Secundaria?",
+      "respuesta": "Nuestro programa busca que los estudiantes desarrollen un dominio comunicativo del inglés y los prepara para acceder a acreditaciones internacionales. Vanguard Schools cuenta además con un programa de inglés certificado por Cambridge Assessment English, que incluye metodología comunicativa y preparación para exámenes Cambridge.",
+      "pagina_nivel": "secundaria",
+      "pagina_destinos": ["secundaria"]
     },
     {
       "categoria": "SERVICIOS Y ACTIVIDADES",
-      "pregunta": "¿Cuentan con departamento de psicología?",
-      "respuesta": "Sí. Ofrecemos acompañamiento socioemocional, protocolos anti-bullying, orientación vocacional, talleres y escuela para padres, siempre con confidencialidad."
+      "pregunta": "¿Qué acompañamiento psicológico y socioemocional reciben los adolescentes?",
+      "respuesta": "El acompañamiento psicológico forma parte de nuestra propuesta integral en Secundaria. A través del Proyecto de Vida, la orientación vocacional y la psicología escolar, buscamos acompañar a nuestros estudiantes en su desarrollo personal, social y en la toma responsable de decisiones para su futuro.",
+      "pagina_nivel": "secundaria",
+      "pagina_destinos": ["secundaria"]
     },
     {
-      "categoria": "COMUNICACIÓN CON PADRES",
-      "pregunta": "¿Cómo se informa a los padres sobre el progreso académico?",
-      "respuesta": "Reportes bimestrales, plataforma digital con calificaciones en tiempo real, reuniones personalizadas y alertas tempranas."
-    },
-    {
-      "categoria": "COMUNICACIÓN CON PADRES",
-      "pregunta": "¿Con qué frecuencia se realizan reuniones de padres y maestros?",
-      "respuesta": "Reuniones generales al inicio del año y reuniones individuales bimestrales con cada familia."
-    },
-    {
-      "categoria": "COMUNICACIÓN CON PADRES",
-      "pregunta": "¿Tienen plataforma virtual o aplicación?",
-      "respuesta": "Sí. Contamos con la Intranet Vanguardroom 4.0 y una APP móvil que notifica sobre asistencias, calificaciones y comunicados."
-    },
-    {
-      "categoria": "OTROS",
-      "pregunta": "¿Los estudiantes usan uniforme?",
-      "respuesta": "En Vanguard Schools no exigimos uniforme completo. Solo se requiere el buzo institucional y polos distintivos para actividades académicas y deportivas. Esto mantiene la identidad del colegio, con comodidad y sin gastos innecesarios. La vestimenta siempre debe respetar el Reglamento Interno."
-    },
-    {
-      "categoria": "OTROS",
-      "pregunta": "Calidad de la enseñanza en Vanguard Schools",
-      "respuesta": "Contamos con un equipo docente de alto nivel, capacitado en metodologías modernas como STEAM y Aula Invertida, evaluados y acompañados durante todo el año."
+      "categoria": "ACADÉMICO Y PEDAGÓGICO",
+      "pregunta": "¿Qué herramientas tecnológicas utilizan los estudiantes durante sus clases?",
+      "respuesta": "Los estudiantes integran diferentes herramientas tecnológicas en su aprendizaje, como tablets, pizarras interactivas, libros digitales, evaluaciones y tareas en línea, además de recursos de robótica y programación en un laboratorio equipado para desarrollar el pensamiento computacional.",
+      "pagina_nivel": "secundaria",
+      "pagina_destinos": ["secundaria"]
     }
   ]
 }
-
-
-

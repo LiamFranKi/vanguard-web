@@ -86,3 +86,5 @@ Secundaria: 7:35 am – 2:00 pm.', 6, 1),
 --   5. SERVICIOS Y ACTIVIDADES (servicios-y-actividades)
 --   6. COMUNICACIÓN CON PADRES (comunicacion-con-padres)
 --   7. OTROS (otros)
+--
+-- Contenido vigente 2026: ejecutar sql/web_faqs_contenido_2026.sql (reemplaza estas 20 preguntas).

@@ -349,7 +349,11 @@ html {
 .nivel-hero-shine {
   background: radial-gradient(1200px 500px at 20% 10%, rgba(255,255,255,0.18), transparent 55%);
 }
-.nivel-faq summary::-webkit-details-marker {
+.nivel-faq summary::-webkit-details-marker,
+.v-faq summary::-webkit-details-marker {
   display: none;
+}
+.v-faq summary {
+  list-style: none;
 }
 

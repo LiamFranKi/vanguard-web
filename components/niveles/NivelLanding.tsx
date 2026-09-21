@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { NivelLandingData } from '@/lib/niveles-landing'
 import type { FaqItem } from '@/lib/faqs'
+import FaqAccordion from '@/components/faqs/FaqAccordion'
 import { formatSoles, textoDescuentoHermano } from '@/lib/niveles-inversion'
 
 type Props = {
@@ -234,28 +235,10 @@ export default function NivelLanding({
       </section>
 
       {faqs.length > 0 && (
-        <section className="container mx-auto px-4 py-14 max-w-5xl">
+        <section className="container mx-auto px-4 py-14 max-w-3xl">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">Preguntas frecuentes</h2>
-          <p className="text-gray-600 mb-8">Respuestas rápidas de este nivel. Si hace falta, también estamos en contacto.</p>
-          <div className="grid md:grid-cols-2 gap-4">
-            {faqs.map((faq, i) => (
-              <details
-                key={`${faq.pregunta}-${i}`}
-                className="nivel-faq group rounded-3xl bg-white border border-black/5 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all"
-              >
-                <summary className="cursor-pointer list-none px-5 py-4 flex items-start gap-3">
-                  <span className={`shrink-0 w-9 h-9 rounded-2xl ${t.pill} flex items-center justify-center text-sm font-extrabold`}>
-                    {i + 1}
-                  </span>
-                  <span className="font-bold text-gray-900 leading-snug pt-1">{faq.pregunta}</span>
-                  <span className="ml-auto text-gray-400 group-open:rotate-180 transition-transform pt-1">▾</span>
-                </summary>
-                <div className="px-5 pb-5 md:pl-16 text-gray-700 leading-relaxed whitespace-pre-line border-t border-black/5 pt-3">
-                  {faq.respuesta}
-                </div>
-              </details>
-            ))}
-          </div>
+          <p className="text-gray-600 mb-8">Respuestas de {data.title.toLowerCase()}. Si hace falta, también estamos en contacto.</p>
+          <FaqAccordion faqs={faqs} tone={data.key === 'inicial' ? 'rose' : data.key === 'primaria' ? 'sky' : 'emerald'} />
         </section>
       )}
 

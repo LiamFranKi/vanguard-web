@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
-import { FiChevronDown, FiHelpCircle } from 'react-icons/fi'
-import { getFaqs, FaqItem as FaqItemType } from '@/lib/faqs'
+import Link from 'next/link'
+import { getFaqs } from '@/lib/faqs'
+import FaqAccordion from '@/components/faqs/FaqAccordion'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -8,134 +9,96 @@ export const revalidate = 0
 export const metadata: Metadata = {
   title: 'Preguntas Frecuentes - Vanguard Schools',
   description:
-    'Resuelve tus dudas sobre admisiones, horarios, pensiones, uniformes, servicios y más en Vanguard Schools.',
+    'Admisión, vacantes, traslados y visitas al campus de Vanguard Schools. Resuelve tus dudas antes de dar el siguiente paso.',
 }
 
-function FaqItem({
-  index,
-  pregunta,
-  respuesta,
-}: {
-  index: number
-  pregunta: string
-  respuesta: string
-}) {
-  const id = `faq-${index}`
-  const colorVariants = [
-    { bg: 'bg-blue-50', border: 'border-blue-100' },
-    { bg: 'bg-green-50', border: 'border-green-100' },
-    { bg: 'bg-amber-50', border: 'border-amber-100' },
-    { bg: 'bg-purple-50', border: 'border-purple-100' },
-    { bg: 'bg-pink-50', border: 'border-pink-100' },
-  ]
-  const color = colorVariants[index % colorVariants.length]
-
-  return (
-    <details
-      className={`group ${color.bg} ${color.border} border rounded-3xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all`}
-    >
-      <summary
-        className="list-none flex items-center justify-between px-5 py-4 cursor-pointer select-none"
-      >
-        <div className="flex items-start space-x-3">
-          <div className="mt-1 w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0">
-            <FiHelpCircle className="text-primary-600" size={18} />
-          </div>
-          <h3 className="text-base md:text-lg font-semibold text-gray-900">
-            {pregunta}
-          </h3>
-        </div>
-        <div className="ml-3 flex-shrink-0 rounded-full border border-gray-200 bg-gray-50 p-1 transition-transform group-open:rotate-180">
-          <FiChevronDown className="text-gray-500" size={18} aria-hidden="true" />
-        </div>
-      </summary>
-      <div
-        id={id}
-        className="px-5 pb-4 pt-0 text-sm md:text-base text-gray-700 leading-relaxed border-t border-gray-100"
-      >
-        {respuesta}
-      </div>
-    </details>
-  )
-}
+const NIVELES = [
+  {
+    href: '/niveles/inicial',
+    label: 'Inicial',
+    hint: '3, 4 y 5 años · STEAM e inmersión en inglés',
+    className: 'from-rose-50 to-orange-50 border-rose-100 hover:border-rose-300',
+    chip: 'bg-rose-500',
+  },
+  {
+    href: '/niveles/primaria',
+    label: 'Primaria',
+    hint: 'Aula invertida, inglés vivencial y tablets',
+    className: 'from-sky-50 to-blue-50 border-sky-100 hover:border-sky-300',
+    chip: 'bg-sky-500',
+  },
+  {
+    href: '/niveles/secundaria',
+    label: 'Secundaria',
+    hint: 'Proyecto de vida, Cambridge y tecnología',
+    className: 'from-emerald-50 to-teal-50 border-emerald-100 hover:border-emerald-300',
+    chip: 'bg-emerald-600',
+  },
+]
 
 export default async function PreguntasFrecuentesPage() {
-  const faqs: FaqItemType[] = await getFaqs()
-
-  // Agrupar FAQs por categoría (áreas: Admisión, Costos, Horarios, etc.)
-  const grupos = faqs.reduce<{ categoria: string; preguntas: FaqItemType[] }[]>(
-    (acc, faq) => {
-      const categoria = faq.categoria || 'Otras consultas'
-      const existente = acc.find((g) => g.categoria === categoria)
-      if (existente) {
-        existente.preguntas.push(faq)
-      } else {
-        acc.push({ categoria, preguntas: [faq] })
-      }
-      return acc
-    },
-    []
-  )
-
-  // Para asignar colores distintos de forma global
-  let globalIndex = 0
+  const faqs = await getFaqs()
 
   return (
     <div className="pt-20">
-      {/* Banner superior */}
-      <section className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <br />
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              Preguntas Frecuentes
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-800 via-primary-900 to-slate-950 text-white py-16 md:py-20">
+        <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-gold-400/20 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-10 h-56 w-56 rounded-full bg-primary-400/20 blur-3xl" />
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-bold tracking-[0.18em] uppercase text-gold-200 mb-5">
+              Admisión y visitas
+            </p>
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
+              Preguntas frecuentes
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 md:whitespace-nowrap">
-              Resolvemos las dudas más comunes sobre nuestra propuesta educativa
+            <p className="text-lg md:text-xl text-white/85 leading-relaxed">
+              Cómo iniciar el proceso, qué documentos necesitas, vacantes y cómo agendar una visita al campus.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Contenido FAQs */}
-      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-14 md:py-20 bg-gradient-to-b from-white via-slate-50 to-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-primary-800 mb-3">
-                Encuentra respuestas rápidas
-              </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-4"></div>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-4">
-                Antes de contactarnos, revisa estas preguntas frecuentes. Si aún tienes dudas,
-                estaremos encantados de ayudarte por nuestros canales de atención.
-              </p>
-            </div>
+          <div className="max-w-3xl mx-auto">
+            {faqs.length === 0 ? (
+              <p className="text-center text-gray-500">Pronto publicaremos las preguntas más frecuentes.</p>
+            ) : (
+              <FaqAccordion faqs={faqs} tone="gold" />
+            )}
 
-            {/* Categorías una debajo de otra, preguntas en dos columnas */}
-            <div className="space-y-10">
-              {grupos.map((grupo, grupoIndex) => (
-                <div key={`${grupo.categoria}-${grupoIndex}`}>
-                  <div className="mb-6 text-center">
-                    <h3 className="text-2xl font-extrabold text-primary-800 mb-2">
-                      {grupo.categoria}
-                    </h3>
-                    <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto" />
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {grupo.preguntas.map(p => {
-                      const idx = globalIndex++
-                      return (
-                        <FaqItem
-                          key={`${grupo.categoria}-${idx}`}
-                          index={idx}
-                          pregunta={p.pregunta}
-                          respuesta={p.respuesta}
-                        />
-                      )
-                    })}
-                  </div>
-                </div>
+            <div className="mt-12 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/visita-guiada"
+                className="inline-flex justify-center rounded-2xl bg-gradient-to-r from-primary-700 to-primary-900 text-white font-bold px-6 py-3.5 hover:from-primary-800 hover:to-slate-900"
+              >
+                Agendar visita guiada
+              </Link>
+              <Link
+                href="/admision"
+                className="inline-flex justify-center rounded-2xl border border-primary-200 bg-white text-primary-900 font-bold px-6 py-3.5 hover:bg-primary-50"
+              >
+                Iniciar admisión
+              </Link>
+            </div>
+          </div>
+
+          <div className="max-w-5xl mx-auto mt-16">
+            <p className="text-center text-sm font-bold tracking-[0.16em] uppercase text-gray-400 mb-5">
+              Preguntas de cada nivel
+            </p>
+            <div className="grid md:grid-cols-3 gap-4">
+              {NIVELES.map((n) => (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  className={`rounded-3xl border bg-gradient-to-br ${n.className} p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg`}
+                >
+                  <span className={`inline-block w-2.5 h-2.5 rounded-full ${n.chip} mb-3`} />
+                  <h2 className="text-xl font-extrabold text-gray-900">{n.label}</h2>
+                  <p className="text-sm text-gray-600 mt-1 leading-relaxed">{n.hint}</p>
+                </Link>
               ))}
             </div>
           </div>
@@ -144,5 +107,3 @@ export default async function PreguntasFrecuentesPage() {
     </div>
   )
 }
-
-
