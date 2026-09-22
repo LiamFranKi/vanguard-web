@@ -21,3 +21,12 @@ export const TELEFONOS_SCHEMA = TELEFONOS_COLEGIO.map((n) => {
   const d = String(n).replace(/\D/g, '')
   return `+51-${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`
 })
+
+/** Lo que la web muestra hoy si General todavía no tiene teléfono, correo o dirección. */
+export const CONTACTO_WEB_RESPALDO = {
+  telefonos: TELEFONOS_DISPLAY,
+  correo: 'admin@vanguardschools.edu.pe',
+  direccion: 'Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP',
+  whatsappUrl: TELEFONO_WHATSAPP_URL,
+  telefonosSchema: [...TELEFONOS_SCHEMA],
+}

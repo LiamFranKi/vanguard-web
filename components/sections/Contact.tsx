@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi'
-import { TELEFONOS_DISPLAY } from '@/lib/contacto'
+import { useEffect, useState } from 'react'
+import { CONTACTO_WEB_RESPALDO } from '@/lib/contacto'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -14,6 +14,26 @@ export default function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [contacto, setContacto] = useState(CONTACTO_WEB_RESPALDO)
+
+  useEffect(() => {
+    let vivo = true
+    fetch('/api/contacto-publico')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!vivo || !data?.telefonos) return
+        setContacto((prev) => ({
+          ...prev,
+          telefonos: String(data.telefonos),
+          correo: String(data.correo || prev.correo),
+          direccion: String(data.direccion || prev.direccion),
+        }))
+      })
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,7 +100,7 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 mb-2">Teléfonos</h3>
-                      <p className="text-gray-700">{TELEFONOS_DISPLAY}</p>
+                      <p className="text-gray-700">{contacto.telefonos}</p>
                     </div>
                   </div>
                 </div>
@@ -92,8 +112,8 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 mb-2">Email</h3>
-                      <a href="mailto:admin@vanguardschools.edu.pe" className="text-cyan-600 hover:text-cyan-700 transition-colors break-words">
-                        admin@vanguardschools.<wbr />edu.pe
+                      <a href={`mailto:${contacto.correo}`} className="text-cyan-600 hover:text-cyan-700 transition-colors break-words">
+                        {contacto.correo}
                       </a>
                     </div>
                   </div>
@@ -106,10 +126,7 @@ export default function Contact() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-gray-900 mb-2">Dirección</h3>
-                      <p className="text-gray-700">
-                        Jr. Toribio de Luzuriaga Mz F<br />
-                        lote 18 y 19 - SMP
-                      </p>
+                      <p className="text-gray-700">{contacto.direccion}</p>
                     </div>
                   </div>
                 </div>

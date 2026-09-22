@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { FiFacebook, FiInstagram, FiYoutube, FiHome, FiLayers, FiShield, FiCamera, FiMessageSquare, FiMail, FiPhone, FiMapPin, FiBookOpen } from 'react-icons/fi'
+import { FiFacebook, FiInstagram, FiYoutube, FiHome, FiLayers, FiShield, FiCamera, FiMessageSquare, FiBookOpen } from 'react-icons/fi'
 import { FaTiktok } from 'react-icons/fa6'
-import { TELEFONOS_DISPLAY } from '@/lib/contacto'
+import ContactoFooter from '@/components/ContactoFooter'
 
 export default function Footer() {
   return (
@@ -140,36 +140,7 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Contacto</h3>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li>
-                <div className="flex items-start space-x-2">
-                  <FiPhone className="text-white mt-1 flex-shrink-0" size={14} />
-                  <div>
-                    <strong className="text-white">Teléfonos:</strong><br />
-                    <span>{TELEFONOS_DISPLAY}</span>
-                  </div>
-                </div>
-              </li>
-              <li className="pt-2">
-                <div className="flex items-start space-x-2">
-                  <FiMapPin className="text-white mt-1 flex-shrink-0" size={14} />
-                  <div>
-                    <strong className="text-white">Dirección:</strong><br />
-                    Jr. Toribio de Luzuriaga Mz F<br />
-                    lote 18 y 19 - SMP
-                  </div>
-                </div>
-              </li>
-              <li className="pt-2">
-                <div className="flex items-start space-x-2">
-                  <FiMail className="text-white mt-1 flex-shrink-0" size={14} />
-                  <div>
-                    <strong className="text-white">Email:</strong><br />
-                    <a href="mailto:admin@vanguardschools.edu.pe" className="hover:text-white transition-colors">
-                      admin@vanguardschools.edu.pe
-                    </a>
-                  </div>
-                </div>
-              </li>
+              <ContactoFooter />
             </ul>
           </div>
         </div>

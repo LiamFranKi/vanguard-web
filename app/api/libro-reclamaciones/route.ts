@@ -10,6 +10,7 @@ import {
   emailReclamoUsuario,
 } from '@/lib/email-templates'
 import { nowPeruMysql } from '@/lib/datetime-peru'
+import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -29,12 +30,13 @@ type InstitucionConfig = {
   adjuntoTipos: string[]
 }
 
-function getInstitucionConfig(): InstitucionConfig {
+async function getInstitucionConfig(): Promise<InstitucionConfig> {
+  let base: InstitucionConfig
   try {
     const configPath = path.join(process.cwd(), 'config', 'libro-reclamaciones.json')
-    return JSON.parse(fs.readFileSync(configPath, 'utf8')) as InstitucionConfig
+    base = JSON.parse(fs.readFileSync(configPath, 'utf8')) as InstitucionConfig
   } catch {
-    return {
+    base = {
       razonSocial: 'Vanguard Schools',
       nombreComercial: 'Vanguard Schools',
       ruc: 'PENDIENTE-ACTUALIZAR',
@@ -45,6 +47,15 @@ function getInstitucionConfig(): InstitucionConfig {
       adjuntoTipos: ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
     }
   }
+  try {
+    const contacto = await obtenerContactoInstitucional()
+    if (contacto.direccion) base.direccion = contacto.direccion
+    if (contacto.telefonos) base.telefonos = contacto.telefonos
+    if (contacto.correo) base.email = contacto.correo
+  } catch {
+    /* se queda el archivo local */
+  }
+  return base
 }
 
 function ensureDirs() {
@@ -69,7 +80,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const institucion = getInstitucionConfig()
+    const institucion = await getInstitucionConfig()
     const formData = await request.formData()
     const get = (key: string) => String(formData.get(key) || '').trim()
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
-import { TELEFONOS_DISPLAY } from '@/lib/contacto'
+import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
 
 const contactSchema = z.object({
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { nombre, email, telefono, asunto, mensaje } = validation.data
+    const contacto = await obtenerContactoInstitucional()
 
     // Configuración de email (usar variables de entorno)
     const logoUrl =
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: email,
       subject: '✅ Gracias por contactarnos - Vanguard Schools',
-      html: generateEmailToUser(nombre, logoUrl),
+      html: generateEmailToUser(nombre, logoUrl, contacto),
     }
 
     // Enviar emails en segundo plano para no hacer esperar al usuario
@@ -168,7 +169,11 @@ function generateEmailToSchool(
   `
 }
 
-function generateEmailToUser(nombre: string, logoUrl: string): string {
+function generateEmailToUser(
+  nombre: string,
+  logoUrl: string,
+  contacto: { telefonos: string; correo: string; direccion: string }
+): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -214,8 +219,8 @@ function generateEmailToUser(nombre: string, logoUrl: string): string {
                   <div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px; margin: 20px 0;">
                     <p style="color: #0369a1; margin: 0; font-size: 14px;">
                       <strong>¿Necesitas información inmediata?</strong><br>
-                      Teléfonos: ${TELEFONOS_DISPLAY}<br>
-                      Email: admin@vanguardschools.edu.pe
+                      Teléfonos: ${contacto.telefonos}<br>
+                      Email: ${contacto.correo}
                     </p>
                   </div>
                 </td>
@@ -225,7 +230,7 @@ function generateEmailToUser(nombre: string, logoUrl: string): string {
               <tr>
                 <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
                   <p style="margin: 0 0 10px 0;"><strong>Vanguard Schools</strong></p>
-                  <p style="margin: 0;">Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP</p>
+                  <p style="margin: 0;">${contacto.direccion}</p>
                   <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Vanguard Schools - Todos los derechos reservados</p>
                 </td>
               </tr>

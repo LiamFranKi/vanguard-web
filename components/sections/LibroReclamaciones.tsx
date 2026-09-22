@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   FiAlertTriangle,
@@ -40,6 +40,29 @@ export default function LibroReclamaciones() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successNumero, setSuccessNumero] = useState('')
+  const [contacto, setContacto] = useState({
+    direccion: institucionData.direccion,
+    telefonos: institucionData.telefonos,
+    email: institucionData.email,
+  })
+
+  useEffect(() => {
+    let vivo = true
+    fetch('/api/contacto-publico')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!vivo || !data) return
+        setContacto((prev) => ({
+          direccion: data.direccion ? String(data.direccion) : prev.direccion,
+          telefonos: data.telefonos ? String(data.telefonos) : prev.telefonos,
+          email: data.correo ? String(data.correo) : prev.email,
+        }))
+      })
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -119,15 +142,15 @@ export default function LibroReclamaciones() {
                 </li>
                 <li className="flex gap-2">
                   <FiMapPin className="text-primary-600 mt-0.5 shrink-0" />
-                  <span>{institucionData.direccion}</span>
+                  <span>{contacto.direccion}</span>
                 </li>
                 <li className="flex gap-2">
                   <FiPhone className="text-primary-600 mt-0.5 shrink-0" />
-                  <span>{institucionData.telefonos}</span>
+                  <span>{contacto.telefonos}</span>
                 </li>
                 <li className="flex gap-2">
                   <FiMail className="text-primary-600 mt-0.5 shrink-0" />
-                  <span>{institucionData.email}</span>
+                  <span>{contacto.email}</span>
                 </li>
               </ul>
             </div>

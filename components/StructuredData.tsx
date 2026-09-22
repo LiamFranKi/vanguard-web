@@ -1,8 +1,9 @@
 import { getNivelesInversion, priceRangeSeo } from '@/lib/niveles-inversion'
-import { TELEFONOS_SCHEMA } from '@/lib/contacto'
+import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
 
 export default async function StructuredData() {
   const inversion = await getNivelesInversion()
+  const contacto = await obtenerContactoInstitucional()
   const priceRange = priceRangeSeo(inversion)
   const organizationSchema = {
     '@context': 'https://schema.org',
@@ -14,14 +15,14 @@ export default async function StructuredData() {
     description: 'Colegio Vanguard Schools - Educación Inicial, Primaria y Secundaria con metodología STEAM, inglés intensivo y tecnología de vanguardia en San Martín de Porres, Lima.',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Jr. Toribio de Luzuriaga Mz F Lote 18 y 19',
+      streetAddress: contacto.direccion,
       addressLocality: 'San Martín de Porres',
       addressRegion: 'Lima',
       addressCountry: 'PE',
     },
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: TELEFONOS_SCHEMA[0],
+      telephone: contacto.telefonosSchema[0],
       contactType: 'Admisiones',
       areaServed: 'PE',
       availableLanguage: ['Spanish', 'English'],
@@ -41,14 +42,14 @@ export default async function StructuredData() {
     description: 'Colegio privado en San Martín de Porres, Lima. Ofrecemos Educación Inicial, Primaria y Secundaria con metodología STEAM, inglés intensivo, piscinas temperadas y tecnología de vanguardia.',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Jr. Toribio de Luzuriaga Mz F Lote 18 y 19',
+      streetAddress: contacto.direccion,
       addressLocality: 'San Martín de Porres',
       addressRegion: 'Lima',
       postalCode: '15107',
       addressCountry: 'PE',
     },
-    telephone: [...TELEFONOS_SCHEMA],
-    email: 'admin@vanguardschools.edu.pe',
+    telephone: [...contacto.telefonosSchema],
+    email: contacto.correo,
     url: 'https://www.vanguardschools.com',
     logo: 'https://www.vanguardschools.com/LOGO6.png',
     image: 'https://www.vanguardschools.com/api/banner-inicio',

@@ -2,7 +2,16 @@
  * Plantillas HTML de correo institucionales (logo + formato)
  */
 
-import { TELEFONOS_DISPLAY } from '@/lib/contacto'
+import { CONTACTO_WEB_RESPALDO } from '@/lib/contacto'
+import type { ContactoInstitucional } from '@/lib/contacto-institucional'
+
+function pie(contacto?: ContactoInstitucional) {
+  return {
+    telefonos: contacto?.telefonos || CONTACTO_WEB_RESPALDO.telefonos,
+    correo: contacto?.correo || CONTACTO_WEB_RESPALDO.correo,
+    direccion: contacto?.direccion || CONTACTO_WEB_RESPALDO.direccion,
+  }
+}
 
 function siteBase(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com').replace(/\/+$/, '')
@@ -44,6 +53,7 @@ function row(label: string, value: string) {
 
 function shell(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   eyebrow: string
   title: string
   subtitle?: string
@@ -51,6 +61,7 @@ function shell(opts: {
   footerExtra?: string
 }) {
   const year = new Date().getFullYear()
+  const datos = pie(opts.contacto)
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -84,8 +95,8 @@ function shell(opts: {
             <td style="padding:8px 26px 28px 26px;">
               <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;color:#64748b;font-size:12px;line-height:1.55;">
                 <strong style="color:#1e3a8a;">Vanguard Schools</strong><br/>
-                Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP<br/>
-                Tel: ${TELEFONOS_DISPLAY} · admin@vanguardschools.edu.pe<br/>
+                ${escapeHtml(datos.direccion)}<br/>
+                Tel: ${escapeHtml(datos.telefonos)} · ${escapeHtml(datos.correo)}<br/>
                 ${opts.footerExtra || ''}
                 <span style="display:block;margin-top:8px;">© ${year} Vanguard Schools — Mensaje automático del sitio web</span>
               </div>
@@ -102,6 +113,7 @@ function shell(opts: {
 /** Correo al colegio: visita guiada */
 export function emailVisitaColegio(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   email: string
   telefono?: string
@@ -130,6 +142,7 @@ export function emailVisitaColegio(opts: {
     <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del interesado).</p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Formulario web',
     title: 'Nueva visita guiada',
@@ -141,6 +154,7 @@ export function emailVisitaColegio(opts: {
 /** Correo al usuario: acuse visita */
 export function emailVisitaUsuario(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   fechaPreferida?: string
   horarioPreferido?: string
@@ -166,6 +180,7 @@ export function emailVisitaUsuario(opts: {
     </p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Vanguard Schools',
     title: 'Registro confirmado',
@@ -177,6 +192,7 @@ export function emailVisitaUsuario(opts: {
 /** Correo al colegio: postulación Trabaja con Nosotros */
 export function emailTrabajaColegio(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   email: string
   telefono?: string
@@ -199,6 +215,7 @@ export function emailTrabajaColegio(opts: {
     <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">El PDF del curriculum va adjunto a este correo. Puede responder (Reply-To) al postulante.</p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Formulario web',
     title: 'Nueva postulación',
@@ -210,6 +227,7 @@ export function emailTrabajaColegio(opts: {
 /** Correo al usuario: acuse postulación */
 export function emailTrabajaUsuario(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   puesto?: string
 }) {
@@ -234,6 +252,7 @@ export function emailTrabajaUsuario(opts: {
     </p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Vanguard Schools',
     title: 'Postulación recibida',
@@ -245,6 +264,7 @@ export function emailTrabajaUsuario(opts: {
 /** Correo al colegio: solicitud de admisión */
 export function emailAdmisionColegio(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombresEstudiante: string
   apellidosEstudiante: string
   nombresApoderado: string
@@ -270,6 +290,7 @@ export function emailAdmisionColegio(opts: {
     <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del apoderado).</p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Formulario web',
     title: 'Nueva solicitud de admisión',
@@ -281,10 +302,12 @@ export function emailAdmisionColegio(opts: {
 /** Correo al apoderado: acuse admisión */
 export function emailAdmisionUsuario(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombresApoderado: string
   nombresEstudiante: string
   grado: string
 }) {
+  const datos = pie(opts.contacto)
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombresApoderado)}</strong>,
@@ -296,8 +319,8 @@ export function emailAdmisionUsuario(opts: {
     </p>
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
-        Si necesita información inmediata: <strong>${TELEFONOS_DISPLAY}</strong>
-        · <strong>admin@vanguardschools.edu.pe</strong>
+        Si necesita información inmediata: <strong>${escapeHtml(datos.telefonos)}</strong>
+        · <strong>${escapeHtml(datos.correo)}</strong>
       </p>
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
@@ -306,6 +329,7 @@ export function emailAdmisionUsuario(opts: {
     </p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Vanguard Schools',
     title: 'Solicitud recibida',
@@ -317,6 +341,7 @@ export function emailAdmisionUsuario(opts: {
 /** Correo al colegio: nuevo contacto */
 export function emailContactoColegio(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   email: string
   telefono?: string
@@ -337,6 +362,7 @@ export function emailContactoColegio(opts: {
     <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del usuario).</p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Formulario web',
     title: 'Nuevo mensaje de contacto',
@@ -348,6 +374,7 @@ export function emailContactoColegio(opts: {
 /** Correo al usuario: acuse de contacto */
 export function emailContactoUsuario(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
 }) {
   const body = `
@@ -361,8 +388,8 @@ export function emailContactoUsuario(opts: {
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
         Si necesita ayuda inmediata, llámenos a
-        <strong>${TELEFONOS_DISPLAY}</strong>
-        o escriba a <strong>admin@vanguardschools.edu.pe</strong>.
+        <strong>${escapeHtml(pie(opts.contacto).telefonos)}</strong>
+        o escriba a <strong>${escapeHtml(pie(opts.contacto).correo)}</strong>.
       </p>
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
@@ -371,6 +398,7 @@ export function emailContactoUsuario(opts: {
     </p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Vanguard Schools',
     title: 'Recibimos su mensaje',
@@ -382,6 +410,7 @@ export function emailContactoUsuario(opts: {
 /** Correo al colegio: nueva sugerencia */
 export function emailSugerenciaColegio(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   email: string
   telefono?: string
@@ -404,6 +433,7 @@ export function emailSugerenciaColegio(opts: {
     <p style="margin:14px 0 0 0;font-size:12px;color:#94a3b8;">Puede responder directamente a este correo (Reply-To del usuario).</p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Formulario web',
     title: 'Nueva sugerencia recibida',
@@ -415,6 +445,7 @@ export function emailSugerenciaColegio(opts: {
 /** Correo al usuario: acuse de sugerencia */
 export function emailSugerenciaUsuario(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
 }) {
   const body = `
@@ -428,7 +459,7 @@ export function emailSugerenciaUsuario(opts: {
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
       <p style="margin:0;color:#1e40af;font-size:14px;line-height:1.55;">
         No es necesario responder a este correo. Si necesita ayuda inmediata, llámenos a
-        <strong>${TELEFONOS_DISPLAY}</strong>.
+        <strong>${escapeHtml(pie(opts.contacto).telefonos)}</strong>.
       </p>
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
@@ -437,6 +468,7 @@ export function emailSugerenciaUsuario(opts: {
     </p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Vanguard Schools',
     title: 'Recibimos su mensaje',
@@ -448,6 +480,7 @@ export function emailSugerenciaUsuario(opts: {
 /** Correo al colegio: nuevo reclamo/queja */
 export function emailReclamoColegio(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   numero: string
   tipoLabel: string
   razonSocial: string
@@ -498,6 +531,7 @@ export function emailReclamoColegio(opts: {
     </table>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Libro de Reclamaciones',
     title: `${opts.tipoLabel} registrado`,
@@ -509,6 +543,7 @@ export function emailReclamoColegio(opts: {
 /** Correo al usuario: acuse de reclamo */
 export function emailReclamoUsuario(opts: {
   logoUrl: string
+  contacto?: ContactoInstitucional
   nombre: string
   numero: string
   tipoLabel: string
@@ -544,6 +579,7 @@ export function emailReclamoUsuario(opts: {
     </p>
   `
   return shell({
+    contacto: opts.contacto,
     logoUrl: opts.logoUrl,
     eyebrow: 'Acuse de recibo',
     title: 'Registro confirmado',

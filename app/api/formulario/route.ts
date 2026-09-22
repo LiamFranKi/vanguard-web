@@ -15,7 +15,7 @@ import {
   emailAdmisionColegio,
   emailAdmisionUsuario,
 } from '@/lib/email-templates'
-import { TELEFONOS_DISPLAY } from '@/lib/contacto'
+import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -257,6 +257,7 @@ export async function POST(request: NextRequest) {
 
     const emailConfig = getEmailConfig()
     const logoUrl = getLogoUrl()
+    const contacto = await obtenerContactoInstitucional()
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
@@ -287,6 +288,7 @@ export async function POST(request: NextRequest) {
 
     if (tipo === 'sugerencias') {
       emailHTML = emailSugerenciaColegio({
+        contacto,
         logoUrl,
         nombre,
         email,
@@ -295,11 +297,12 @@ export async function POST(request: NextRequest) {
         tipo: String(otrosDatos.tipo || ''),
         mensaje: String(otrosDatos.mensaje || ''),
       })
-      confirmacionHTML = emailSugerenciaUsuario({ logoUrl, nombre })
+      confirmacionHTML = emailSugerenciaUsuario({ contacto, logoUrl, nombre })
       asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
       replyToColegio = email
     } else if (tipo === 'contacto') {
       emailHTML = emailContactoColegio({
+        contacto,
         logoUrl,
         nombre,
         email,
@@ -307,12 +310,13 @@ export async function POST(request: NextRequest) {
         asunto: String(otrosDatos.asunto || ''),
         mensaje: String(otrosDatos.mensaje || ''),
       })
-      confirmacionHTML = emailContactoUsuario({ logoUrl, nombre })
+      confirmacionHTML = emailContactoUsuario({ contacto, logoUrl, nombre })
       asuntoColegio = `Nuevo contacto web — ${String(otrosDatos.asunto || 'Sin asunto')}`
       asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
       replyToColegio = email
     } else if (tipo === 'visita-guiada') {
       emailHTML = emailVisitaColegio({
+        contacto,
         logoUrl,
         nombre,
         email,
@@ -325,6 +329,7 @@ export async function POST(request: NextRequest) {
         mensaje: String(otrosDatos.mensaje || ''),
       })
       confirmacionHTML = emailVisitaUsuario({
+        contacto,
         logoUrl,
         nombre,
         fechaPreferida: String(otrosDatos.fechaPreferida || ''),
@@ -339,6 +344,7 @@ export async function POST(request: NextRequest) {
       const nombresApoderado = String(otrosDatos.nombresApoderado || '')
       const grado = String(otrosDatos.grado || '')
       emailHTML = emailAdmisionColegio({
+        contacto,
         logoUrl,
         nombresEstudiante,
         apellidosEstudiante,
@@ -350,6 +356,7 @@ export async function POST(request: NextRequest) {
         grado,
       })
       confirmacionHTML = emailAdmisionUsuario({
+        contacto,
         logoUrl,
         nombresApoderado,
         nombresEstudiante,
@@ -369,7 +376,8 @@ export async function POST(request: NextRequest) {
       confirmacionHTML = generateConfirmacionHTML(
         nombre,
         formularioConfig.nombre,
-        logoUrl
+        logoUrl,
+        contacto
       )
     }
 
@@ -525,7 +533,12 @@ function generateEmailHTML(
 /**
  * Genera el HTML del email de confirmación para el usuario
  */
-function generateConfirmacionHTML(nombre: string, tipoFormulario: string, logoUrl: string): string {
+function generateConfirmacionHTML(
+  nombre: string,
+  tipoFormulario: string,
+  logoUrl: string,
+  contacto: { telefonos: string; correo: string; direccion: string }
+): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -571,8 +584,8 @@ function generateConfirmacionHTML(nombre: string, tipoFormulario: string, logoUr
                   <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0;">
                     <p style="color: #1e40af; margin: 0; font-size: 14px;">
                       <strong>¿Necesitas información inmediata?</strong><br>
-                      Teléfonos: ${TELEFONOS_DISPLAY}<br>
-                      Email: admin@vanguardschools.edu.pe
+                      Teléfonos: ${contacto.telefonos}<br>
+                      Email: ${contacto.correo}
                     </p>
                   </div>
                 </td>
@@ -582,7 +595,7 @@ function generateConfirmacionHTML(nombre: string, tipoFormulario: string, logoUr
               <tr>
                 <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
                   <p style="margin: 0 0 10px 0;"><strong>Vanguard Schools</strong></p>
-                  <p style="margin: 0;">Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP</p>
+                  <p style="margin: 0;">${contacto.direccion}</p>
                   <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Vanguard Schools - Todos los derechos reservados</p>
                 </td>
               </tr>

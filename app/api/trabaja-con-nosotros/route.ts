@@ -9,6 +9,7 @@ import {
   emailTrabajaColegio,
   emailTrabajaUsuario,
 } from '@/lib/email-templates'
+import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -167,7 +168,9 @@ export async function POST(request: NextRequest) {
     })
 
     const destinatarios = await getDestinatariosWeb('trabaja')
+    const contacto = await obtenerContactoInstitucional()
     const emailHTML = emailTrabajaColegio({
+      contacto,
       logoUrl,
       nombre,
       email,
@@ -176,7 +179,7 @@ export async function POST(request: NextRequest) {
       mensaje,
       cvNombre: originalName,
     })
-    const confirmacionHTML = emailTrabajaUsuario({ logoUrl, nombre, puesto })
+    const confirmacionHTML = emailTrabajaUsuario({ contacto, logoUrl, nombre, puesto })
 
     const emailPromises = destinatarios.map((destinatario) =>
       transporter.sendMail({
