@@ -55,6 +55,7 @@ export type VisitaRow = {
   email: string
   telefono?: string
   nivelInteres?: string
+  gradoInteres?: string
   fechaPreferida: string
   horarioPreferido: string
   numeroEstudiantes?: string
@@ -240,27 +241,56 @@ export async function insertVisita(row: VisitaRow): Promise<InsertResult> {
     return { ok: false }
   }
 
+  const valoresBase = [
+    nowPeruMysql(),
+    row.nombre,
+    row.email,
+    row.telefono || null,
+    row.nivelInteres || null,
+    row.fechaPreferida,
+    row.horarioPreferido,
+    row.numeroEstudiantes || null,
+    row.mensaje || null,
+    row.ip || null,
+  ]
   try {
     const [result] = await db.execute<ResultSetHeader>(
       `INSERT INTO web_visitas_guiadas
-        (fecha_registro, nombre, email, telefono, nivel_interes, fecha_preferida,
+        (fecha_registro, nombre, email, telefono, nivel_interes, grado_interes, fecha_preferida,
          horario_preferido, numero_estudiantes, mensaje, estado, ip)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
       [
-        nowPeruMysql(),
-        row.nombre,
-        row.email,
-        row.telefono || null,
-        row.nivelInteres || null,
-        row.fechaPreferida,
-        row.horarioPreferido,
-        row.numeroEstudiantes || null,
-        row.mensaje || null,
-        row.ip || null,
+        valoresBase[0],
+        valoresBase[1],
+        valoresBase[2],
+        valoresBase[3],
+        valoresBase[4],
+        row.gradoInteres || null,
+        valoresBase[5],
+        valoresBase[6],
+        valoresBase[7],
+        valoresBase[8],
+        valoresBase[9],
       ]
     )
     return { ok: true, id: Number(result.insertId) || undefined }
   } catch (error) {
+    const msg = String((error as Error)?.message || error)
+    if (msg.includes('grado_interes') || msg.includes('Unknown column')) {
+      try {
+        const [result] = await db.execute<ResultSetHeader>(
+          `INSERT INTO web_visitas_guiadas
+            (fecha_registro, nombre, email, telefono, nivel_interes, fecha_preferida,
+             horario_preferido, numero_estudiantes, mensaje, estado, ip)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)`,
+          valoresBase
+        )
+        return { ok: true, id: Number(result.insertId) || undefined }
+      } catch (e2) {
+        console.error('[MySQL] Error al guardar web_visitas_guiadas (email de respaldo sigue):', e2)
+        return { ok: false }
+      }
+    }
     console.error('[MySQL] Error al guardar web_visitas_guiadas (email de respaldo sigue):', error)
     return { ok: false }
   }

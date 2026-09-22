@@ -106,6 +106,7 @@ export function emailVisitaColegio(opts: {
   email: string
   telefono?: string
   nivelInteres?: string
+  gradoInteres?: string
   fechaPreferida?: string
   horarioPreferido?: string
   numeroEstudiantes?: string
@@ -120,6 +121,7 @@ export function emailVisitaColegio(opts: {
       ${row('Email', opts.email)}
       ${row('Teléfono', opts.telefono || '—')}
       ${row('Nivel de interés', opts.nivelInteres || '—')}
+      ${row('Grado', opts.gradoInteres || '—')}
       ${row('Fecha preferida', opts.fechaPreferida || '—')}
       ${row('Horario preferido', opts.horarioPreferido || '—')}
       ${row('N° de estudiantes (aprox.)', opts.numeroEstudiantes || '—')}

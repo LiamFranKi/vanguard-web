@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker'
 import { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { es } from 'date-fns/locale/es'
 import 'react-datepicker/dist/react-datepicker.css'
+import { gradosParaNivel } from '@/lib/visita-grados'
 
 registerLocale('es', es)
 setDefaultLocale('es')
@@ -40,6 +41,7 @@ export default function VisitForm() {
     email: '',
     telefono: '',
     nivelInteres: '',
+    gradoInteres: '',
     fechaPreferida: '',
     horarioPreferido: '',
     numeroEstudiantes: '',
@@ -153,6 +155,7 @@ export default function VisitForm() {
           email: '',
           telefono: '',
           nivelInteres: '',
+          gradoInteres: '',
           fechaPreferida: '',
           horarioPreferido: '',
           numeroEstudiantes: '',
@@ -174,7 +177,12 @@ export default function VisitForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev) => {
+      if (name === 'nivelInteres') {
+        return { ...prev, nivelInteres: value, gradoInteres: '' }
+      }
+      return { ...prev, [name]: value }
+    })
   }
 
   const handleDateChange = (date: Date | null) => {
@@ -386,6 +394,29 @@ export default function VisitForm() {
                   </div>
                 </div>
 
+                {gradosParaNivel(formData.nivelInteres).length > 0 && (
+                  <div>
+                    <label htmlFor="gradoInteres" className="block text-gray-700 font-semibold mb-2">
+                      Grado de interés *
+                    </label>
+                    <select
+                      id="gradoInteres"
+                      name="gradoInteres"
+                      required
+                      value={formData.gradoInteres}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900"
+                    >
+                      <option value="">Selecciona un grado</option>
+                      {gradosParaNivel(formData.nivelInteres).map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <h3 className="text-xl font-semibold text-gray-900 mt-4">Detalles de la visita</h3>
 
                 {configLoaded && !visitasDisponibles && (
@@ -450,27 +481,6 @@ export default function VisitForm() {
                         required={visitasDisponibles}
                       />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1 flex items-center flex-wrap">
-                      <span
-                        className={`inline-block w-2 h-2 rounded-full mr-1 ${
-                          visitasDisponibles ? 'bg-green-500' : 'bg-amber-500'
-                        }`}
-                      />
-                      {visitasDisponibles ? (
-                        <>
-                          Días disponibles:
-                          <strong className="text-green-600 ml-1">
-                            {config.mensajeDias}
-                          </strong>
-                        </>
-                      ) : (
-                        <strong className="text-amber-700 ml-1">
-                          {configLoaded
-                            ? config.mensajeDias || 'No hay días disponibles'
-                            : 'Cargando disponibilidad…'}
-                        </strong>
-                      )}
-                    </p>
                   </div>
                   <div>
                     <label htmlFor="horarioPreferido" className="block text-gray-700 font-semibold mb-2">

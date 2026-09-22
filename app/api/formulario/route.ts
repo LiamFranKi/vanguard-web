@@ -146,6 +146,15 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      const { validarGradoVisita } = await import('@/lib/visita-grados')
+      const gradoOk = validarGradoVisita(
+        String(otrosDatos.nivelInteres || ''),
+        String(otrosDatos.gradoInteres || '')
+      )
+      if (!gradoOk.ok) {
+        return NextResponse.json({ error: gradoOk.error }, { status: 400 })
+      }
+
       const { validarVisitaFechaHorario } = await import('@/lib/visitas-config')
       const validacion = await validarVisitaFechaHorario(
         fechaPreferida,
@@ -168,6 +177,7 @@ export async function POST(request: NextRequest) {
         email,
         telefono: String(otrosDatos.telefono || ''),
         nivelInteres: String(otrosDatos.nivelInteres || ''),
+        gradoInteres: gradoOk.grado,
         fechaPreferida,
         horarioPreferido,
         numeroEstudiantes: String(otrosDatos.numeroEstudiantes || ''),
@@ -185,7 +195,7 @@ export async function POST(request: NextRequest) {
           nombre,
           email,
           telefono: String(otrosDatos.telefono || ''),
-          resumen: `${fechaPreferida} · ${horarioPreferido}`,
+          resumen: `${fechaPreferida} · ${horarioPreferido}${gradoOk.grado ? ` · ${gradoOk.grado}` : ''}`,
         }).catch(() => {})
       }
     }
@@ -308,6 +318,7 @@ export async function POST(request: NextRequest) {
         email,
         telefono: String(otrosDatos.telefono || ''),
         nivelInteres: String(otrosDatos.nivelInteres || ''),
+        gradoInteres: String(otrosDatos.gradoInteres || ''),
         fechaPreferida: String(otrosDatos.fechaPreferida || ''),
         horarioPreferido: String(otrosDatos.horarioPreferido || ''),
         numeroEstudiantes: String(otrosDatos.numeroEstudiantes || ''),

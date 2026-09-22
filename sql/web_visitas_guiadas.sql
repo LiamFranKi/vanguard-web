@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS `web_visitas_guiadas` (
   `email` VARCHAR(200) NOT NULL,
   `telefono` VARCHAR(50) DEFAULT NULL,
   `nivel_interes` VARCHAR(80) DEFAULT NULL,
+  `grado_interes` VARCHAR(80) DEFAULT NULL,
   `fecha_preferida` DATE NOT NULL,
   `horario_preferido` VARCHAR(120) NOT NULL,
   `numero_estudiantes` VARCHAR(20) DEFAULT NULL,
