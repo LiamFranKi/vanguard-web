@@ -10,6 +10,7 @@ import {
   emailTrabajaUsuario,
 } from '@/lib/email-templates'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import { camposAntiSpamDesdeFormData, evaluarAntiSpam, ipCliente } from '@/lib/anti-spam'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -61,6 +62,18 @@ export async function POST(request: NextRequest) {
     const puesto = String(formData.get('puesto') || '').trim()
     const mensaje = String(formData.get('mensaje') || '').trim()
     const cv = formData.get('cv')
+
+    const anti = evaluarAntiSpam(
+      {
+        ...camposAntiSpamDesdeFormData(formData),
+        nombre,
+        telefono,
+      },
+      { ip: ipCliente(request), formulario: 'trabaja-con-nosotros' }
+    )
+    if (!anti.ok) {
+      return NextResponse.json({ error: anti.error }, { status: anti.status })
+    }
 
     if (!nombre || !email || !telefono || !puesto) {
       return NextResponse.json(

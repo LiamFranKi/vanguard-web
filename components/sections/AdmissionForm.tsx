@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FiUser, FiMail, FiPhone, FiMapPin, FiFileText, FiSend, FiCheckCircle } from 'react-icons/fi'
+import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
 
 export default function AdmissionForm() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ export default function AdmissionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const anti = useAntiSpam()
 
   const grados = [
     'Inicial 03 Años',
@@ -52,6 +54,7 @@ export default function AdmissionForm() {
           nombre: `${formData.nombresApoderado} (Apoderado)`,
           email: formData.emailApoderado,
           ...formData,
+          ...anti.payload(),
         }),
       })
 
@@ -95,6 +98,7 @@ export default function AdmissionForm() {
             {/* Formulario */}
             <div className="p-6 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
+                <AntiSpamFields honeypot={anti.honeypot} onHoneypot={anti.setHoneypot} startedAt={anti.startedAt} />
                 {/* Datos del Estudiante */}
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">

@@ -16,6 +16,11 @@ import {
   emailAdmisionUsuario,
 } from '@/lib/email-templates'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import {
+  camposAntiSpamDesdeObjeto,
+  evaluarAntiSpam,
+  ipCliente,
+} from '@/lib/anti-spam'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -45,7 +50,25 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, nombre, ...otrosDatos } = body
+    const { email, nombre, sitio_web_extra: _hp, form_started_at: _ts, ...otrosDatos } = body
+    const tipoNorm = String(tipo || '').toLowerCase()
+    const esAdmision = tipoNorm === 'admisión' || tipoNorm === 'admision'
+    const anti = evaluarAntiSpam(
+      {
+        ...camposAntiSpamDesdeObjeto(body),
+        nombre: esAdmision ? otrosDatos.nombresApoderado || nombre : nombre,
+        nombresExtra: esAdmision
+          ? [otrosDatos.nombresEstudiante, otrosDatos.apellidosEstudiante]
+          : [],
+        telefono: esAdmision ? otrosDatos.telefonoApoderado : otrosDatos.telefono,
+        telefonoOpcional: tipoNorm === 'contacto' || tipoNorm === 'sugerencias',
+        dni: esAdmision ? otrosDatos.dniApoderado : undefined,
+      },
+      { ip: ipCliente(request), formulario: tipoNorm || 'formulario' }
+    )
+    if (!anti.ok) {
+      return NextResponse.json({ error: anti.error }, { status: anti.status })
+    }
 
     if (!email || !nombre) {
       return NextResponse.json(

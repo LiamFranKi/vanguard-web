@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import { camposAntiSpamDesdeObjeto, evaluarAntiSpam, ipCliente } from '@/lib/anti-spam'
 
 const contactSchema = z.object({
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -25,6 +26,18 @@ export async function POST(request: NextRequest) {
     }
 
     const { nombre, email, telefono, asunto, mensaje } = validation.data
+    const anti = evaluarAntiSpam(
+      {
+        ...camposAntiSpamDesdeObjeto(body),
+        nombre,
+        telefono,
+        telefonoOpcional: true,
+      },
+      { ip: ipCliente(request), formulario: 'contacto' }
+    )
+    if (!anti.ok) {
+      return NextResponse.json({ error: anti.error }, { status: anti.status })
+    }
     const contacto = await obtenerContactoInstitucional()
 
     // Configuración de email (usar variables de entorno)

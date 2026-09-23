@@ -3,6 +3,7 @@
 import { FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi'
 import { useEffect, useState } from 'react'
 import { CONTACTO_WEB_RESPALDO } from '@/lib/contacto'
+import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -14,7 +15,9 @@ export default function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
   const [contacto, setContacto] = useState(CONTACTO_WEB_RESPALDO)
+  const anti = useAntiSpam()
 
   useEffect(() => {
     let vivo = true
@@ -39,15 +42,15 @@ export default function Contact() {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus('idle')
+    setErrorMsg('')
 
     try {
-      // Usamos la API genérica de formularios que lee config/formularios.json
       const response = await fetch('/api/formulario?tipo=contacto', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...anti.payload() }),
       })
 
       if (response.ok) {
@@ -60,6 +63,8 @@ export default function Contact() {
           mensaje: ''
         })
       } else {
+        const data = await response.json().catch(() => ({}))
+        setErrorMsg(String(data?.error || ''))
         setSubmitStatus('error')
       }
     } catch (error) {
@@ -154,6 +159,7 @@ export default function Contact() {
             {/* Formulario */}
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg border border-gray-200">
               <form onSubmit={handleSubmit} className="space-y-6">
+                <AntiSpamFields honeypot={anti.honeypot} onHoneypot={anti.setHoneypot} startedAt={anti.startedAt} />
                 <div>
                   <label htmlFor="nombre" className="block text-gray-700 font-semibold mb-2">
                     Nombre completo *
@@ -246,7 +252,7 @@ export default function Contact() {
 
                 {submitStatus === 'error' && (
                   <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-                    Hubo un error al enviar el mensaje. Por favor, intenta nuevamente.
+                    {errorMsg || 'Hubo un error al enviar el mensaje. Por favor, intenta nuevamente.'}
                   </div>
                 )}
 

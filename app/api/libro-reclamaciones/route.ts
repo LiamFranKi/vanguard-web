@@ -11,6 +11,7 @@ import {
 } from '@/lib/email-templates'
 import { nowPeruMysql } from '@/lib/datetime-peru'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import { camposAntiSpamDesdeFormData, evaluarAntiSpam, ipCliente } from '@/lib/anti-spam'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -100,6 +101,20 @@ export async function POST(request: NextRequest) {
     const pedido = get('pedido')
     const monto = get('monto')
     const acepta = get('acepta')
+
+    const anti = evaluarAntiSpam(
+      {
+        ...camposAntiSpamDesdeFormData(formData),
+        nombre,
+        telefono,
+        telefonoOpcional: true,
+        modo: 'libro',
+      },
+      { ip: ipCliente(request), formulario: 'libro-reclamaciones' }
+    )
+    if (!anti.ok) {
+      return NextResponse.json({ error: anti.error }, { status: anti.status })
+    }
 
     if (!nombre || !email || !tipoDocumento || !numeroDocumento || !tipo || !detalle || !pedido) {
       return NextResponse.json(

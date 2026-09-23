@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FiMail, FiPhone, FiUser, FiBriefcase, FiFileText, FiSend } from 'react-icons/fi'
+import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
 
 export default function WorkWithUsForm() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function WorkWithUsForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const anti = useAntiSpam()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -56,6 +58,8 @@ export default function WorkWithUsForm() {
       data.append('telefono', formData.telefono)
       data.append('puesto', formData.puesto)
       data.append('mensaje', formData.mensaje)
+      data.append('sitio_web_extra', anti.payload().sitio_web_extra)
+      data.append('form_started_at', String(anti.payload().form_started_at))
       data.append('cv', cvFile)
 
       const response = await fetch('/api/trabaja-con-nosotros', {
@@ -137,6 +141,7 @@ export default function WorkWithUsForm() {
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              <AntiSpamFields honeypot={anti.honeypot} onHoneypot={anti.setHoneypot} startedAt={anti.startedAt} />
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="nombre" className="block text-gray-700 font-semibold mb-2">

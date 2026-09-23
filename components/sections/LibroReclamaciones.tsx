@@ -14,6 +14,7 @@ import {
   FiUpload,
 } from 'react-icons/fi'
 import institucionData from '@/config/libro-reclamaciones.json'
+import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
 
 const emptyForm = {
   nombre: '',
@@ -40,6 +41,7 @@ export default function LibroReclamaciones() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successNumero, setSuccessNumero] = useState('')
+  const anti = useAntiSpam()
   const [contacto, setContacto] = useState({
     direccion: institucionData.direccion,
     telefonos: institucionData.telefonos,
@@ -92,6 +94,8 @@ export default function LibroReclamaciones() {
         }
       })
       if (adjunto) body.append('adjunto', adjunto)
+      body.append('sitio_web_extra', anti.payload().sitio_web_extra)
+      body.append('form_started_at', String(anti.payload().form_started_at))
 
       const response = await fetch('/api/libro-reclamaciones', {
         method: 'POST',
@@ -231,6 +235,7 @@ export default function LibroReclamaciones() {
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  <AntiSpamFields honeypot={anti.honeypot} onHoneypot={anti.setHoneypot} startedAt={anti.startedAt} />
                   {/* Reclamante */}
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-wide text-primary-700 mb-3 border-b border-primary-100 pb-2">

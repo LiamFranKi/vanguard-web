@@ -7,6 +7,7 @@ import { registerLocale, setDefaultLocale } from 'react-datepicker'
 import { es } from 'date-fns/locale/es'
 import 'react-datepicker/dist/react-datepicker.css'
 import { gradosParaNivel } from '@/lib/visita-grados'
+import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
 
 registerLocale('es', es)
 setDefaultLocale('es')
@@ -51,6 +52,7 @@ export default function VisitForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const anti = useAntiSpam()
 
   const visitasDisponibles =
     configLoaded &&
@@ -145,7 +147,7 @@ export default function VisitForm() {
       const response = await fetch('/api/formulario?tipo=visita-guiada', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...anti.payload() }),
       })
 
       if (response.ok) {
@@ -315,6 +317,7 @@ export default function VisitForm() {
             <div className="md:col-span-3 bg-white rounded-2xl shadow-lg p-8 border border-sky-100">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Datos de contacto</h3>
               <form onSubmit={handleSubmit} className="space-y-6">
+                <AntiSpamFields honeypot={anti.honeypot} onHoneypot={anti.setHoneypot} startedAt={anti.startedAt} />
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="nombre" className="block text-gray-700 font-semibold mb-2">

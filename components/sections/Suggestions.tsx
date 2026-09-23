@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { FiSmile, FiAlertCircle, FiThumbsUp, FiMessageSquare, FiSend } from 'react-icons/fi'
+import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
 
 export default function Suggestions() {
   const [formData, setFormData] = useState({
@@ -15,11 +16,14 @@ export default function Suggestions() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+  const anti = useAntiSpam()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus('idle')
+    setErrorMsg('')
 
     try {
       const response = await fetch('/api/formulario?tipo=sugerencias', {
@@ -27,7 +31,7 @@ export default function Suggestions() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...anti.payload() }),
       })
 
       if (response.ok) {
@@ -41,6 +45,8 @@ export default function Suggestions() {
           mensaje: '',
         })
       } else {
+        const data = await response.json().catch(() => ({}))
+        setErrorMsg(String(data?.error || ''))
         setSubmitStatus('error')
       }
     } catch (error) {
@@ -151,6 +157,7 @@ export default function Suggestions() {
               obligatorios.
             </p>
             <form onSubmit={handleSubmit} className="space-y-5">
+              <AntiSpamFields honeypot={anti.honeypot} onHoneypot={anti.setHoneypot} startedAt={anti.startedAt} />
               <div>
                 <label htmlFor="nombre" className="block text-gray-700 font-semibold mb-2">
                   Nombre completo *
@@ -269,8 +276,8 @@ export default function Suggestions() {
 
               {submitStatus === 'error' && (
                 <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-                  Ocurrió un error al enviar tu sugerencia. Por favor, intenta nuevamente en unos
-                  momentos.
+                  {errorMsg ||
+                    'Ocurrió un error al enviar tu sugerencia. Por favor, intenta nuevamente en unos momentos.'}
                 </div>
               )}
 
