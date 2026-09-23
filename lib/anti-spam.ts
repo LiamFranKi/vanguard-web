@@ -43,6 +43,11 @@ function rateOk(clave: string, max: number) {
   return true
 }
 
+const LETRA = 'A-Za-zÁÉÍÓÚÜÑáéíóúüñ'
+const NOMBRE_COMPLETO = new RegExp('^[' + LETRA + ']+(?:[ \'\\-][' + LETRA + ']+)+$')
+const NOMBRE_PARTE = new RegExp('^[' + LETRA + ']{2,}(?:[ \'\\-][' + LETRA + ']+)*$')
+const CONSONANTES_SEGUIDAS = /[bcdfghjklmnpqrstvwxyzñ]{5,}/i
+
 /** Nombre y apellido reales: letras, espacios, guion o apóstrofe. */
 export function nombreParecePersona(raw: unknown) {
   const limpio = texto(raw)
@@ -51,10 +56,10 @@ export function nombreParecePersona(raw: unknown) {
     .replace(/\s+/g, ' ')
     .trim()
   if (limpio.length < 5 || limpio.length > 80) return false
-  if (!/^[\p{L}]+(?:[ '\-][\p{L}]+)+$/u.test(limpio)) return false
+  if (!NOMBRE_COMPLETO.test(limpio)) return false
   const palabras = limpio.split(/[ '\-]+/).filter(Boolean)
   if (palabras.length < 2 || palabras.some((p) => p.length < 2)) return false
-  if (/[bcdfghjklmnpqrstvwxyzñ]{5,}/iu.test(limpio)) return false
+  if (CONSONANTES_SEGUIDAS.test(limpio)) return false
   return true
 }
 
@@ -62,8 +67,8 @@ export function nombreOParteOk(raw: unknown) {
   if (nombreParecePersona(raw)) return true
   const limpio = texto(raw).normalize('NFC').replace(/\s+/g, ' ').trim()
   if (limpio.length < 2 || limpio.length > 80) return false
-  if (!/^[\p{L}]{2,}(?:[ '\-][\p{L}]+)*$/u.test(limpio)) return false
-  if (/[bcdfghjklmnpqrstvwxyzñ]{5,}/iu.test(limpio)) return false
+  if (!NOMBRE_PARTE.test(limpio)) return false
+  if (CONSONANTES_SEGUIDAS.test(limpio)) return false
   return true
 }
 
