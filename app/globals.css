@@ -357,3 +357,24 @@ html {
   list-style: none;
 }
 
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .hoja-reclamacion-print,
+  .hoja-reclamacion-print * {
+    visibility: visible;
+  }
+  .hoja-reclamacion-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+

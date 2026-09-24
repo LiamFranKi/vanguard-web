@@ -10,54 +10,15 @@ import {
   emailReclamoUsuario,
 } from '@/lib/email-templates'
 import { nowPeruMysql } from '@/lib/datetime-peru'
-import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
 import { camposAntiSpamDesdeFormData, evaluarAntiSpam, ipCliente } from '@/lib/anti-spam'
-
+import { obtenerInstitucionPublica } from '@/lib/institucion-publica'
+import { htmlHojaReclamacion, type HojaReclamacionDatos } from '@/lib/hoja-reclamacion'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'libro-reclamaciones')
 const JSON_FILE = path.join(DATA_DIR, 'registros.json')
 const ADJUNTOS_DIR = path.join(DATA_DIR, 'adjuntos')
-
-type InstitucionConfig = {
-  razonSocial: string
-  nombreComercial: string
-  ruc: string
-  direccion: string
-  telefonos: string
-  email: string
-  adjuntoMaxMb: number
-  adjuntoTipos: string[]
-}
-
-async function getInstitucionConfig(): Promise<InstitucionConfig> {
-  let base: InstitucionConfig
-  try {
-    const configPath = path.join(process.cwd(), 'config', 'libro-reclamaciones.json')
-    base = JSON.parse(fs.readFileSync(configPath, 'utf8')) as InstitucionConfig
-  } catch {
-    base = {
-      razonSocial: 'Vanguard Schools',
-      nombreComercial: 'Vanguard Schools',
-      ruc: 'PENDIENTE-ACTUALIZAR',
-      direccion: 'Jr. Toribio de Luzuriaga Mz F lote 18 y 19 - SMP',
-      telefonos: '922 084 833 - 947 345 887 - 947 346 735',
-      email: 'admin@vanguardschools.edu.pe',
-      adjuntoMaxMb: 5,
-      adjuntoTipos: ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
-    }
-  }
-  try {
-    const contacto = await obtenerContactoInstitucional()
-    if (contacto.direccion) base.direccion = contacto.direccion
-    if (contacto.telefonos) base.telefonos = contacto.telefonos
-    if (contacto.correo) base.email = contacto.correo
-  } catch {
-    /* se queda el archivo local */
-  }
-  return base
-}
 
 function ensureDirs() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true })
@@ -81,7 +42,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const institucion = await getInstitucionConfig()
+    const institucion = await obtenerInstitucionPublica()
     const formData = await request.formData()
     const get = (key: string) => String(formData.get(key) || '').trim()
 
@@ -213,6 +174,7 @@ export async function POST(request: NextRequest) {
       adjunto: adjuntoMeta,
       institucion: {
         razonSocial: institucion.razonSocial,
+        nombreComercial: institucion.nombreComercial,
         ruc: institucion.ruc,
       },
     }
@@ -279,6 +241,30 @@ export async function POST(request: NextRequest) {
     })
 
     const tipoLabel = tipo === 'reclamo' ? 'Reclamo' : 'Queja'
+    const marca = institucion.nombreComercial || institucion.razonSocial
+    const hoja: HojaReclamacionDatos = {
+      numero,
+      fechaRegistro,
+      tipoLabel,
+      razonSocial: institucion.razonSocial,
+      nombreComercial: institucion.nombreComercial,
+      ruc: institucion.ruc,
+      direccion: institucion.direccion,
+      nombre,
+      email,
+      telefono,
+      tipoDocumento,
+      numeroDocumento,
+      domicilio,
+      relacion,
+      alumnoNombre,
+      alumnoDni,
+      bienContratado,
+      fechaHecho,
+      monto,
+      detalle,
+      pedido,
+    }
     const attachments =
       adjuntoBuffer && adjuntoMeta
         ? [
@@ -290,8 +276,18 @@ export async function POST(request: NextRequest) {
           ]
         : []
 
+    const contactoMail = {
+      telefonos: institucion.telefonos,
+      correo: institucion.email,
+      direccion: institucion.direccion,
+      whatsappUrl: '',
+      telefonosSchema: [] as string[],
+    }
+
     const emailHTML = emailReclamoColegio({
       logoUrl,
+      contacto: contactoMail,
+      marca,
       numero,
       tipoLabel,
       razonSocial: institucion.razonSocial,
@@ -316,11 +312,14 @@ export async function POST(request: NextRequest) {
 
     const confirmHTML = emailReclamoUsuario({
       logoUrl,
+      contacto: contactoMail,
+      marca,
       nombre,
       numero,
       tipoLabel,
       telefonos: institucion.telefonos,
       emailContacto: institucion.email,
+      hojaHtml: htmlHojaReclamacion(hoja),
     })
 
     // Destinatarios desde BD (web_correos_envio); respaldo formularios.json
@@ -330,10 +329,10 @@ export async function POST(request: NextRequest) {
 
     const emailPromises = lista.map((destinatario) =>
       transporter.sendMail({
-        from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
+        from: `"${marca || emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: destinatario,
         replyTo: email,
-        subject: `Libro de Reclamaciones ${numero} — ${tipoLabel} · Vanguard Schools`,
+        subject: `Libro de Reclamaciones ${numero} — ${tipoLabel} · ${marca}`,
         html: emailHTML,
         attachments,
       })
@@ -341,9 +340,9 @@ export async function POST(request: NextRequest) {
 
     emailPromises.push(
       transporter.sendMail({
-        from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
+        from: `"${marca || emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
         to: email,
-        subject: `Registro confirmado ${numero} — Libro de Reclamaciones`,
+        subject: `Registro confirmado ${numero} — Libro de Reclamaciones · ${marca}`,
         html: confirmHTML,
       })
     )
@@ -356,6 +355,7 @@ export async function POST(request: NextRequest) {
       message: 'Reclamo registrado correctamente',
       numero,
       fechaRegistro,
+      hoja,
     })
   } catch (error) {
     console.error('Error libro de reclamaciones:', error)

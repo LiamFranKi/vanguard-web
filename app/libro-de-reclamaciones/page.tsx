@@ -1,27 +1,38 @@
 import { Metadata } from 'next'
 import LibroReclamaciones from '@/components/sections/LibroReclamaciones'
+import { obtenerInstitucionPublica } from '@/lib/institucion-publica'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export const metadata: Metadata = {
-  title: 'Libro de Reclamaciones - Vanguard Schools',
-  description:
-    'Libro de reclamaciones virtual de Vanguard Schools. Registre su reclamo o queja de forma formal.',
+export async function generateMetadata(): Promise<Metadata> {
+  const inst = await obtenerInstitucionPublica()
+  const marca = inst.nombreComercial || inst.razonSocial || 'Colegio'
+  return {
+    title: `Libro de Reclamaciones - ${marca}`,
+    description: `Libro de reclamaciones virtual de ${marca}. Registre su reclamo o queja de forma formal.`,
+  }
 }
 
-export default function LibroDeReclamacionesPage() {
+export default async function LibroDeReclamacionesPage() {
+  const inst = await obtenerInstitucionPublica()
+  const marca = inst.nombreComercial || inst.razonSocial
+
   return (
     <div className="pt-20">
-      <section className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-16">
+      <section className="bg-gradient-to-br from-slate-800 via-slate-900 to-primary-900 text-white py-14">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <br />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/60 mb-3">
+              Código de Protección y Defensa del Consumidor
+            </p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-3">
               Libro de Reclamaciones
             </h1>
-            <p className="text-xl md:text-2xl text-white/90">
-              Canal formal para registrar reclamos y quejas
+            <p className="text-lg md:text-xl text-white/90">{marca}</p>
+            <p className="mt-2 text-sm text-white/65">
+              {inst.razonSocial}
+              {inst.ruc ? ` · RUC ${inst.ruc}` : ''}
             </p>
           </div>
         </div>

@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   FiAlertTriangle,
-  FiBookOpen,
-  FiCheckCircle,
   FiFileText,
   FiMail,
   FiMapPin,
@@ -15,6 +13,10 @@ import {
 } from 'react-icons/fi'
 import institucionData from '@/config/libro-reclamaciones.json'
 import AntiSpamFields, { useAntiSpam } from '@/components/AntiSpamFields'
+import HojaReclamacion from '@/components/HojaReclamacion'
+import LibroReclamacionesIcon from '@/components/icons/LibroReclamacionesIcon'
+import type { HojaReclamacionDatos } from '@/lib/hoja-reclamacion'
+import type { InstitucionPublica } from '@/lib/institucion-publica'
 
 const emptyForm = {
   nombre: '',
@@ -40,24 +42,35 @@ export default function LibroReclamaciones() {
   const [adjunto, setAdjunto] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-  const [successNumero, setSuccessNumero] = useState('')
+  const [successHoja, setSuccessHoja] = useState<HojaReclamacionDatos | null>(null)
   const anti = useAntiSpam()
-  const [contacto, setContacto] = useState({
+  const [institucion, setInstitucion] = useState<InstitucionPublica>({
+    razonSocial: institucionData.razonSocial,
+    nombreComercial: institucionData.nombreComercial,
+    ruc: institucionData.ruc,
     direccion: institucionData.direccion,
     telefonos: institucionData.telefonos,
     email: institucionData.email,
+    adjuntoMaxMb: institucionData.adjuntoMaxMb,
+    adjuntoTipos: institucionData.adjuntoTipos,
   })
 
   useEffect(() => {
     let vivo = true
-    fetch('/api/contacto-publico')
+    fetch('/api/institucion-publica')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!vivo || !data) return
-        setContacto((prev) => ({
-          direccion: data.direccion ? String(data.direccion) : prev.direccion,
-          telefonos: data.telefonos ? String(data.telefonos) : prev.telefonos,
-          email: data.correo ? String(data.correo) : prev.email,
+        setInstitucion((prev) => ({
+          ...prev,
+          razonSocial: data.razonSocial || prev.razonSocial,
+          nombreComercial: data.nombreComercial || prev.nombreComercial,
+          ruc: data.ruc || prev.ruc,
+          direccion: data.direccion || prev.direccion,
+          telefonos: data.telefonos || prev.telefonos,
+          email: data.email || prev.email,
+          adjuntoMaxMb: data.adjuntoMaxMb || prev.adjuntoMaxMb,
+          adjuntoTipos: Array.isArray(data.adjuntoTipos) ? data.adjuntoTipos : prev.adjuntoTipos,
         }))
       })
       .catch(() => {})
@@ -82,7 +95,7 @@ export default function LibroReclamaciones() {
     e.preventDefault()
     setIsSubmitting(true)
     setErrorMsg('')
-    setSuccessNumero('')
+    setSuccessHoja(null)
 
     try {
       const body = new FormData()
@@ -109,7 +122,33 @@ export default function LibroReclamaciones() {
         return
       }
 
-      setSuccessNumero(data.numero || '')
+      if (data.hoja) {
+        setSuccessHoja(data.hoja as HojaReclamacionDatos)
+      } else if (data.numero) {
+        setSuccessHoja({
+          numero: data.numero,
+          fechaRegistro: data.fechaRegistro || '',
+          tipoLabel: formData.tipo === 'queja' ? 'Queja' : 'Reclamo',
+          razonSocial: institucion.razonSocial,
+          nombreComercial: institucion.nombreComercial,
+          ruc: institucion.ruc,
+          direccion: institucion.direccion,
+          nombre: formData.nombre,
+          email: formData.email,
+          telefono: formData.telefono,
+          tipoDocumento: formData.tipoDocumento,
+          numeroDocumento: formData.numeroDocumento,
+          domicilio: formData.domicilio,
+          relacion: formData.relacion,
+          alumnoNombre: formData.alumnoNombre,
+          alumnoDni: formData.alumnoDni,
+          bienContratado: formData.bienContratado,
+          fechaHecho: formData.fechaHecho,
+          monto: formData.monto,
+          detalle: formData.detalle,
+          pedido: formData.pedido,
+        })
+      }
       setFormData(emptyForm)
       setAdjunto(null)
     } catch {
@@ -122,39 +161,42 @@ export default function LibroReclamaciones() {
   return (
     <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
+        {successHoja ? (
+          <HojaReclamacion data={successHoja} onNueva={() => setSuccessHoja(null)} />
+        ) : (
         <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 items-start">
           {/* Info */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-gradient-to-br from-primary-50 via-blue-50 to-indigo-50 border border-primary-100 rounded-2xl p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-xl bg-primary-600 text-white flex items-center justify-center">
-                  <FiBookOpen size={22} />
+                <div className="w-12 h-12 rounded-xl bg-white shadow-sm ring-1 ring-slate-200 flex items-center justify-center">
+                  <LibroReclamacionesIcon className="h-8 w-8" />
                 </div>
                 <h2 className="text-2xl font-extrabold text-primary-800">Identificación del proveedor</h2>
               </div>
               <ul className="space-y-3 text-sm text-gray-700">
                 <li>
                   <strong className="text-gray-900">Razón social:</strong>{' '}
-                  {institucionData.razonSocial}
+                  {institucion.razonSocial}
                 </li>
                 <li>
                   <strong className="text-gray-900">Nombre comercial:</strong>{' '}
-                  {institucionData.nombreComercial}
+                  {institucion.nombreComercial}
                 </li>
                 <li>
-                  <strong className="text-gray-900">RUC:</strong> {institucionData.ruc}
+                  <strong className="text-gray-900">RUC:</strong> {institucion.ruc}
                 </li>
                 <li className="flex gap-2">
                   <FiMapPin className="text-primary-600 mt-0.5 shrink-0" />
-                  <span>{contacto.direccion}</span>
+                  <span>{institucion.direccion}</span>
                 </li>
                 <li className="flex gap-2">
                   <FiPhone className="text-primary-600 mt-0.5 shrink-0" />
-                  <span>{contacto.telefonos}</span>
+                  <span>{institucion.telefonos}</span>
                 </li>
                 <li className="flex gap-2">
                   <FiMail className="text-primary-600 mt-0.5 shrink-0" />
-                  <span>{contacto.email}</span>
+                  <span>{institucion.email}</span>
                 </li>
               </ul>
             </div>
@@ -196,38 +238,14 @@ export default function LibroReclamaciones() {
                 .
               </p>
               <p className="text-xs text-gray-500">
-                Tras enviar el formulario recibirá un número de registro y un correo de confirmación.
+                Tras enviar el formulario podrá imprimir la hoja y recibirá una copia completa en su
+                correo.
               </p>
             </div>
           </div>
 
           {/* Formulario */}
           <div className="lg:col-span-3 bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-gray-200">
-            {successNumero ? (
-              <div className="text-center py-10">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <FiCheckCircle className="text-emerald-600" size={32} />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Registro exitoso</h2>
-                <p className="text-gray-600 mb-4">
-                  Su caso ha sido registrado en el Libro de Reclamaciones.
-                </p>
-                <p className="inline-block bg-primary-50 border border-primary-200 text-primary-800 font-bold px-6 py-3 rounded-xl text-lg mb-6">
-                  N° {successNumero}
-                </p>
-                <p className="text-sm text-gray-500 mb-6">
-                  Conserve este número. También se envió un acuse a su correo electrónico.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setSuccessNumero('')}
-                  className="bg-gradient-to-r from-primary-600 to-primary-800 text-white px-6 py-3 rounded-xl font-semibold hover:from-primary-700 hover:to-primary-900 transition-all"
-                >
-                  Registrar otro
-                </button>
-              </div>
-            ) : (
-              <>
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">Formulario de registro</h2>
                 <p className="text-sm text-gray-600 mb-6">
                   Campos con <span className="text-primary-600 font-semibold">*</span> son
@@ -494,7 +512,7 @@ export default function LibroReclamaciones() {
 
                       <div>
                         <label className="block text-gray-700 font-semibold mb-2" htmlFor="adjunto">
-                          Adjunto (PDF o imagen, máx. {institucionData.adjuntoMaxMb} MB)
+                          Adjunto (PDF o imagen, máx. {institucion.adjuntoMaxMb} MB)
                         </label>
                         <label className="flex items-center gap-3 w-full px-4 py-3 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-400 hover:bg-primary-50/40 transition-colors">
                           <FiUpload className="text-primary-600" size={20} />
@@ -544,10 +562,9 @@ export default function LibroReclamaciones() {
                     <FiSend className={isSubmitting ? 'animate-pulse' : ''} />
                   </button>
                 </form>
-              </>
-            )}
           </div>
         </div>
+        )}
       </div>
     </section>
   )

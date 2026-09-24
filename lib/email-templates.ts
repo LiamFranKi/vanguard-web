@@ -59,9 +59,11 @@ function shell(opts: {
   subtitle?: string
   body: string
   footerExtra?: string
+  marca?: string
 }) {
   const year = new Date().getFullYear()
   const datos = pie(opts.contacto)
+  const marca = (opts.marca || '').trim() || 'Vanguard Schools'
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -76,7 +78,7 @@ function shell(opts: {
         <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(15,23,42,.08);">
           <tr>
             <td style="background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 55%,#2563eb 100%);padding:28px 24px;text-align:center;">
-              <img src="${opts.logoUrl}" alt="Vanguard Schools" width="88" style="width:88px;height:auto;display:block;margin:0 auto 12px auto;border:0;" />
+              <img src="${opts.logoUrl}" alt="${escapeHtml(marca)}" width="88" style="width:88px;height:auto;display:block;margin:0 auto 12px auto;border:0;" />
               <p style="margin:0 0 6px 0;color:rgba(255,255,255,.85);font-size:12px;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(opts.eyebrow)}</p>
               <h1 style="margin:0;color:#ffffff;font-size:22px;line-height:1.3;font-weight:700;">${escapeHtml(opts.title)}</h1>
               ${
@@ -94,11 +96,11 @@ function shell(opts: {
           <tr>
             <td style="padding:8px 26px 28px 26px;">
               <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;color:#64748b;font-size:12px;line-height:1.55;">
-                <strong style="color:#1e3a8a;">Vanguard Schools</strong><br/>
+                <strong style="color:#1e3a8a;">${escapeHtml(marca)}</strong><br/>
                 ${escapeHtml(datos.direccion)}<br/>
                 Tel: ${escapeHtml(datos.telefonos)} · ${escapeHtml(datos.correo)}<br/>
                 ${opts.footerExtra || ''}
-                <span style="display:block;margin-top:8px;">© ${year} Vanguard Schools — Mensaje automático del sitio web</span>
+                <span style="display:block;margin-top:8px;">© ${year} ${escapeHtml(marca)} — Mensaje automático del sitio web</span>
               </div>
             </td>
           </tr>
@@ -481,6 +483,7 @@ export function emailSugerenciaUsuario(opts: {
 export function emailReclamoColegio(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   numero: string
   tipoLabel: string
   razonSocial: string
@@ -533,6 +536,7 @@ export function emailReclamoColegio(opts: {
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Libro de Reclamaciones',
     title: `${opts.tipoLabel} registrado`,
     subtitle: opts.numero,
@@ -540,23 +544,26 @@ export function emailReclamoColegio(opts: {
   })
 }
 
-/** Correo al usuario: acuse de reclamo */
+/** Correo al usuario: acuse de reclamo + copia de la hoja */
 export function emailReclamoUsuario(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   numero: string
   tipoLabel: string
   telefonos: string
   emailContacto: string
+  hojaHtml?: string
 }) {
+  const marca = (opts.marca || '').trim() || 'la institución'
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
     </p>
     <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
       Hemos registrado su <strong>${escapeHtml(opts.tipoLabel.toLowerCase())}</strong> en el
-      Libro de Reclamaciones de Vanguard Schools.
+      Libro de Reclamaciones de ${escapeHtml(marca)}.
     </p>
     <div style="text-align:center;margin:20px 0;">
       <div style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px 22px;">
@@ -565,9 +572,13 @@ export function emailReclamoUsuario(opts: {
       </div>
     </div>
     <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
-      Conserve este número para el seguimiento. Nuestro equipo revisará su caso y se comunicará
-      con usted a la brevedad.
+      Conserve este número y la hoja adjunta. El proveedor debe responder por escrito en el plazo legal.
     </p>
+    ${
+      opts.hojaHtml
+        ? `<div style="margin:18px 0 8px 0;">${opts.hojaHtml}</div>`
+        : ''
+    }
     <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;margin:16px 0;color:#475569;font-size:14px;line-height:1.55;">
       <strong style="color:#1e3a8a;">Contacto institucional</strong><br/>
       Teléfonos: ${escapeHtml(opts.telefonos)}<br/>
@@ -575,12 +586,13 @@ export function emailReclamoUsuario(opts: {
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
       Atentamente,<br/>
-      <strong style="color:#1e3a8a;">Vanguard Schools</strong>
+      <strong style="color:#1e3a8a;">${escapeHtml(marca)}</strong>
     </p>
   `
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Acuse de recibo',
     title: 'Registro confirmado',
     subtitle: 'Libro de Reclamaciones',
