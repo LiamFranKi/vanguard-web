@@ -10,6 +10,7 @@ import {
   emailTrabajaUsuario,
 } from '@/lib/email-templates'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import { obtenerInstitucionPublica } from '@/lib/institucion-publica'
 import { camposAntiSpamDesdeFormData, evaluarAntiSpam, ipCliente } from '@/lib/anti-spam'
 
 export const dynamic = 'force-dynamic'
@@ -182,9 +183,12 @@ export async function POST(request: NextRequest) {
 
     const destinatarios = await getDestinatariosWeb('trabaja')
     const contacto = await obtenerContactoInstitucional()
+    const inst = await obtenerInstitucionPublica()
+    const marca = inst.nombreComercial || inst.razonSocial || emailConfig.nombre_remitente
     const emailHTML = emailTrabajaColegio({
       contacto,
       logoUrl,
+      marca,
       nombre,
       email,
       telefono,
@@ -192,11 +196,11 @@ export async function POST(request: NextRequest) {
       mensaje,
       cvNombre: originalName,
     })
-    const confirmacionHTML = emailTrabajaUsuario({ contacto, logoUrl, nombre, puesto })
+    const confirmacionHTML = emailTrabajaUsuario({ contacto, logoUrl, marca, nombre, puesto })
 
     const emailPromises = destinatarios.map((destinatario) =>
       transporter.sendMail({
-        from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
+        from: `"${marca}" <${emailConfig.email_from}>`,
         to: destinatario,
         replyTo: email,
         subject: `Nueva postulación — ${puesto}`,
@@ -213,9 +217,9 @@ export async function POST(request: NextRequest) {
 
     emailPromises.push(
       transporter.sendMail({
-        from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
+        from: `"${marca}" <${emailConfig.email_from}>`,
         to: email,
-        subject: `Postulación recibida — Vanguard Schools`,
+        subject: `Postulación recibida — ${marca}`,
         html: confirmacionHTML,
       })
     )

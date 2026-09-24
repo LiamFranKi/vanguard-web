@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
+import { obtenerInstitucionPublica } from '@/lib/institucion-publica'
 
 // Configuración de email
 const transporter = nodemailer.createTransport({
@@ -90,8 +91,10 @@ export async function POST(request: NextRequest) {
       : null
 
     // Enviar email de notificación (en segundo plano, no bloquea la respuesta)
+    const inst = await obtenerInstitucionPublica()
+    const marca = inst.nombreComercial || inst.razonSocial || 'Institución educativa'
     const emailPromise = transporter.sendMail({
-      from: `"Vanguard Schools Chat" <${process.env.SMTP_USER}>`,
+      from: `"${marca} Chat" <${process.env.SMTP_USER}>`,
       to: emailDestino,
       subject: `💬 Nuevo mensaje de chat - ${nombre}`,
       html: `
@@ -114,7 +117,7 @@ export async function POST(request: NextRequest) {
         <body>
           <div class="container">
             <div class="header">
-              <img src="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com'}/LOGO1.png" alt="Vanguard Schools" />
+              <img src="${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.vanguardschools.com'}/LOGO1.png" alt="${marca}" />
               <h2 style="margin: 10px 0 0 0;">Nuevo Mensaje de Chat</h2>
             </div>
             <div class="content">
@@ -142,7 +145,7 @@ export async function POST(request: NextRequest) {
               </div>
             </div>
             <div class="footer">
-              <p>Este es un mensaje automático del sistema de chat de Vanguard Schools.</p>
+              <p>Este es un mensaje automático del sistema de chat de ${marca}.</p>
               <p>Fecha: ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}</p>
             </div>
           </div>

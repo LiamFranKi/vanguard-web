@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import { obtenerInstitucionPublica } from '@/lib/institucion-publica'
 import { camposAntiSpamDesdeObjeto, evaluarAntiSpam, ipCliente } from '@/lib/anti-spam'
 
 const contactSchema = z.object({
@@ -39,6 +40,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: anti.error }, { status: anti.status })
     }
     const contacto = await obtenerContactoInstitucional()
+    const inst = await obtenerInstitucionPublica()
+    const marca = inst.nombreComercial || inst.razonSocial || 'Institución educativa'
 
     // Configuración de email (usar variables de entorno)
     const logoUrl =
@@ -60,15 +63,15 @@ export async function POST(request: NextRequest) {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: process.env.CONTACT_EMAIL || 'admin@vanguardschools.edu.pe',
       subject: `📧 Nuevo mensaje de contacto: ${asunto}`,
-      html: generateEmailToSchool(nombre, email, telefono, asunto, mensaje, logoUrl),
+      html: generateEmailToSchool(nombre, email, telefono, asunto, mensaje, logoUrl, marca),
     }
 
     // Email de confirmación para el usuario
     const emailToUser = {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: email,
-      subject: '✅ Gracias por contactarnos - Vanguard Schools',
-      html: generateEmailToUser(nombre, logoUrl, contacto),
+      subject: `✅ Gracias por contactarnos - ${marca}`,
+      html: generateEmailToUser(nombre, logoUrl, contacto, marca),
     }
 
     // Enviar emails en segundo plano para no hacer esperar al usuario
@@ -98,7 +101,8 @@ function generateEmailToSchool(
   telefono: string | undefined,
   asunto: string,
   mensaje: string,
-  logoUrl: string
+  logoUrl: string,
+  marca: string
 ): string {
   return `
     <!DOCTYPE html>
@@ -118,10 +122,10 @@ function generateEmailToSchool(
                 <td style="background: linear-gradient(135deg, #0ea5e9 0%, #a855f7 100%); padding: 30px; text-align: center;">
                   <img 
                     src="${logoUrl}" 
-                    alt="Vanguard Schools" 
+                    alt="${marca}" 
                     style="width: 80px; height: auto; display: block; margin: 0 auto 10px auto;"
                   />
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Vanguard Schools</h1>
+                  <h1 style="color: white; margin: 0; font-size: 24px;">${marca}</h1>
                 </td>
               </tr>
               
@@ -170,7 +174,7 @@ function generateEmailToSchool(
               <!-- Footer -->
               <tr>
                 <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-                  <p style="margin: 0;">Este es un mensaje automático del sistema de contacto de Vanguard Schools</p>
+                  <p style="margin: 0;">Este es un mensaje automático del sistema de contacto de ${marca}</p>
                 </td>
               </tr>
             </table>
@@ -185,7 +189,8 @@ function generateEmailToSchool(
 function generateEmailToUser(
   nombre: string,
   logoUrl: string,
-  contacto: { telefonos: string; correo: string; direccion: string }
+  contacto: { telefonos: string; correo: string; direccion: string },
+  marca: string
 ): string {
   return `
     <!DOCTYPE html>
@@ -205,10 +210,10 @@ function generateEmailToUser(
                 <td style="background: linear-gradient(135deg, #0ea5e9 0%, #a855f7 100%); padding: 30px; text-align: center;">
                   <img 
                     src="${logoUrl}" 
-                    alt="Vanguard Schools" 
+                    alt="${marca}" 
                     style="width: 80px; height: auto; display: block; margin: 0 auto 10px auto;"
                   />
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Vanguard Schools</h1>
+                  <h1 style="color: white; margin: 0; font-size: 24px;">${marca}</h1>
                 </td>
               </tr>
               
@@ -242,9 +247,9 @@ function generateEmailToUser(
               <!-- Footer -->
               <tr>
                 <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-                  <p style="margin: 0 0 10px 0;"><strong>Vanguard Schools</strong></p>
+                  <p style="margin: 0 0 10px 0;"><strong>${marca}</strong></p>
                   <p style="margin: 0;">${contacto.direccion}</p>
-                  <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Vanguard Schools - Todos los derechos reservados</p>
+                  <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} ${marca} - Todos los derechos reservados</p>
                 </td>
               </tr>
             </table>

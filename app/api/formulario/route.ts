@@ -16,6 +16,7 @@ import {
   emailAdmisionUsuario,
 } from '@/lib/email-templates'
 import { obtenerContactoInstitucional } from '@/lib/contacto-institucional'
+import { obtenerInstitucionPublica } from '@/lib/institucion-publica'
 import {
   camposAntiSpamDesdeObjeto,
   evaluarAntiSpam,
@@ -281,6 +282,8 @@ export async function POST(request: NextRequest) {
     const emailConfig = getEmailConfig()
     const logoUrl = getLogoUrl()
     const contacto = await obtenerContactoInstitucional()
+    const inst = await obtenerInstitucionPublica()
+    const marca = inst.nombreComercial || inst.razonSocial || emailConfig.nombre_remitente
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
@@ -306,13 +309,14 @@ export async function POST(request: NextRequest) {
     let emailHTML: string
     let confirmacionHTML: string
     let asuntoColegio = formularioConfig.asunto
-    let asuntoUsuario = `✅ Gracias por contactarnos - ${emailConfig.nombre_remitente}`
+    let asuntoUsuario = `✅ Gracias por contactarnos - ${marca}`
     let replyToColegio = emailConfig.reply_to
 
     if (tipo === 'sugerencias') {
       emailHTML = emailSugerenciaColegio({
         contacto,
         logoUrl,
+        marca,
         nombre,
         email,
         telefono: String(otrosDatos.telefono || ''),
@@ -320,27 +324,29 @@ export async function POST(request: NextRequest) {
         tipo: String(otrosDatos.tipo || ''),
         mensaje: String(otrosDatos.mensaje || ''),
       })
-      confirmacionHTML = emailSugerenciaUsuario({ contacto, logoUrl, nombre })
-      asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
+      confirmacionHTML = emailSugerenciaUsuario({ contacto, logoUrl, marca, nombre })
+      asuntoUsuario = `Recibimos su mensaje — ${marca}`
       replyToColegio = email
     } else if (tipo === 'contacto') {
       emailHTML = emailContactoColegio({
         contacto,
         logoUrl,
+        marca,
         nombre,
         email,
         telefono: String(otrosDatos.telefono || ''),
         asunto: String(otrosDatos.asunto || ''),
         mensaje: String(otrosDatos.mensaje || ''),
       })
-      confirmacionHTML = emailContactoUsuario({ contacto, logoUrl, nombre })
+      confirmacionHTML = emailContactoUsuario({ contacto, logoUrl, marca, nombre })
       asuntoColegio = `Nuevo contacto web — ${String(otrosDatos.asunto || 'Sin asunto')}`
-      asuntoUsuario = `Recibimos su mensaje — Vanguard Schools`
+      asuntoUsuario = `Recibimos su mensaje — ${marca}`
       replyToColegio = email
     } else if (tipo === 'visita-guiada') {
       emailHTML = emailVisitaColegio({
         contacto,
         logoUrl,
+        marca,
         nombre,
         email,
         telefono: String(otrosDatos.telefono || ''),
@@ -354,12 +360,13 @@ export async function POST(request: NextRequest) {
       confirmacionHTML = emailVisitaUsuario({
         contacto,
         logoUrl,
+        marca,
         nombre,
         fechaPreferida: String(otrosDatos.fechaPreferida || ''),
         horarioPreferido: String(otrosDatos.horarioPreferido || ''),
       })
       asuntoColegio = `Nueva visita guiada — ${String(otrosDatos.fechaPreferida || '')}`
-      asuntoUsuario = `Registro de visita confirmado — Vanguard Schools`
+      asuntoUsuario = `Registro de visita confirmado — ${marca}`
       replyToColegio = email
     } else if (tipo === 'admisión') {
       const nombresEstudiante = String(otrosDatos.nombresEstudiante || '')
@@ -369,6 +376,7 @@ export async function POST(request: NextRequest) {
       emailHTML = emailAdmisionColegio({
         contacto,
         logoUrl,
+        marca,
         nombresEstudiante,
         apellidosEstudiante,
         nombresApoderado,
@@ -381,12 +389,13 @@ export async function POST(request: NextRequest) {
       confirmacionHTML = emailAdmisionUsuario({
         contacto,
         logoUrl,
+        marca,
         nombresApoderado,
         nombresEstudiante,
         grado,
       })
       asuntoColegio = `Nueva admisión — ${grado || 'Sin grado'}`
-      asuntoUsuario = `Solicitud de admisión recibida — Vanguard Schools`
+      asuntoUsuario = `Solicitud de admisión recibida — ${marca}`
       replyToColegio = String(otrosDatos.emailApoderado || email)
     } else {
       emailHTML = generateEmailHTML(
@@ -394,19 +403,21 @@ export async function POST(request: NextRequest) {
         nombre,
         email,
         otrosDatos,
-        logoUrl
+        logoUrl,
+        marca
       )
       confirmacionHTML = generateConfirmacionHTML(
         nombre,
         formularioConfig.nombre,
         logoUrl,
-        contacto
+        contacto,
+        marca
       )
     }
 
     const emailPromises = destinatarios.map((destinatario) =>
       transporter.sendMail({
-        from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
+        from: `"${marca}" <${emailConfig.email_from}>`,
         to: destinatario,
         replyTo: replyToColegio,
         subject: asuntoColegio,
@@ -416,7 +427,7 @@ export async function POST(request: NextRequest) {
 
     emailPromises.push(
       transporter.sendMail({
-        from: `"${emailConfig.nombre_remitente}" <${emailConfig.email_from}>`,
+        from: `"${marca}" <${emailConfig.email_from}>`,
         to: email,
         subject: asuntoUsuario,
         html: confirmacionHTML,
@@ -472,7 +483,8 @@ function generateEmailHTML(
   nombre: string,
   email: string,
   datos: Record<string, any>,
-  logoUrl: string
+  logoUrl: string,
+  marca: string
 ): string {
   const camposHTML = Object.entries(datos)
     .filter(([key]) => key !== 'email' && key !== 'nombre')
@@ -507,10 +519,10 @@ function generateEmailHTML(
                 <td style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px; text-align: center;">
                   <img 
                     src="${logoUrl}" 
-                    alt="Vanguard Schools" 
+                    alt="${marca}" 
                     style="width: 80px; height: auto; display: block; margin: 0 auto 10px auto;"
                   />
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Vanguard Schools</h1>
+                  <h1 style="color: white; margin: 0; font-size: 24px;">${marca}</h1>
                   <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">${tipoFormulario}</p>
                 </td>
               </tr>
@@ -541,7 +553,7 @@ function generateEmailHTML(
               <!-- Footer -->
               <tr>
                 <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-                  <p style="margin: 0;">Este es un mensaje automático del sistema de formularios de Vanguard Schools</p>
+                  <p style="margin: 0;">Este es un mensaje automático del sistema de formularios de ${marca}</p>
                 </td>
               </tr>
             </table>
@@ -560,7 +572,8 @@ function generateConfirmacionHTML(
   nombre: string,
   tipoFormulario: string,
   logoUrl: string,
-  contacto: { telefonos: string; correo: string; direccion: string }
+  contacto: { telefonos: string; correo: string; direccion: string },
+  marca: string
 ): string {
   return `
     <!DOCTYPE html>
@@ -580,10 +593,10 @@ function generateConfirmacionHTML(
                 <td style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px; text-align: center;">
                   <img 
                     src="${logoUrl}" 
-                    alt="Vanguard Schools" 
+                    alt="${marca}" 
                     style="width: 80px; height: auto; display: block; margin: 0 auto 10px auto;"
                   />
-                  <h1 style="color: white; margin: 0; font-size: 24px;">Vanguard Schools</h1>
+                  <h1 style="color: white; margin: 0; font-size: 24px;">${marca}</h1>
                 </td>
               </tr>
               
@@ -617,9 +630,9 @@ function generateConfirmacionHTML(
               <!-- Footer -->
               <tr>
                 <td style="background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-                  <p style="margin: 0 0 10px 0;"><strong>Vanguard Schools</strong></p>
+                  <p style="margin: 0 0 10px 0;"><strong>${marca}</strong></p>
                   <p style="margin: 0;">${contacto.direccion}</p>
-                  <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Vanguard Schools - Todos los derechos reservados</p>
+                  <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} ${marca} - Todos los derechos reservados</p>
                 </td>
               </tr>
             </table>

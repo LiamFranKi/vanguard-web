@@ -62,13 +62,21 @@ export async function obtenerInstitucionPublica(): Promise<InstitucionPublica> {
     if (!pool) return base
     const colegioId = parseInt(process.env.WEB_COLEGIO_ID || '1', 10) || 1
     const [rows] = await pool.query(
-      `SELECT nombre, ruc, razon_social, direccion FROM colegios WHERE id = ? LIMIT 1`,
+      `SELECT titulo_intranet, ruc, razon_social, direccion FROM colegios WHERE id = ? LIMIT 1`,
       [colegioId]
     )
-    const row = (rows as { nombre?: string; ruc?: string; razon_social?: string; direccion?: string }[])[0]
+    const row = (rows as {
+      titulo_intranet?: string
+      ruc?: string
+      razon_social?: string
+      direccion?: string
+    }[])[0]
     if (row) {
       if (row.razon_social) base.razonSocial = String(row.razon_social).trim()
-      if (row.nombre) base.nombreComercial = String(row.nombre).trim()
+      // Título / Nombre del Colegio en Configuración. No usar colegios.nombre:
+      // ese campo viejo suele decir "Colegio …" y no se edita en esa pantalla.
+      const titulo = String(row.titulo_intranet || '').trim()
+      if (titulo) base.nombreComercial = titulo
       if (row.ruc) base.ruc = String(row.ruc).trim()
       if (row.direccion && !contacto.direccion) base.direccion = String(row.direccion).trim()
     }

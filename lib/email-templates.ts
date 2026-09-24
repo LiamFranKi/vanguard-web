@@ -24,6 +24,10 @@ export function getLogoUrl(): string {
   )
 }
 
+function marcaDe(opts: { marca?: string }) {
+  return (opts.marca || '').trim() || 'Vanguard Schools'
+}
+
 function escapeHtml(text: string): string {
   return String(text || '')
     .replace(/&/g, '&amp;')
@@ -116,6 +120,7 @@ function shell(opts: {
 export function emailVisitaColegio(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   email: string
   telefono?: string
@@ -146,6 +151,7 @@ export function emailVisitaColegio(opts: {
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Formulario web',
     title: 'Nueva visita guiada',
     subtitle: opts.nombre,
@@ -157,16 +163,18 @@ export function emailVisitaColegio(opts: {
 export function emailVisitaUsuario(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   fechaPreferida?: string
   horarioPreferido?: string
 }) {
+  const marca = marcaDe(opts)
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
     </p>
     <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
-      Gracias por su interés en Vanguard Schools. Su registro de
+      Gracias por su interés en ${escapeHtml(marca)}. Su registro de
       <strong>visita guiada</strong> fue confirmado con la fecha y hora que seleccionó.
     </p>
     <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin:18px 0;">
@@ -178,13 +186,14 @@ export function emailVisitaUsuario(opts: {
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
       Atentamente,<br/>
-      <strong style="color:#1e3a8a;">Equipo de Admisión · Vanguard Schools</strong>
+      <strong style="color:#1e3a8a;">Equipo de Admisión · ${escapeHtml(marca)}</strong>
     </p>
   `
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
-    eyebrow: 'Vanguard Schools',
+    marca,
+    eyebrow: marca,
     title: 'Registro confirmado',
     subtitle: 'Visita guiada',
     body,
@@ -195,6 +204,7 @@ export function emailVisitaUsuario(opts: {
 export function emailTrabajaColegio(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   email: string
   telefono?: string
@@ -219,6 +229,7 @@ export function emailTrabajaColegio(opts: {
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Formulario web',
     title: 'Nueva postulación',
     subtitle: opts.puesto,
@@ -230,15 +241,17 @@ export function emailTrabajaColegio(opts: {
 export function emailTrabajaUsuario(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   puesto?: string
 }) {
+  const marca = marcaDe(opts)
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
     </p>
     <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
-      Gracias por su interés en formar parte de Vanguard Schools. Hemos recibido su postulación
+      Gracias por su interés en formar parte de ${escapeHtml(marca)}. Hemos recibido su postulación
       ${opts.puesto ? `para <strong>${escapeHtml(opts.puesto)}</strong>` : ''}
       y nuestro equipo de Recursos Humanos la revisará a la brevedad.
     </p>
@@ -250,13 +263,14 @@ export function emailTrabajaUsuario(opts: {
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
       Atentamente,<br/>
-      <strong style="color:#1e3a8a;">Recursos Humanos · Vanguard Schools</strong>
+      <strong style="color:#1e3a8a;">Recursos Humanos · ${escapeHtml(marca)}</strong>
     </p>
   `
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
-    eyebrow: 'Vanguard Schools',
+    marca,
+    eyebrow: marca,
     title: 'Postulación recibida',
     subtitle: 'Trabaja con Nosotros',
     body,
@@ -267,6 +281,7 @@ export function emailTrabajaUsuario(opts: {
 export function emailAdmisionColegio(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombresEstudiante: string
   apellidosEstudiante: string
   nombresApoderado: string
@@ -294,6 +309,7 @@ export function emailAdmisionColegio(opts: {
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Formulario web',
     title: 'Nueva solicitud de admisión',
     subtitle: opts.grado,
@@ -305,17 +321,19 @@ export function emailAdmisionColegio(opts: {
 export function emailAdmisionUsuario(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombresApoderado: string
   nombresEstudiante: string
   grado: string
 }) {
+  const marca = marcaDe(opts)
   const datos = pie(opts.contacto)
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombresApoderado)}</strong>,
     </p>
     <p style="margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.65;">
-      Gracias por su interés en Vanguard Schools. Hemos recibido la solicitud de admisión
+      Gracias por su interés en ${escapeHtml(marca)}. Hemos recibido la solicitud de admisión
       de <strong>${escapeHtml(opts.nombresEstudiante)}</strong>
       para <strong>${escapeHtml(opts.grado)}</strong> y nos pondremos en contacto a la brevedad.
     </p>
@@ -327,13 +345,14 @@ export function emailAdmisionUsuario(opts: {
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
       Atentamente,<br/>
-      <strong style="color:#1e3a8a;">Equipo de Admisión · Vanguard Schools</strong>
+      <strong style="color:#1e3a8a;">Equipo de Admisión · ${escapeHtml(marca)}</strong>
     </p>
   `
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
-    eyebrow: 'Vanguard Schools',
+    marca,
+    eyebrow: marca,
     title: 'Solicitud recibida',
     subtitle: 'Admisión',
     body,
@@ -344,6 +363,7 @@ export function emailAdmisionUsuario(opts: {
 export function emailContactoColegio(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   email: string
   telefono?: string
@@ -366,6 +386,7 @@ export function emailContactoColegio(opts: {
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Formulario web',
     title: 'Nuevo mensaje de contacto',
     subtitle: opts.nombre,
@@ -377,8 +398,10 @@ export function emailContactoColegio(opts: {
 export function emailContactoUsuario(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
 }) {
+  const marca = marcaDe(opts)
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
@@ -396,13 +419,14 @@ export function emailContactoUsuario(opts: {
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
       Atentamente,<br/>
-      <strong style="color:#1e3a8a;">Equipo Vanguard Schools</strong>
+      <strong style="color:#1e3a8a;">Equipo ${escapeHtml(marca)}</strong>
     </p>
   `
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
-    eyebrow: 'Vanguard Schools',
+    marca,
+    eyebrow: marca,
     title: 'Recibimos su mensaje',
     subtitle: 'Contáctenos',
     body,
@@ -413,6 +437,7 @@ export function emailContactoUsuario(opts: {
 export function emailSugerenciaColegio(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
   email: string
   telefono?: string
@@ -437,6 +462,7 @@ export function emailSugerenciaColegio(opts: {
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
+    marca: opts.marca,
     eyebrow: 'Formulario web',
     title: 'Nueva sugerencia recibida',
     subtitle: opts.nombre,
@@ -448,8 +474,10 @@ export function emailSugerenciaColegio(opts: {
 export function emailSugerenciaUsuario(opts: {
   logoUrl: string
   contacto?: ContactoInstitucional
+  marca?: string
   nombre: string
 }) {
+  const marca = marcaDe(opts)
   const body = `
     <p style="margin:0 0 14px 0;color:#334155;font-size:15px;line-height:1.65;">
       Estimado/a <strong>${escapeHtml(opts.nombre)}</strong>,
@@ -466,13 +494,14 @@ export function emailSugerenciaUsuario(opts: {
     </div>
     <p style="margin:0;color:#64748b;font-size:14px;line-height:1.6;">
       Atentamente,<br/>
-      <strong style="color:#1e3a8a;">Equipo Vanguard Schools</strong>
+      <strong style="color:#1e3a8a;">Equipo ${escapeHtml(marca)}</strong>
     </p>
   `
   return shell({
     contacto: opts.contacto,
     logoUrl: opts.logoUrl,
-    eyebrow: 'Vanguard Schools',
+    marca,
+    eyebrow: marca,
     title: 'Recibimos su mensaje',
     subtitle: 'Sugerencias y comentarios',
     body,
